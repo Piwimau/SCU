@@ -1,6 +1,6 @@
 # SCU
 
-SCU is a small utility library for C.
+SCU is a utility library for C.
 
 ## Contributing
 
