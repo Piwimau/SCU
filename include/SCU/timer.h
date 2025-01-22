@@ -112,7 +112,7 @@ double scu_timer_elapsedWallTime(const SCUTimer* timer);
 /**
  * @brief Deallocates a given `SCUTimer`.
  *
- * @note For convenience, `timer` may be a `nullptr`.
+ * @note For convenience, `timer` is allowed to be a `nullptr`.
  *
  * @warning Any use of the `SCUTimer` after it has been deallocated results in undefined behavior.
  *

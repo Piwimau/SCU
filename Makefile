@@ -2,6 +2,25 @@ CC = gcc
 CFLAGS = -std=c23 -Wall -Wextra -Wpedantic -Werror
 CPPFLAGS = $(INCS) $(DEPFLAGS)
 DEPFLAGS = -MMD -MP
+LDFLAGS =
+LDLIBS =
+
+ifeq ($(OS), Windows_NT)
+    STATIC_LIB_EXT = .lib
+    SHARED_LIB_EXT = .dll
+    LDLIBS += -lbcrypt
+else
+    STATIC_LIB_EXT = .a
+    SHARED_LIB_EXT = .so
+endif
+
+CONFIG ?= release
+ifeq ($(CONFIG), debug)
+    CFLAGS += -g3 -O0
+    LIB_SUFFIX = d
+else
+    CFLAGS += -g0 -O3
+endif
 
 SRC = src
 BIN = bin
@@ -9,21 +28,13 @@ OBJ = obj
 
 INCS = -Iinclude
 SRCS = $(shell find $(SRC) -type f -name '*.c')
-STATIC_OBJS = $(patsubst $(SRC)/%.c, $(OBJ)/$(BUILD_TYPE)/static/%.o, $(SRCS))
-SHARED_OBJS = $(patsubst $(SRC)/%.c, $(OBJ)/$(BUILD_TYPE)/shared/%.o, $(SRCS))
+STATIC_OBJS = $(patsubst $(SRC)/%.c, $(OBJ)/$(CONFIG)/static/%.o, $(SRCS))
+SHARED_OBJS = $(patsubst $(SRC)/%.c, $(OBJ)/$(CONFIG)/shared/%.o, $(SRCS))
 STATIC_DEPS = $(patsubst %.o, %.d, $(STATIC_OBJS))
 SHARED_DEPS = $(patsubst %.o, %.d, $(SHARED_OBJS))
 
-STATIC_LIB = $(BIN)/$(BUILD_TYPE)/static/libscu$(LIB_SUFFIX).a
-SHARED_LIB = $(BIN)/$(BUILD_TYPE)/shared/libscu$(LIB_SUFFIX).so
-
-BUILD_TYPE ?= release
-ifeq ($(BUILD_TYPE), debug)
-    CFLAGS += -g3 -O0
-    LIB_SUFFIX = d
-else ifeq ($(BUILD_TYPE), release)
-    CFLAGS += -g0 -O3
-endif
+STATIC_LIB = $(BIN)/$(CONFIG)/static/libscu$(LIB_SUFFIX)$(STATIC_LIB_EXT)
+SHARED_LIB = $(BIN)/$(CONFIG)/shared/libscu$(LIB_SUFFIX)$(SHARED_LIB_EXT)
 
 .PHONY: all static shared clean help
 
@@ -47,7 +58,7 @@ help:
 	@echo "  help    Display this help."
 	@echo ""
 	@echo "Variables:"
-	@echo "  BUILD_TYPE={debug|release}  Set the build type (default = release)."
+	@echo "  CONFIG={debug|release}  Set the configuration (default = release)."
 
 $(STATIC_LIB): $(STATIC_OBJS)
 	@mkdir -p $(dir $@)
@@ -55,13 +66,13 @@ $(STATIC_LIB): $(STATIC_OBJS)
 
 $(SHARED_LIB): $(SHARED_OBJS)
 	@mkdir -p $(dir $@)
-	@$(CC) -shared $^ -o $@
+	@$(CC) -shared $^ $(LDLIBS) -o $@
 
-$(OBJ)/$(BUILD_TYPE)/static/%.o: $(SRC)/%.c
+$(OBJ)/$(CONFIG)/static/%.o: $(SRC)/%.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(OBJ)/$(BUILD_TYPE)/shared/%.o: $(SRC)/%.c
+$(OBJ)/$(CONFIG)/shared/%.o: $(SRC)/%.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -fPIC $(CPPFLAGS) -c $< -o $@
 
