@@ -20,6 +20,7 @@ ifeq ($(CONFIG), debug)
     LIB_SUFFIX = d
 else
     CFLAGS += -g0 -O3
+    LIB_SUFFIX =
 endif
 
 SRC = src
@@ -66,7 +67,7 @@ $(STATIC_LIB): $(STATIC_OBJS)
 
 $(SHARED_LIB): $(SHARED_OBJS)
 	@mkdir -p $(dir $@)
-	@$(CC) -shared $^ $(LDLIBS) -o $@
+	@$(CC) -shared $^ $(LDFLAGS) $(LDLIBS) -o $@
 
 $(OBJ)/$(CONFIG)/static/%.o: $(SRC)/%.c
 	@mkdir -p $(dir $@)

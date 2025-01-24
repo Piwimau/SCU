@@ -41,7 +41,7 @@
  * not be used anymore (and especially not be passed to `SCU_FREE()`). If the block was expanded,
  * the content of any new locations in memory is undefined.
  *
- * @param[in] pointer Pointer to the block of memory to reallocate. It is allowed to be `nullptr`,
+ * @param[in] pointer Pointer to the block of memory to reallocate. It is allowed to be a `nullptr`,
  *                    in which case it behaves like calling `SCU_MALLOC()` with the given size.
  * @param[in] size    Size to reallocate the block to (in bytes).
  * @return A pointer to the reallocated block of memory on success, or a `nullptr` if an
@@ -53,7 +53,7 @@
  * @brief Deallocates a block of memory previously allocated by `SCU_MALLOC()`, `SCU_CALLOC()` or
  * `SCU_REALLOC()`.
  *
- * @note For convenience, `pointer` is allowed to be `nullptr`.
+ * @note For convenience, `pointer` is allowed to be a `nullptr`.
  *
  * @warning The behavior is undefined if the block of memory pointed to by `pointer` was not
  * previously allocated by `SCU_MALLOC()`, `SCU_CALLOC()` or `SCU_REALLOC()`, or if it has already
