@@ -55,54 +55,6 @@ int64_t scu_random_getSeed(const SCURandom* random);
 void scu_random_setSeed(SCURandom* random, uint64_t seed);
 
 /**
- * @brief Returns a pseudorandom `int8_t` between min (inclusive) and max (exclusive).
- *
- * @note If `min` is greater than or equal to `max`, `min` is returned.
- *
- * @param[in, out] random `SCURandom` to use.
- * @param[in]      min    Minimum value to return (inclusive).
- * @param[in]      max    Maximum value to return (exclusive).
- * @return A pseudorandom `int8_t` between min (inclusive) and max (exclusive).
- */
-int8_t scu_random_int8(SCURandom* random, int8_t min, int8_t max);
-
-/**
- * @brief Returns a pseudorandom `uint8_t` between min (inclusive) and max (exclusive).
- *
- * @note If `min` is greater than or equal to `max`, `min` is returned.
- *
- * @param[in, out] random `SCURandom` to use.
- * @param[in]      min    Minimum value to return (inclusive).
- * @param[in]      max    Maximum value to return (exclusive).
- * @return A pseudorandom `uint8_t` between min (inclusive) and max (exclusive).
- */
-uint8_t scu_random_uint8(SCURandom* random, uint8_t min, uint8_t max);
-
-/**
- * @brief Returns a pseudorandom `int16_t` between min (inclusive) and max (exclusive).
- *
- * @note If `min` is greater than or equal to `max`, `min` is returned.
- *
- * @param[in, out] random `SCURandom` to use.
- * @param[in]      min    Minimum value to return (inclusive).
- * @param[in]      max    Maximum value to return (exclusive).
- * @return A pseudorandom `int16_t` between min (inclusive) and max (exclusive).
- */
-int16_t scu_random_int16(SCURandom* random, int16_t min, int16_t max);
-
-/**
- * @brief Returns a pseudorandom `uint16_t` between min (inclusive) and max (exclusive).
- *
- * @note If `min` is greater than or equal to `max`, `min` is returned.
- *
- * @param[in, out] random `SCURandom` to use.
- * @param[in]      min    Minimum value to return (inclusive).
- * @param[in]      max    Maximum value to return (exclusive).
- * @return A pseudorandom `uint16_t` between min (inclusive) and max (exclusive).
- */
-uint16_t scu_random_uint16(SCURandom* random, uint16_t min, uint16_t max);
-
-/**
  * @brief Returns a pseudorandom `int32_t` between min (inclusive) and max (exclusive).
  *
  * @note If `min` is greater than or equal to `max`, `min` is returned.
