@@ -113,8 +113,8 @@ int32_t scu_random_int32(SCURandom* random, int32_t min, int32_t max) {
     // Cast to unsigned to avoid undefined behavior in case of a signed integer overflow.
     uint32_t range = ((uint32_t) max) - min;
     // Rejection sampling to generate uniformly distributed pseudorandom numbers and avoid the bias
-    // that would otherwise be introduced by the modulo operator. Typically, very few iterations are
-    // required to find a suitable pseudorandom number.
+    // that would otherwise be introduced by the modulo operator. Typically, very few iterations
+    // are required to find a suitable pseudorandom number.
     uint32_t threshold = -range % range;
     uint32_t result;
     do {
@@ -132,8 +132,8 @@ uint32_t scu_random_uint32(SCURandom* random, uint32_t min, uint32_t max) {
     }
     uint32_t range = max - min;
     // Rejection sampling to generate uniformly distributed pseudorandom numbers and avoid the bias
-    // that would otherwise be introduced by the modulo operator. Typically, very few iterations are
-    // required to find a suitable pseudorandom number.
+    // that would otherwise be introduced by the modulo operator. Typically, very few iterations
+    // are required to find a suitable pseudorandom number.
     uint32_t threshold = -range % range;
     uint32_t result;
     do {
@@ -152,8 +152,8 @@ int64_t scu_random_int64(SCURandom* random, int64_t min, int64_t max) {
     // Cast to unsigned to avoid undefined behavior in case of a signed integer overflow.
     uint64_t range = ((uint64_t) max) - min;
     // Rejection sampling to generate uniformly distributed pseudorandom numbers and avoid the bias
-    // that would otherwise be introduced by the modulo operator. Typically, very few iterations are
-    // required to find a suitable pseudorandom number.
+    // that would otherwise be introduced by the modulo operator. Typically, very few iterations
+    // are required to find a suitable pseudorandom number.
     uint64_t threshold = -range % range;
     uint64_t result;
     do {
@@ -169,8 +169,8 @@ uint64_t scu_random_uint64(SCURandom* random, uint64_t min, uint64_t max) {
     }
     uint64_t range = max - min;
     // Rejection sampling to generate uniformly distributed pseudorandom numbers and avoid the bias
-    // that would otherwise be introduced by the modulo operator. Typically, very few iterations are
-    // required to find a suitable pseudorandom number.
+    // that would otherwise be introduced by the modulo operator. Typically, very few iterations
+    // are required to find a suitable pseudorandom number.
     uint64_t threshold = -range % range;
     uint64_t result;
     do {
@@ -184,7 +184,7 @@ float scu_random_float(SCURandom* random, float min, float max) {
     if (min >= max) {
         return min;
     }
-    // We generate a uniformly distributed `float` in the range [0.0F, 1.0F) as described by the
+    // Generate a uniformly distributed `float` in the range [0.0F, 1.0F) as described by the
     // authors [here](https://prng.di.unimi.it/#remarks).
     float scale = (scu_next(random) >> 40) * (1.0F / (1UL << 24));
     return min + (scale * (max - min));
@@ -194,7 +194,7 @@ double scu_random_double(SCURandom* random, double min, double max) {
     if (min >= max) {
         return min;
     }
-    // We generate a uniformly distributed `double` in the range [0.0F, 1.0F) as described by the
+    // Generate a uniformly distributed `double` in the range [0.0F, 1.0F) as described by the
     // authors [here](https://prng.di.unimi.it/#remarks).
     double scale = (scu_next(random) >> 11) * (1.0 / (1ULL << 53));
     return min + (scale * (max - min));

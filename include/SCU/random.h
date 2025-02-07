@@ -17,8 +17,8 @@ typedef struct SCURandom SCURandom;
  * @warning An `SCURandom` returned by this function is dynamically allocated and must be passed to
  * `scu_random_free()` to avoid a memory leak.
  *
- * @return A pointer to a new initialized `SCURandom` on success, or a `nullptr` if an out-of-memory
- * condition occurred.
+ * @return A pointer to a new initialized `SCURandom` on success, or a `nullptr` if an error
+ * occurred.
  */
 SCURandom* scu_random_new();
 
@@ -29,17 +29,17 @@ SCURandom* scu_random_new();
  * `scu_random_free()` to avoid a memory leak.
  *
  * @param[in] seed Seed to initialize the `SCURandom` with.
- * @return A pointer to a new initialized `SCURandom` on success, or a `nullptr` if an out-of-memory
- * condition occurred.
+ * @return A pointer to a new initialized `SCURandom` on success, or a `nullptr` if an error
+ * occurred.
  */
 SCURandom* scu_random_withSeed(uint64_t seed);
 
 /**
  * @brief Returns the seed of a given `SCURandom`.
  *
- * @note If the `SCURandom` has been reseeded, this function returns the last seed used for
- * `scu_random_setSeed()`. Otherwise it returns the seed the `SCURandom` was initialized with
- * by `scu_random_new()` or `scu_random_withSeed()`.
+ * @note If the `SCURandom` has been reseeded, this function returns the last seed passed to
+ * `scu_random_setSeed()`. Otherwise it returns the seed the `SCURandom` was initialized with by
+ * `scu_random_new()` or `scu_random_withSeed()`.
  *
  * @param[in] random `SCURandom` to get the seed of.
  * @return The seed of the given `SCURandom`.

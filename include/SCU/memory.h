@@ -32,18 +32,19 @@
  *
  * @warning If `size` is zero, the behavior is undefined.
  *
- * If the reallocation fails due to an out-of-memory condition, the pointer to the original block of
- * memory remains valid and must be passed to `SCU_FREE()` to avoid a memory leak. Therefore, do not
- * assign the return value of `SCU_REALLOC()` directly to the original pointer, as this could result
- * in losing the reference to the original block of memory.
+ * If the reallocation fails due to an out-of-memory condition, the pointer to the original block
+ * of memory remains valid and must be passed to `SCU_FREE()` to avoid a memory leak. Therefore,
+ * do not assign the return value of `SCU_REALLOC()` directly to the original pointer, as this
+ * could result in losing the reference to the original block of memory.
  *
- * If the reallocation succeeds, the pointer to the original block of memory is invalidated and must
- * not be used anymore (and especially not be passed to `SCU_FREE()`). If the block was expanded,
- * the content of any new locations in memory is undefined.
+ * If the reallocation succeeds, the pointer to the original block of memory is invalidated and
+ * must not be used anymore (and especially not be passed to `SCU_FREE()`). If the block was
+ * expanded, the content of any new locations in memory is undefined.
  *
- * @param[in] pointer Pointer to the block of memory to reallocate. It is allowed to be a `nullptr`,
- *                    in which case it behaves like calling `SCU_MALLOC()` with the given size.
- * @param[in] size    Size to reallocate the block to (in bytes).
+ * @param[in, out] pointer Pointer to the block of memory to reallocate. It is allowed to be a
+ *                         `nullptr`, in which case it behaves like calling `SCU_MALLOC()` with the
+ *                         given size.
+ * @param[in]      size    Size to reallocate the block to (in bytes).
  * @return A pointer to the reallocated block of memory on success, or a `nullptr` if an
  * out-of-memory condition occurred.
  */
@@ -59,7 +60,7 @@
  * previously allocated by `SCU_MALLOC()`, `SCU_CALLOC()` or `SCU_REALLOC()`, or if it has already
  * been deallocated.
  *
- * @param[in] pointer Pointer to the block of memory to deallocate.
+ * @param[in, out] pointer Pointer to the block of memory to deallocate.
  */
 #define SCU_FREE(pointer) free(pointer)
 

@@ -36,7 +36,7 @@ static constexpr double SCU_FILETIME_TICKS_PER_SECOND = 1.0E7;
  * @param[in] filetime `FILETIME` structure to convert to seconds.
  * @return The number of seconds equivalent to the given `FILETIME` structure.
  */
-static inline double scu_fileTimeToSeconds(FILETIME filetime) {
+static inline double scu_filetimeToSeconds(FILETIME filetime) {
     ULARGE_INTEGER temp;
     temp.LowPart = filetime.dwLowDateTime;
     temp.HighPart = filetime.dwHighDateTime;
@@ -72,7 +72,7 @@ static inline double scu_cpuTimestamp() {
     if (!GetProcessTimes(GetCurrentProcess(), &creationTime, &exitTime, &kernelTime, &userTime)) {
         return -1.0;
     }
-    return scu_fileTimeToSeconds(kernelTime) + scu_fileTimeToSeconds(userTime);
+    return scu_filetimeToSeconds(kernelTime) + scu_filetimeToSeconds(userTime);
 #else
     struct timespec timespec;
     if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &timespec) < 0) {
@@ -159,7 +159,7 @@ double scu_timer_elapsedCPUTime(const SCUTimer* timer) {
     }
     double cpuTimestamp = scu_cpuTimestamp();
     if (cpuTimestamp < 0.0) {
-        return -1.0;
+        return cpuTimestamp;
     }
     return timer->elapsedCPUTime + (cpuTimestamp - timer->startCPUTimestamp);
 }
@@ -170,7 +170,7 @@ double scu_timer_elapsedWallTime(const SCUTimer* timer) {
     }
     double wallTimestamp = scu_wallTimestamp();
     if (wallTimestamp < 0.0) {
-        return -1.0;
+        return wallTimestamp;
     }
     return timer->elapsedWallTime + (wallTimestamp - timer->startWallTimestamp);
 }
