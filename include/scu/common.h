@@ -33,4 +33,15 @@
  */
 #define SCU_SIZEOF(expr) ((int64_t) sizeof(expr))
 
+/**
+ * @brief Returns the number of elements in a statically allocated array.
+ *
+ * @warning Do not use this macro with a pointer to a dynamically allocated
+ * array, as it will yield incorrect results.
+ *
+ * @param[in] array The statically allocated array.
+ * @return The number of elements in the statically allocated array.
+ */
+#define SCU_COUNTOF(array) (SCU_SIZEOF(array) / SCU_SIZEOF((array)[0]))
+
 #endif
