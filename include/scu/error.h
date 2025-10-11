@@ -67,7 +67,10 @@ typedef enum SCUError {
     SCU_ERROR_REMOVING_FILE,
 
     /** @brief Indicates that an error occurred while renaming a file. */
-    SCU_ERROR_RENAMING_FILE
+    SCU_ERROR_RENAMING_FILE,
+
+    /** @brief Indicates that an error occurred while using a timer. */
+    SCU_ERROR_TIMER_FAILED
 
 } SCUError;
 
