@@ -12,11 +12,8 @@ typedef enum SCUError {
     /** @brief Indicates that an out-of-memory condition occurred. */
     SCU_ERROR_OUT_OF_MEMORY,
 
-    /** @brief Indicates that a file could not be opened. */
+    /** @brief Indicates that a file could not be (re-)opened. */
     SCU_ERROR_OPENING_FILE,
-
-    /** @brief Indicates that a file stream could not be reopened. */
-    SCU_ERROR_REOPENING_FILE,
 
     /**
      * @brief Indicates that the end-of-file condition was reached before any
@@ -30,29 +27,15 @@ typedef enum SCUError {
     SCU_ERROR_READING_FILE,
 
     /**
-     * @brief Indicates that the end was reached or an error occurred while
-     * reading from a byte string.
-     */
-    SCU_ERROR_READING_BUFFER,
-
-    /**
      * @brief Indicates that an error occurred while writing to a file stream.
      */
     SCU_ERROR_WRITING_FILE,
 
-    /**
-     * @brief Indicates that an error occurred while writing to a byte string.
-     */
+    /** @brief Indicates that an error occurred while writing to a buffer. */
     SCU_ERROR_WRITING_BUFFER,
 
     /** @brief Indicates that an error occurred while flushing a file stream. */
     SCU_ERROR_FLUSHING_FILE,
-
-    /**
-     * @brief Indicates that an error occurred while getting the file position
-     * indicator of a file stream.
-     */
-    SCU_ERROR_TELLING_FILE,
 
     /**
      * @brief Indicates that an error occurred while setting the file position

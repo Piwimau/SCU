@@ -130,7 +130,7 @@ SCUError scu_freopen(
     SCU_ASSERT(mode != nullptr);
     FILE* handle = freopen(name, mode, file->handle);
     if (handle == nullptr) {
-        return SCU_ERROR_REOPENING_FILE;
+        return SCU_ERROR_OPENING_FILE;
     }
     file->handle = handle;
     return SCU_ERROR_NONE;
@@ -170,89 +170,53 @@ SCUError scu_frename(const char* oldName, const char* newName) {
         : SCU_ERROR_NONE;
 }
 
-SCUError scu_fread(
+int64_t scu_fread(
     SCUFile* restrict file,
     void* restrict buffer,
     int64_t count,
-    int64_t size,
-    int64_t* restrict read
+    int64_t size
 ) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     SCU_ASSERT(count >= 0);
     SCU_ASSERT(size >= 0);
     if ((count == 0) || (size == 0)) {
-        if (read != nullptr) {
-            *read = 0;
-        }
-        return SCU_ERROR_NONE;
+        return 0;
     }
     SCU_ASSERT(buffer != nullptr);
     SCU_ASSERT(size <= (INT64_MAX / count));
-    int64_t n = (int64_t) fread(
-        buffer,
-        (size_t) size,
-        (size_t) count,
-        file->handle
-    );
-    if (read != nullptr) {
-        *read = n;
-    }
-    if (n < count) {
-        return feof(file->handle) 
-            ? SCU_ERROR_END_OF_FILE
-            : SCU_ERROR_READING_FILE;
-    }
-    return SCU_ERROR_NONE;
+    return (int64_t) fread(buffer, (size_t) size, (size_t) count, file->handle);
 }
 
-SCUError scu_read(
-    void* restrict buffer,
-    int64_t count,
-    int64_t size,
-    int64_t* restrict read
-) {
-    return scu_fread(SCU_STDIN, buffer, count, size, read);
+int64_t scu_read(void* buffer, int64_t count, int64_t size) {
+    return scu_fread(SCU_STDIN, buffer, count, size);
 }
 
-SCUError scu_fwrite(
+int64_t scu_fwrite(
     SCUFile* restrict file,
     const void* restrict buffer,
     int64_t count,
-    int64_t size,
-    int64_t* restrict written
+    int64_t size
 ) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     SCU_ASSERT(count >= 0);
     SCU_ASSERT(size >= 0);
     if ((count == 0) || (size == 0)) {
-        if (written != nullptr) {
-            *written = 0;
-        }
-        return SCU_ERROR_NONE;
+        return 0;
     }
     SCU_ASSERT(buffer != nullptr);
     SCU_ASSERT(size <= (INT64_MAX / count));
-    int64_t n = (int64_t) fwrite(
+    return (int64_t) fwrite(
         buffer,
         (size_t) size,
         (size_t) count,
         file->handle
     );
-    if (written != nullptr) {
-        *written = n;
-    }
-    return (n < count) ? SCU_ERROR_WRITING_FILE : SCU_ERROR_NONE;
 }
 
-SCUError scu_write(
-    const void* restrict buffer,
-    int64_t count,
-    int64_t size,
-    int64_t* restrict written
-) {
-    return scu_fwrite(SCU_STDOUT, buffer, count, size, written);
+int64_t scu_write(const void* buffer, int64_t count, int64_t size) {
+    return scu_fwrite(SCU_STDOUT, buffer, count, size);
 }
 
 SCUError scu_freadc(SCUFile* restrict file, char* restrict c) {
@@ -447,9 +411,8 @@ SCUError scu_writeln(const char* buffer) {
     return scu_fwriteln(SCU_STDOUT, buffer);
 }
 
-SCUError scu_vfscanf(
+int64_t scu_vfscanf(
     SCUFile* restrict file,
-    int64_t* restrict read,
     const char* restrict format,
     va_list args
 ) {
@@ -457,79 +420,54 @@ SCUError scu_vfscanf(
     SCU_ASSERT(file->handle != nullptr);
     SCU_ASSERT(format != nullptr);
     int64_t n = vfscanf(file->handle, format, args);
-    bool failed = n == EOF;
-    if (read != nullptr) {
-        *read = failed ? -1 : n;
-    }
-    if (failed) {
-        return feof(file->handle)
-            ? SCU_ERROR_END_OF_FILE
-            : SCU_ERROR_READING_FILE;
-    }
-    return SCU_ERROR_NONE;
+    return (n == EOF) ? -1 : n;
 }
 
-SCUError scu_fscanf(
-    SCUFile* restrict file,
-    int64_t* restrict read,
-    const char* restrict format,
-    ...
-) {
+int64_t scu_fscanf(SCUFile* restrict file, const char* restrict format, ...) {
     va_list args;
     va_start(args, format);
-    SCUError error = scu_vfscanf(file, read, format, args);
+    int64_t n = scu_vfscanf(file, format, args);
+    va_end(args);
+    return n;
+}
+
+int64_t scu_vscanf(const char* restrict format, va_list args) {
+    return scu_vfscanf(SCU_STDIN, format, args);
+}
+
+int64_t scu_scanf(const char* restrict format, ...) {
+    va_list args;
+    va_start(args, format);
+    SCUError error = scu_vfscanf(SCU_STDIN, format, args);
     va_end(args);
     return error;
 }
 
-SCUError scu_vscanf(
-    int64_t* restrict read,
-    const char* restrict format,
-    va_list args
-) {
-    return scu_vfscanf(SCU_STDIN, read, format, args);
-}
-
-SCUError scu_scanf(int64_t* restrict read, const char* restrict format, ...) {
-    va_list args;
-    va_start(args, format);
-    SCUError error = scu_vfscanf(SCU_STDIN, read, format, args);
-    va_end(args);
-    return error;
-}
-
-SCUError scu_vsscanf(
+int64_t scu_vsscanf(
     const char* restrict buffer,
-    int64_t* restrict read,
     const char* restrict format,
     va_list args
 ) {
     SCU_ASSERT(buffer != nullptr);
     SCU_ASSERT(format != nullptr);
     int64_t n = vsscanf(buffer, format, args);
-    bool failed = n == EOF;
-    if (read != nullptr) {
-        *read = failed ? -1 : n;
-    }
-    return failed ? SCU_ERROR_READING_BUFFER : SCU_ERROR_NONE;
+    return (n == EOF) ? -1 : n;
 }
 
-SCUError scu_sscanf(
+int64_t scu_sscanf(
     const char* restrict buffer,
-    int64_t* restrict read,
     const char* restrict format,
     ...
 ) {
     va_list args;
     va_start(args, format);
-    SCUError error = scu_vsscanf(buffer, read, format, args);
+    int64_t n = scu_vsscanf(buffer, format, args);
     va_end(args);
-    return error;
+    return n;
 }
 
-SCUError scu_vfprintf(
+int64_t scu_vfprintf(
     SCUFile* restrict file,
-    int64_t* restrict written,
     const char* restrict format,
     va_list args
 ) {
@@ -537,50 +475,32 @@ SCUError scu_vfprintf(
     SCU_ASSERT(file->handle != nullptr);
     SCU_ASSERT(format != nullptr);
     int64_t n = vfprintf(file->handle, format, args);
-    bool failed = n < 0;
-    if (written != nullptr) {
-        *written = failed ? -1 : n;
-    }
-    return failed ? SCU_ERROR_WRITING_FILE : SCU_ERROR_NONE;
+    return (n < 0) ? -1 : n;
 }
 
-SCUError scu_fprintf(
-    SCUFile* restrict file,
-    int64_t* restrict written,
-    const char* restrict format,
-    ...
-) {
+int64_t scu_fprintf(SCUFile* restrict file, const char* restrict format, ...) {
     va_list args;
     va_start(args, format);
-    SCUError error = scu_vfprintf(file, written, format, args);
+    int64_t n = scu_vfprintf(file, format, args);
     va_end(args);
-    return error;
+    return n;
 }
 
-SCUError scu_vprintf(
-    int64_t* restrict written,
-    const char* restrict format,
-    va_list args
-) {
-    return scu_vfprintf(SCU_STDOUT, written, format, args);
+int64_t scu_vprintf(const char* restrict format, va_list args) {
+    return scu_vfprintf(SCU_STDOUT, format, args);
 }
 
-SCUError scu_printf(
-    int64_t* restrict written,
-    const char* restrict format,
-    ...
-) {
+int64_t scu_printf(const char* restrict format, ...) {
     va_list args;
     va_start(args, format);
-    SCUError error = scu_vfprintf(SCU_STDOUT, written, format, args);
+    int64_t n = scu_vfprintf(SCU_STDOUT, format, args);
     va_end(args);
-    return error;
+    return n;
 }
 
-SCUError scu_vsnprintf(
+int64_t scu_vsnprintf(
     char* restrict buffer,
     int64_t size,
-    int64_t* restrict written,
     const char* restrict format,
     va_list args
 ) {
@@ -588,37 +508,31 @@ SCUError scu_vsnprintf(
     SCU_ASSERT((size == 0) || (buffer != nullptr));
     SCU_ASSERT(format != nullptr);
     int64_t n = vsnprintf(buffer, (size_t) size, format, args);
-    bool failed = n < 0;
-    if (written != nullptr) {
-        *written = failed ? -1 : n;
-    }
-    if (failed) {
+    if (n < 0) {
         if (size > 0) {
             buffer[0] = '\0';
         }
-        return SCU_ERROR_WRITING_BUFFER;
+        return -1;
     }
-    return SCU_ERROR_NONE;
+    return n;
 }
 
-SCUError scu_snprintf(
+int64_t scu_snprintf(
     char* restrict buffer,
     int64_t size,
-    int64_t* restrict written,
     const char* restrict format,
     ...
 ) {
     va_list args;
     va_start(args, format);
-    SCUError error = scu_vsnprintf(buffer, size, written, format, args);
+    int64_t n = scu_vsnprintf(buffer, size, format, args);
     va_end(args);
-    return error;
+    return n;
 }
 
 SCUError scu_vrsnprintf(
     char** restrict buffer,
     int64_t* restrict size,
-    int64_t* restrict written,
     const char* restrict format,
     va_list args
 ) {
@@ -635,24 +549,14 @@ SCUError scu_vrsnprintf(
         if (*size > 0) {
             (*buffer)[0] = '\0';
         }
-        if (written != nullptr) {
-            *written = -1;
-        }
         return SCU_ERROR_WRITING_BUFFER;
     }
     SCUError error = scu_ensure_size(buffer, size, (n + 1) * SCU_SIZEOF(char));
     if (error != SCU_ERROR_NONE) {
-        if (written != nullptr) {
-            *written = -1;
-        }
         return error;
     }
     n = vsnprintf(*buffer, (size_t) *size, format, args);
-    bool failed = n < 0;
-    if (written != nullptr) {
-        *written = failed ? -1 : n;
-    }
-    if (failed) {
+    if (n < 0) {
         (*buffer)[0] = '\0';
         return SCU_ERROR_WRITING_BUFFER;
     }
@@ -662,13 +566,12 @@ SCUError scu_vrsnprintf(
 SCUError scu_rsnprintf(
     char** restrict buffer,
     int64_t* restrict size,
-    int64_t* restrict written,
     const char* restrict format,
     ...
 ) {
     va_list args;
     va_start(args, format);
-    SCUError error = scu_vrsnprintf(buffer, size, written, format, args);
+    SCUError error = scu_vrsnprintf(buffer, size, format, args);
     va_end(args);
     return error;
 }
@@ -676,7 +579,6 @@ SCUError scu_rsnprintf(
 SCUError scu_vrasnprintf(
     char** restrict buffer,
     int64_t* restrict size,
-    int64_t* restrict written,
     const char* restrict format,
     va_list args
 ) {
@@ -690,9 +592,6 @@ SCUError scu_vrasnprintf(
     int64_t n = vsnprintf(nullptr, 0, format, argsCopy);
     va_end(argsCopy);
     if (n < 0) {
-        if (written != nullptr) {
-            *written = -1;
-        }
         return SCU_ERROR_WRITING_BUFFER;
     }
     int64_t offset = (*buffer == nullptr) ? 0 : scu_strlen(*buffer);
@@ -702,17 +601,10 @@ SCUError scu_vrasnprintf(
         (offset + n + 1) * SCU_SIZEOF(char)
     );
     if (error != SCU_ERROR_NONE) {
-        if (written != nullptr) {
-            *written = -1;
-        }
         return error;
     }
     n = vsnprintf(*buffer + offset, (size_t) (*size - offset), format, args);
-    bool failed = n < 0;
-    if (written != nullptr) {
-        *written = failed ? -1 : n;
-    }
-    if (failed) {
+    if (n < 0) {
         (*buffer)[offset] = '\0';
         return SCU_ERROR_WRITING_BUFFER;
     }
@@ -722,23 +614,24 @@ SCUError scu_vrasnprintf(
 SCUError scu_rasnprintf(
     char** restrict buffer,
     int64_t* restrict size,
-    int64_t* restrict written,
     const char* restrict format,
     ...
 ) {
     va_list args;
     va_start(args, format);
-    SCUError error = scu_vrasnprintf(buffer, size, written, format, args);
+    SCUError error = scu_vrasnprintf(buffer, size, format, args);
     va_end(args);
     return error;
 }
 
-SCUError scu_ftell(SCUFile* file, int64_t* position) {
+int64_t scu_ftell(SCUFile* file) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
-    SCU_ASSERT(position != nullptr);
-    *position = ftell(file->handle);
-    return (*position == -1) ? SCU_ERROR_TELLING_FILE : SCU_ERROR_NONE;
+#ifdef _WIN32
+    return _ftelli64(file->handle);
+#else
+    return ftello(file->handle);
+#endif
 }
 
 SCUError scu_fseek(SCUFile* file, SCUSeekOrigin seekOrigin, int64_t offset) {
@@ -763,9 +656,15 @@ SCUError scu_fseek(SCUFile* file, SCUSeekOrigin seekOrigin, int64_t offset) {
         default:
             SCU_UNREACHABLE();
     }
-    return (fseek(file->handle, (long) offset, origin) != 0)
+#ifdef _WIN32
+    return (_fseeki64(file->handle, offset, origin) != 0)
         ? SCU_ERROR_SEEKING_FILE
         : SCU_ERROR_NONE;
+#else
+    return (fseeko(file->handle, (off_t) offset, origin) != 0)
+        ? SCU_ERROR_SEEKING_FILE
+        : SCU_ERROR_NONE;
+#endif
 }
 
 void scu_frewind(SCUFile* file) {

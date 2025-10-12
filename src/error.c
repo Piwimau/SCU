@@ -19,16 +19,15 @@ void scu_fatal(
     SCU_ASSERT(fmt != nullptr);
     scu_fprintf(
         SCU_STDERR,
-        nullptr,
         "SCU: Fatal error occurred at %s:%" PRIi64 " in %s().\n",
         file,
         line,
         func
     );
-    scu_fprintf(SCU_STDERR, nullptr, "Message: ");
+    scu_fprintf(SCU_STDERR, "Message: ");
     va_list args;
     va_start(args, fmt);
-    scu_vfprintf(SCU_STDERR, nullptr, fmt, args);
+    scu_vfprintf(SCU_STDERR, fmt, args);
     va_end(args);
     scu_fflush(SCU_STDERR);
     abort();

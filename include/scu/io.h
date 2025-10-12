@@ -223,8 +223,8 @@ SCUError scu_fopentmp(SCUFile** file);
  *                      with the specified file stream.
  * @param[in]      mode An `fopen()`-style mode string that specifies the mode
  *                      in which to open the file.
- * @return `SCU_ERROR_REOPENING_FILE` if the file stream could not be reopened,
- * or `SCU_ERROR_NONE` on success.
+ * @return `SCU_ERROR_OPENING_FILE` if the file stream could not be reopened, or
+ * `SCU_ERROR_NONE` on success.
  */
 SCUError scu_freopen(
     SCUFile* restrict file,
@@ -291,8 +291,7 @@ SCUError scu_frename(const char* oldName, const char* newName);
  * bytes.
  *
  * If `count` or `size` is zero, `buffer` is ignored (it may even be a
- * `nullptr`), `*read` is set to zero (if `read` is not `nullptr`) and the
- * function returns `SCU_ERROR_NONE`.
+ * `nullptr`), and the function returns zero.
  *
  * @warning If an error occurs while reading from the specified file stream, the
  * value of the file position indicator is indeterminate. The same holds true
@@ -302,20 +301,15 @@ SCUError scu_frename(const char* oldName, const char* newName);
  * @param[out]     buffer The buffer to write the data to.
  * @param[in]      count  The number of objects to read.
  * @param[in]      size   The size of each object (in bytes).
- * @param[out]     read   The number of objects read, which may be less than
- *                        `count` if the end-of-file-condition is reached or an
- *                        error occurs. If `read` is `nullptr`, it is ignored.
- * @return `SCU_ERROR_END_OF_FILE` if the end-of-file condition is reached
- * before `count` objects are read, `SCU_ERROR_READING_FILE` if an error
- * occurred while reading from the specified file stream, or `SCU_ERROR_NONE` on
- * success.
+ * @return The number of objects read, which may be less than `count` if the
+ * end-of-file condition is reached or an error occurs while reading from the
+ * specified file stream.
  */
-SCUError scu_fread(
+int64_t scu_fread(
     SCUFile* restrict file,
     void* restrict buffer,
     int64_t count,
-    int64_t size,
-    int64_t* restrict read
+    int64_t size
 );
 
 /**
@@ -326,11 +320,10 @@ SCUError scu_fread(
  * bytes.
  *
  * If `count` or `size` is zero, `buffer` is ignored (it may even be a
- * `nullptr`), `*read` is set to zero (if `read` is not `nullptr`) and the
- * function returns `SCU_ERROR_NONE`.
+ * `nullptr`), and the function returns zero.
  *
  * Calling this function is equivalent to calling `scu_fread(SCU_STDIN, buffer,
- * count, size, read)`.
+ * count, size)`.
  *
  * @warning If an error occurs while reading from the standard input stream, the
  * value of the file position indicator is indeterminate. The same holds true
@@ -339,20 +332,11 @@ SCUError scu_fread(
  * @param[out] buffer The buffer to write the data to.
  * @param[in]  count  The number of objects to read.
  * @param[in]  size   The size of each object (in bytes).
- * @param[out] read   The number of objects read, which may be less than `count`
- *                    if the end-of-file-condition is reached or an error
- *                    occurs. If `read` is `nullptr`, it is ignored.
- * @return `SCU_ERROR_END_OF_FILE` if the end-of-file condition is reached
- * before `count` objects are read, `SCU_ERROR_READING_FILE` if an error
- * occurred while reading from the standard input stream, or `SCU_ERROR_NONE` on
- * success.
+ * @return The number of objects read, which may be less than `count` if the
+ * end-of-file condition is reached or an error occurs while reading from the
+ * standard input stream.
  */
-SCUError scu_read(
-    void* restrict buffer,
-    int64_t count,
-    int64_t size,
-    int64_t* restrict read
-);
+int64_t scu_read(void* buffer, int64_t count, int64_t size);
 
 /**
  * @brief Writes `count` objects of size `size` from a buffer to a specified
@@ -362,28 +346,23 @@ SCUError scu_read(
  * bytes.
  *
  * If `count` or `size` is zero, `buffer` is ignored (it may even be a
- * `nullptr`), `*written` is set to zero (if `written` is not `nullptr`) and the
- * function returns `SCU_ERROR_NONE`.
+ * `nullptr`), and the function returns zero.
  *
  * @warning If an error occurs, the value of the file position indicator of the
  * specified file stream is indeterminate.
  *
- * @param[in, out] file    The file stream to write to.
- * @param[in]      buffer  The buffer to read the data from.
- * @param[in]      count   The number of objects to write.
- * @param[in]      size    The size of each object (in bytes).
- * @param[out]     written The number of objects written, which may be less than
- *                         `count` if an error occurs. If `written` is
- *                         `nullptr`, it is ignored.
- * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
- * specified file stream, or `SCU_ERROR_NONE` on success.
+ * @param[in, out] file   The file stream to write to.
+ * @param[in]      buffer The buffer to read the data from.
+ * @param[in]      count  The number of objects to write.
+ * @param[in]      size   The size of each object (in bytes).
+ * @return The number of objects written, which may be less than `count` if an
+ * error occurs while writing to the specified file stream.
  */
-SCUError scu_fwrite(
+int64_t scu_fwrite(
     SCUFile* restrict file,
     const void* restrict buffer,
     int64_t count,
-    int64_t size,
-    int64_t* restrict written
+    int64_t size
 );
 
 /**
@@ -394,30 +373,21 @@ SCUError scu_fwrite(
  * bytes.
  *
  * If `count` or `size` is zero, `buffer` is ignored (it may even be a
- * `nullptr`), `*written` is set to zero (if `written` is not `nullptr`) and the
- * function returns `SCU_ERROR_NONE`.
+ * `nullptr`), and the function returns zero.
  *
  * Calling this function is equivalent to calling `scu_fwrite(SCU_STDOUT,
- * buffer, count, size, written)`.
+ * buffer, count, size)`.
  *
  * @warning If an error occurs, the value of the file position indicator of the
  * standard output stream is indeterminate.
  *
- * @param[in]  buffer  The buffer to read the data from.
- * @param[in]  count   The number of objects to write.
- * @param[in]  size    The size of each object (in bytes).
- * @param[out] written The number of objects written, which may be less than
- *                     `count` if an error occurs. If `written` is `nullptr`, it
- *                     is ignored.
- * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
- * standard output stream, or `SCU_ERROR_NONE` on success.
+ * @param[in] buffer The buffer to read the data from.
+ * @param[in] count  The number of objects to write.
+ * @param[in] size   The size of each object (in bytes).
+ * @return The number of objects written, which may be less than `count` if an
+ * error occurs while writing to the standard output stream.
  */
-SCUError scu_write(
-    const void* restrict buffer,
-    int64_t count,
-    int64_t size,
-    int64_t* restrict written
-);
+int64_t scu_write(const void* buffer, int64_t count, int64_t size);
 
 /**
  * @brief Reads a single byte from a specified file stream.
@@ -687,26 +657,23 @@ SCUError scu_writeln(const char* buffer);
  *
  * This function reads data from the specified file stream and interprets it
  * according to a `vfscanf()`-style format string. The read values are stored in
- * the locations pointed to by the variable argument list. The number of
- * arguments read is reflected in `*read` (if `read` is not `nullptr`).
+ * the locations pointed to by the variable argument list.
  *
  * @warning The caller is expected to call `va_end()` on `args` after this
  * function returns.
  *
  * @param[in, out] file   The file stream to read from.
- * @param[out]     read   The number of arguments read, or -1 on failure. If
- *                        `read` is `nullptr`, it is ignored.
  * @param[in]      format A `vfscanf()`-style format string that specifies how
  *                        to interpret the input.
  * @param[out]     args   A variable argument list containing pointers to
  *                        locations where the read values should be stored.
- * @return `SCU_ERROR_END_OF_FILE` if the end-of-file condition is reached
- * before any argument is read, `SCU_ERROR_READING_FILE` if an error occurred
- * while reading from the specified file stream, or `SCU_ERROR_NONE` on success.
+ * @return The number of arguments read, which may be less than the number of
+ * expected arguments if the end-of-file condition is reached or an error occurs
+ * while reading from the specified file stream. If an error occurs before any
+ * argument is read, -1 is returned.
  */
-SCUError scu_vfscanf(
+int64_t scu_vfscanf(
     SCUFile* restrict file,
-    int64_t* restrict read,
     const char* restrict format,
     va_list args
 );
@@ -716,105 +683,86 @@ SCUError scu_vfscanf(
  *
  * This function reads data from the specified file stream and interprets it
  * according to an `fscanf()`-style format string. The read values are stored in
- * the locations pointed to by the variable argument list. The number of
- * arguments read is reflected in `*read` (if `read` is not `nullptr`).
+ * the locations pointed to by the variable argument list.
  *
  * @param[in, out] file   The file stream to read from.
- * @param[out]     read   The number of arguments read, or -1 on failure. If
- *                        `read` is `nullptr`, it is ignored.
  * @param[in]      format An `fscanf()`-style format string that specifies how
  *                        to interpret the input.
  * @param[out]     ...    A variable argument list containing pointers to
  *                        locations where the read values should be stored.
- * @return `SCU_ERROR_END_OF_FILE` if the end-of-file condition is reached
- * before any argument is read, `SCU_ERROR_READING_FILE` if an error occurred
- * while reading from the specified file stream, or `SCU_ERROR_NONE` on success.
+ * @return The number of arguments read, which may be less than the number of
+ * expected arguments if the end-of-file condition is reached or an error occurs
+ * while reading from the specified file stream. If an error occurs before any
+ * argument is read, -1 is returned.
  */
-SCUError scu_fscanf(
-    SCUFile* restrict file,
-    int64_t* restrict read,
-    const char* restrict format,
-    ...
-);
+int64_t scu_fscanf(SCUFile* restrict file, const char* restrict format, ...);
 
 /**
  * @brief Reads formatted input from the standard input stream.
  *
  * This function reads data from the standard input stream and interprets it
  * according to a `vscanf()`-style format string. The read values are stored in
- * the locations pointed to by the variable argument list. The number of
- * arguments read is reflected in `*read` (if `read` is not `nullptr`).
+ * the locations pointed to by the variable argument list.
  *
  * @note Calling this function is equivalent to calling `scu_vfscanf(SCU_STDIN,
- * read, format, args)`.
+ * format, args)`.
  *
  * @warning The caller is expected to call `va_end()` on `args` after this
  * function returns.
  *
- * @param[out] read   The number of arguments read, or -1 on failure. If `read`
- *                    is `nullptr`, it is ignored.
  * @param[in]  format A `vscanf()`-style format string that specifies how to
  *                    interpret the input.
  * @param[out] args   A variable argument list containing pointers to locations
  *                    where the read values should be stored.
- * @return `SCU_ERROR_END_OF_FILE` if the end-of-file condition is reached
- * before any argument is read, `SCU_ERROR_READING_FILE` if an error occurred
- * while reading from the standard input stream, or `SCU_ERROR_NONE` on success.
+ * @return The number of arguments read, which may be less than the number of
+ * expected arguments if the end-of-file condition is reached or an error occurs
+ * while reading from the standard input stream. If an error occurs before any
+ * argument is read, -1 is returned.
  */
-SCUError scu_vscanf(
-    int64_t* restrict read,
-    const char* restrict format,
-    va_list args
-);
+int64_t scu_vscanf(const char* restrict format, va_list args);
 
 /**
  * @brief Reads formatted input from the standard input stream.
  *
  * This function reads data from the standard input stream and interprets it
  * according to a `scanf()`-style format string. The read values are stored in
- * the locations pointed to by the variable argument list. The number of
- * arguments read is reflected in `*read` (if `read` is not `nullptr`).
+ * the locations pointed to by the variable argument list.
  *
  * @note Calling this function is equivalent to calling `scu_fscanf(SCU_STDIN,
- * read, format, ...)`.
+ * format, ...)`.
  *
- * @param[out] read   The number of arguments read, or -1 on failure. If `read`
- *                    is `nullptr`, it is ignored.
  * @param[in]  format A `scanf()`-style format string that specifies how to
  *                    interpret the input.
  * @param[out] ...    A variable argument list containing pointers to locations
  *                    where the read values should be stored.
- * @return `SCU_ERROR_END_OF_FILE` if the end-of-file condition is reached
- * before any argument is read, `SCU_ERROR_READING_FILE` if an error occurred
- * while reading from the standard input stream, or `SCU_ERROR_NONE` on success.
+ * @return The number of arguments read, which may be less than the number of
+ * expected arguments if the end-of-file condition is reached or an error occurs
+ * while reading from the standard input stream. If an error occurs before any
+ * argument is read, -1 is returned.
  */
-SCUError scu_scanf(int64_t* restrict read, const char* restrict format, ...);
+int64_t scu_scanf(const char* restrict format, ...);
 
 /**
  * @brief Reads formatted input from a byte string.
  *
  * This function reads data from the specified byte string and interprets it
  * according to a `vsscanf()`-style format string. The read values are stored in
- * the locations pointed to by the variable argument list. The number of
- * arguments read is reflected in `*read` (if `read` is not `nullptr`).
+ * the locations pointed to by the variable argument list.
  *
  * @warning The caller is expected to call `va_end()` on `args` after this
  * function returns.
  *
  * @param[in]  buffer The null-terminated byte string to read from.
- * @param[out] read   The number of arguments read, or -1 on failure. If `read`
- *                    is `nullptr`, it is ignored.
  * @param[in]  format A `vsscanf()`-style format string that specifies how to
  *                    interpret the input.
  * @param[out] args   A variable argument list containing pointers to locations
  *                    where the read values should be stored.
- * @return `SCU_ERROR_READING_BUFFER` if the end of the byte string is reached
- * before any argument is read or an error occurs, or `SCU_ERROR_NONE` on
- * success.
+ * @return The number of arguments read, which may be less than the number of
+ * expected arguments if the end of the byte string is reached or an error
+ * occurs. If an error occurs before any argument is read, -1 is returned.
  */
-SCUError scu_vsscanf(
+int64_t scu_vsscanf(
     const char* restrict buffer,
-    int64_t* restrict read,
     const char* restrict format,
     va_list args
 );
@@ -824,23 +772,19 @@ SCUError scu_vsscanf(
  *
  * This function reads data from the specified byte string and interprets it
  * according to an `sscanf()`-style format string. The read values are stored in
- * the locations pointed to by the variable argument list. The number of
- * arguments read is reflected in `*read` (if `read` is not `nullptr`).
+ * the locations pointed to by the variable argument list.
  *
  * @param[in]  buffer The null-terminated byte string to read from.
- * @param[out] read   The number of arguments read, or -1 on failure. If `read`
- *                    is `nullptr`, it is ignored.
  * @param[in]  format An `sscanf()`-style format string that specifies how to
  *                    interpret the input.
  * @param[out] ...    A variable argument list containing pointers to locations
  *                    where the read values should be stored.
- * @return `SCU_ERROR_READING_BUFFER` if the end of the byte string is reached
- * before any argument is read or an error occurs, or `SCU_ERROR_NONE` on
- * success.
+ * @return The number of arguments read, which may be less than the number of
+ * expected arguments if the end of the byte string is reached or an error
+ * occurs. If an error occurs before any argument is read, -1 is returned.
  */
-SCUError scu_sscanf(
+int64_t scu_sscanf(
     const char* restrict buffer,
-    int64_t* restrict read,
     const char* restrict format,
     ...
 );
@@ -850,25 +794,21 @@ SCUError scu_sscanf(
  *
  * This function writes data to the specified file stream according to a
  * `vfprintf()`-style format string. The values to be written are taken from the
- * variable argument list. The number of bytes written is reflected in
- * `*written` (if `written` is not `nullptr`).
+ * variable argument list.
  *
  * @warning The caller is expected to call `va_end()` on `args` after this
  * function returns.
  *
- * @param[in, out] file    The file stream to write to.
- * @param[out]     written The number of bytes written, or -1 on failure. If
- *                         written is `nullptr`, it is ignored.
- * @param[in]      format  A `vfprintf()`-style format string that specifies how
- *                         to format the output.
- * @param[in]      args    A variable argument list containing the values to be
- *                         written.
- * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
- * specified file stream, or `SCU_ERROR_NONE` on success.
+ * @param[in, out] file   The file stream to write to.
+ * @param[in]      format A `vfprintf()`-style format string that specifies how
+ *                        to format the output.
+ * @param[in]      args   A variable argument list containing the values to be
+ *                        written.
+ * @return The number of bytes written to the specified file stream, or -1 on
+ * failure.
  */
-SCUError scu_vfprintf(
+int64_t scu_vfprintf(
     SCUFile* restrict file,
-    int64_t* restrict written,
     const char* restrict format,
     va_list args
 );
@@ -878,99 +818,71 @@ SCUError scu_vfprintf(
  *
  * This function writes data to the specified file stream according to an
  * `fprintf()`-style format string. The values to be written are taken from the
- * variable argument list. The number of bytes written is reflected in
- * `*written` (if `written` is not `nullptr`).
+ * variable argument list.
  *
- * @param[in, out] file    The file stream to write to.
- * @param[out]     written The number of bytes written, or -1 on failure. If
- *                         written is `nullptr`, it is ignored.
- * @param[in]      format  An `fprintf()`-style format string that specifies how
- *                         to format the output.
- * @param[in]      ...     A variable argument list containing the values to be
- *                         written.
- * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
- * specified file stream, or `SCU_ERROR_NONE` on success.
+ * @param[in, out] file   The file stream to write to.
+ * @param[in]      format An `fprintf()`-style format string that specifies how
+ *                        to format the output.
+ * @param[in]      ...    A variable argument list containing the values to be
+ *                        written.
+ * @return The number of bytes written to the specified file stream, or -1 on
+ * failure.
  */
-SCUError scu_fprintf(
-    SCUFile* restrict file,
-    int64_t* restrict written,
-    const char* restrict format,
-    ...
-);
+int64_t scu_fprintf(SCUFile* restrict file, const char* restrict format, ...);
 
 /**
  * @brief Writes formatted output to the standard output stream.
  *
  * This function writes data to the standard output stream according to a
  * `vprintf()`-style format string. The values to be written are taken from the
- * variable argument list. The number of bytes written is reflected in
- * `*written` (if `written` is not `nullptr`).
+ * variable argument list.
  *
  * @note Calling this function is equivalent to calling
- * `scu_vfprintf(SCU_STDOUT, written, format, args)`.
+ * `scu_vfprintf(SCU_STDOUT, format, args)`.
  *
  * @warning The caller is expected to call `va_end()` on `args` after this
  * function returns.
  *
- * @param[out] written The number of bytes written, or -1 on failure. If
- *                     `written` is `nullptr`, it is ignored.
- * @param[in]  format  A `vprintf()`-style format string that specifies how to
- *                     format the output.
- * @param[in]  args    A variable argument list containing the values to be
- *                     written.
- * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
- * standard output stream, or `SCU_ERROR_NONE` on success.
+ * @param[in] format A `vprintf()`-style format string that specifies how to
+ *                   format the output.
+ * @param[in] args   A variable argument list containing the values to be
+ *                   written.
+ * @return The number of bytes written to the standard output stream, or -1 on
+ * failure.
  */
-SCUError scu_vprintf(
-    int64_t* restrict written,
-    const char* restrict format,
-    va_list args
-);
+int64_t scu_vprintf(const char* restrict format, va_list args);
 
 /**
  * @brief Writes formatted output to the standard output stream.
  *
  * This function writes data to the standard output stream according to a
  * `printf()`-style format string. The values to be written are taken from the
- * variable argument list. The number of bytes written is reflected in
- * `*written` (if `written` is not `nullptr`).
+ * variable argument list.
  *
  * @note Calling this function is equivalent to calling `scu_fprintf(SCU_STDOUT,
- * written, format, ...)`.
+ * format, ...)`.
  *
- * @param[out] written The number of bytes written, or -1 on failure. If
- *                     `written` is `nullptr`, it is ignored.
- * @param[in]  format  A `printf()`-style format string that specifies how to
- *                     format the output.
- * @param[in]  ...     A variable argument list containing the values to be
- *                     written.
- * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
- * standard output stream, or `SCU_ERROR_NONE` on success.
+ * @param[in] format A `printf()`-style format string that specifies how to
+ *                   format the output.
+ * @param[in] ...    A variable argument list containing the values to be
+ *                   written.
+ * @return The number of bytes written to the standard output stream, or -1 on
+ * failure.
  */
-SCUError scu_printf(
-    int64_t* restrict written,
-    const char* restrict format,
-    ...
-);
+int64_t scu_printf(const char* restrict format, ...);
 
 /**
- * @brief Writes formatted output to a byte string.
+ * @brief Writes formatted output to a buffer.
  *
- * This function writes up to `size - 1` bytes to the byte string pointed to by
+ * This function writes up to `size - 1` bytes to the buffer pointed to by
  * `buffer` and terminates it with a null byte. The output is formatted
  * according to a `vsnprintf()`-style format string. The values to be written
- * are taken from the variable argument list. The number of bytes written
- * (excluding the terminating null byte) is reflected in `*written` (if
- * `written` is not `nullptr`). If `buffer` is truncated due to `size` and
- * `written` is not `nullptr`, `*written` instead contains the number of
- * bytes (excluding the terminating null byte) that would have been
- * written if `size` had been sufficiently large.
+ * are taken from the variable argument list.
  *
  * @note If `size` is zero, `buffer` is ignored (it may even be a `nullptr`). In
  * this case, the function still computes the number of bytes (excluding the
  * terminating null byte) that would have been written if `size` had been
- * sufficiently large, and reflects this in `*written` (if `written` is not
- * `nullptr`).
+ * sufficiently large.
  *
  * If `size` is greater than or equal to one, `buffer` is guaranteed to be
  * null-terminated, even if an error occurs.
@@ -978,82 +890,69 @@ SCUError scu_printf(
  * @warning The caller is expected to call `va_end()` on `args` after this
  * function returns.
  *
- * @param[out] buffer  The buffer to write the data to.
- * @param[in]  size    The size of the buffer (in bytes, including the
- *                     terminating null byte).
- * @param[out] written The number of bytes written (excluding the terminating
- *                     null byte), or the number of bytes that would have been
- *                     written if `size` had been sufficiently large, or -1 on
- *                     failure. If `written` is `nullptr`, it is ignored.
- * @param[in] format   A `vsnprintf()`-style format string that specifies how to
- *                     format the output.
- * @param[in] args     A variable argument list containing the values to be
- *                     written.
- * @return `SCU_ERROR_WRITING_BUFFER` if an error occurred while writing to the
- * byte string, or `SCU_ERROR_NONE` on success.
+ * @param[out] buffer The buffer to write the data to.
+ * @param[in]  size   The size of the buffer (in bytes, including the
+ *                    terminating null byte).
+ * @param[in]  format A `vsnprintf()`-style format string that specifies how to
+ *                    format the output.
+ * @param[in]  args   A variable argument list containing the values to be
+ *                    written.
+ * @return The number of bytes written (excluding the terminating null byte), or
+ * the number of bytes that would have been written if `size` had been
+ * sufficiently large. If an error occurs while writing to the buffer, -1 is
+ * returned.
  */
-SCUError scu_vsnprintf(
+int64_t scu_vsnprintf(
     char* restrict buffer,
     int64_t size,
-    int64_t* restrict written,
     const char* restrict format,
     va_list args
 );
 
 /**
- * @brief Writes formatted output to a byte string.
+ * @brief Writes formatted output to a buffer.
  *
- * This function writes up to `size - 1` bytes to the byte string pointed to by
+ * This function writes up to `size - 1` bytes to the buffer pointed to by
  * `buffer` and terminates it with a null byte. The output is formatted
  * according to an `snprintf()`-style format string. The values to be written
- * are taken from the variable argument list. The number of bytes written
- * (excluding the terminating null byte) is reflected in `*written` (if
- * `written` is not `nullptr`). If `buffer` is truncated due to `size` and
- * `written` is not `nullptr`, `*written` instead contains the number of
- * bytes (excluding the terminating null byte) that would have been
- * written if `size` had been sufficiently large.
+ * are taken from the variable argument list.
  *
  * @note If `size` is zero, `buffer` is ignored (it may even be a `nullptr`). In
  * this case, the function still computes the number of bytes (excluding
  * the terminating null byte) that would have been written if `size` had
- * been sufficiently large, and reflects this in `*written` (if `written` is not
- * `nullptr`).
+ * been sufficiently large.
  *
  * If `size` is greater than or equal to one, `buffer` is guaranteed to be
  * null-terminated, even if an error occurs.
  *
- * @param[out] buffer  The buffer to write the data to.
- * @param[in]  size    The size of the buffer (in bytes, including the
- *                     terminating null byte).
- * @param[out] written The number of bytes written (excluding the terminating
- *                     null byte), or the number of bytes that would have been
- *                     written if `size` had been sufficiently large, or -1 on
- *                     failure. If `written` is `nullptr`, it is ignored.
- * @param[in] format   An `snprintf()`-style format string that specifies how to
- *                     format the output.
- * @param[in] ...      A variable argument list containing the values to be
- *                     written.
- * @return `SCU_ERROR_WRITING_BUFFER` if an error occurred while writing to the
- * byte string, or `SCU_ERROR_NONE` on success.
+ * @param[out] buffer The buffer to write the data to.
+ * @param[in]  size   The size of the buffer (in bytes, including the
+ *                    terminating null byte).
+ * @param[in]  format An `snprintf()`-style format string that specifies how to
+ *                    format the output.
+ * @param[in]  ...    A variable argument list containing the values to be
+ *                    written.
+ * @return The number of bytes written (excluding the terminating null byte), or
+ * the number of bytes that would have been written if `size` had been
+ * sufficiently large. If an error occurs while writing to the buffer, -1 is
+ * returned.
  */
-SCUError scu_snprintf(
+int64_t scu_snprintf(
     char* restrict buffer,
     int64_t size,
-    int64_t* restrict written,
     const char* restrict format,
     ...
 );
 
 /**
- * @brief Writes formatted output to a dynamically allocated byte string.
+ * @brief Writes formatted output to a dynamically allocated buffer.
  *
  * This function writes a formatted string to a dynamically allocated buffer
  * according to a `vsnprintf()`-style format string. The buffer is reallocated
  * using `scu_realloc()` as needed to fit the entire output (including the
  * terminating null byte). The pointer to the buffer is stored in `*buffer`, and
  * its size (in bytes, including the terminating null byte) is stored in
- * `*size`. The number of bytes written (excluding the terminating null byte) is
- * reflected in `*written` (if `written` is not `nullptr`).
+ * `*size`.
  *
  * @note If `*size` is zero, `*buffer` must be a `nullptr` (and vice versa). In
  * this case, the function allocates a buffer using `scu_realloc()`.
@@ -1069,38 +968,33 @@ SCUError scu_snprintf(
  * The caller is expected to call `va_end()` on `args` after this function
  * returns.
  *
- * @param[in, out] buffer  A pointer to a buffer to write the data to.
- * @param[in, out] size    A pointer to the size of the buffer (in bytes,
- *                         including the terminating null byte).
- * @param[out]     written The number of bytes written (excluding the
- *                         terminating null byte), or -1 on failure. If
- *                         `written` is `nullptr`, it is ignored.
- * @param[in]      format  A `vsnprintf()`-style format string that specifies
- *                         how to format the output.
- * @param[in]      args    A variable argument list containing the values to be
- *                         written.
+ * @param[in, out] buffer A pointer to a buffer to write the data to.
+ * @param[in, out] size   A pointer to the size of the buffer (in bytes,
+ *                        including the terminating null byte).
+ * @param[in]      format A `vsnprintf()`-style format string that specifies how
+ *                        to format the output.
+ * @param[in]      args   A variable argument list containing the values to be
+ *                        written.
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
- * `SCU_ERROR_WRITING_BUFFER` if an error occurred while writing to the byte
- * string, or `SCU_ERROR_NONE` on success.
+ * `SCU_ERROR_WRITING_BUFFER` if an error occurred while writing to the buffer,
+ * or `SCU_ERROR_NONE` on success.
  */
 SCUError scu_vrsnprintf(
     char** restrict buffer,
     int64_t* restrict size,
-    int64_t* restrict written,
     const char* restrict format,
     va_list args
 );
 
 /**
- * @brief Writes formatted output to a dynamically allocated byte string.
+ * @brief Writes formatted output to a dynamically allocated buffer.
  *
  * This function writes a formatted string to a dynamically allocated buffer
  * according to an `snprintf()`-style format string. The buffer is reallocated
  * using `scu_realloc()` as needed to fit the entire output (including the
  * terminating null byte). The pointer to the buffer is stored in `*buffer`, and
  * its size (in bytes, including the terminating null byte) is stored in
- * `*size`. The number of bytes written (excluding the terminating null bytes)
- * is reflected in `*written` (if `written` is not `nullptr`).
+ * `*size`.
  *
  * @note If `*size` is zero, `*buffer` must be a `nullptr` (and vice versa). In
  * this case, the function allocates a buffer using `scu_realloc()`.
@@ -1113,39 +1007,33 @@ SCUError scu_vrsnprintf(
  * allocator used by these functions). The caller is expected to free `*buffer`
  * with `scu_free()` when it is no longer needed.
  *
- * @param[in, out] buffer  A pointer to a buffer to write the data to.
- * @param[in, out] size    A pointer to the size of the buffer (in bytes,
- *                         including the terminating null byte).
- * @param[out]     written The number of bytes written (excluding the
- *                         terminating null byte), or -1 on failure. If
- *                         `written` is `nullptr`, it is ignored.
- * @param[in]      format  An `snprintf()`-style format string that specifies
- *                         how to format the output.
- * @param[in]      ...     A variable argument list containing the values to be
- *                         written.
+ * @param[in, out] buffer A pointer to a buffer to write the data to.
+ * @param[in, out] size   A pointer to the size of the buffer (in bytes,
+ *                        including the terminating null byte).
+ * @param[in]      format An `snprintf()`-style format string that specifies how
+ *                        to format the output.
+ * @param[in]      ...    A variable argument list containing the values to be
+ *                        written.
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
- * `SCU_ERROR_WRITING_BUFFER` if an error occurred while writing to the byte
- * string, or `SCU_ERROR_NONE` on success.
+ * `SCU_ERROR_WRITING_BUFFER` if an error occurred while writing to the buffer,
+ * or `SCU_ERROR_NONE` on success.
  */
 SCUError scu_rsnprintf(
     char** restrict buffer,
     int64_t* restrict size,
-    int64_t* restrict written,
     const char* restrict format,
     ...
 );
 
 /**
- * @brief Appends formatted output to a dynamically allocated byte string.
+ * @brief Appends formatted output to a dynamically allocated buffer.
  *
  * This function appends a formatted string to a dynamically allocated,
  * null-terminated buffer according to a `vsnprintf()`-style format string. The
  * buffer is reallocated using `scu_realloc()` as needed to fit the entire
  * output (including the terminating null byte). The pointer to the buffer is
  * stored in `*buffer`, and its size (in bytes, including the terminating null
- * byte) is stored in `*size`. The number of bytes written (excluding the
- * terminating null byte) is reflected in `*written` (if `written` is not
- * `nullptr`).
+ * byte) is stored in `*size`.
  *
  * @note If `*size` is zero, `*buffer` must be a `nullptr` (and vice versa). In
  * this case, the function allocates a buffer using `scu_realloc()`.
@@ -1161,40 +1049,34 @@ SCUError scu_rsnprintf(
  * The caller is expected to call `va_end()` on `args` after this function
  * returns.
  *
- * @param[in, out] buffer  A pointer to a null-terminated buffer to append the
- *                         data to.
- * @param[in, out] size    A pointer to the size of the buffer (in bytes,
- *                         including the terminating null byte).
- * @param[out]     written The number of bytes written (excluding the
- *                         terminating null byte), or -1 on failure. If
- *                         `written` is `nullptr`, it is ignored.
- * @param[in]      format  A `vsnprintf()`-style format string that specifies
- *                         how to format the output.
- * @param[in]      args    A variable argument list containing the values to be
- *                         written.
+ * @param[in, out] buffer A pointer to a null-terminated buffer to append the
+ *                        data to.
+ * @param[in, out] size   A pointer to the size of the buffer (in bytes,
+ *                        including the terminating null byte).
+ * @param[in]      format A `vsnprintf()`-style format string that specifies how
+ *                        to format the output.
+ * @param[in]      args   A variable argument list containing the values to be
+ *                        written.
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
- * `SCU_ERROR_WRITING_BUFFER` if an error occurred while appending to the byte
- * string, or `SCU_ERROR_NONE` on success.
+ * `SCU_ERROR_WRITING_BUFFER` if an error occurred while appending to the
+ * buffer, or `SCU_ERROR_NONE` on success.
  */
 SCUError scu_vrasnprintf(
     char** restrict buffer,
     int64_t* restrict size,
-    int64_t* restrict written,
     const char* restrict format,
     va_list args
 );
 
 /**
- * @brief Appends formatted output to a dynamically allocated byte string.
+ * @brief Appends formatted output to a dynamically allocated buffer.
  *
  * This function appends a formatted string to a dynamically allocated,
  * null-terminated buffer according to an `snprintf()`-style format string. The
  * buffer is reallocated using `scu_realloc()` as needed to fit the entire
  * output (including the terminating null byte). The pointer to the buffer is
  * stored in `*buffer`, and its size (in bytes, including the terminating null
- * byte) is stored in `*size`. The number of bytes written (excluding the
- * terminating null byte) is reflected in `*written` (if `written` is not
- * `nullptr`).
+ * byte) is stored in `*size`.
  *
  * @note If `*size` is zero, `*buffer` must be a `nullptr` (and vice versa). In
  * this case, the function allocates a buffer using `scu_realloc()`.
@@ -1207,25 +1089,21 @@ SCUError scu_vrasnprintf(
  * the underlying allocator used by these functions). The caller is expected to
  * free `*buffer` with `scu_free()` when it is no longer needed.
  *
- * @param[in, out] buffer  A pointer to a null-terminated buffer to append the
- *                         data to.
- * @param[in, out] size    A pointer to the size of the buffer (in bytes,
- *                         including the terminating null byte).
- * @param[out]     written The number of bytes written (excluding the
- *                         terminating null byte), or -1 on failure. If
- *                         `written` is `nullptr`, it is ignored.
- * @param[in]      format  An `snprintf()`-style format string that specifies
- *                         how to format the output.
- * @param[in]      ...     A variable argument list containing the values to be
- *                         written.
+ * @param[in, out] buffer A pointer to a null-terminated buffer to append the
+ *                        data to.
+ * @param[in, out] size   A pointer to the size of the buffer (in bytes,
+ *                        including the terminating null byte).
+ * @param[in]      format An `snprintf()`-style format string that specifies how
+ *                        to format the output.
+ * @param[in]      ...    A variable argument list containing the values to be
+ *                        written.
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
- * `SCU_ERROR_WRITING_BUFFER` if an error occurred while appending to the byte
- * string, or `SCU_ERROR_NONE` on success.
+ * `SCU_ERROR_WRITING_BUFFER` if an error occurred while appending to the
+ * buffer, or `SCU_ERROR_NONE` on success.
  */
 SCUError scu_rasnprintf(
     char** restrict buffer,
     int64_t* restrict size,
-    int64_t* restrict written,
     const char* restrict format,
     ...
 );
@@ -1237,12 +1115,11 @@ SCUError scu_rasnprintf(
  * of bytes from the beginning of the file. For text streams, the value is
  * unspecified and only meaningful as an input to `scu_fseek()`.
  *
- * @param[in]  file     The file stream to check.
- * @param[out] position The file position indicator, or -1 on failure.
- * @return `SCU_ERROR_TELLING_FILE` if an error occurred while getting the file
- * position indicator, or `SCU_ERROR_NONE` on success.
+ * @param[in] file The file stream to check.
+ * @return The file position indicator of the specified file stream, or -1 on
+ * failure.
  */
-SCUError scu_ftell(SCUFile* file, int64_t* position);
+int64_t scu_ftell(SCUFile* file);
 
 /**
  * @brief Sets the file position indicator of a specified file stream.
