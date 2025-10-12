@@ -18,6 +18,17 @@ typedef enum SCUTimerState {
 /** @brief Represents a timer for measuring wall and CPU time. */
 typedef struct SCUTimer SCUTimer;
 
+/** @brief Represents the result of a time measurement. */
+typedef struct SCUTimerResult {
+
+    /** @brief The measured wall time in nanoseconds. */
+    int64_t wallNs;
+
+    /** @brief The measured CPU time in nanoseconds. */
+    int64_t cpuNs;
+
+} SCUTimerResult;
+
 /**
  * @brief Allocates and initializes a new `SCUTimer`.
  *
@@ -143,5 +154,59 @@ int64_t scu_timer_cpu_ns(const SCUTimer* timer);
  * @param[in] timer The timer to deallocate.
  */
 void scu_timer_free(SCUTimer* timer);
+
+/**
+ * @brief Measures the wall and CPU time required to execute a block of code.
+ *
+ * This macro simplifies the process of measuring the wall and CPU time required
+ * to execute a block of code. It allocates a new `SCUTimer`, starts it,
+ * executes the block of code, stops the timer, retrieves the measured times,
+ * and deallocates the timer. If any error occurs during this process, the macro
+ * sets the wall and CPU time in the `SCUTimerResult` pointed to by `result` to
+ * -1.
+ *
+ * ```c
+ * SCUTimerResult result;
+ * SCU_TIME(&result) {
+ *     // Some code to be timed...
+ * }
+ * if ((result.wallNs == -1) || (result.cpuNs == -1)) {
+ *     // Handle error...
+ * }
+ * else {
+ *     // Use result.wallNs and result.cpuNs...
+ * }
+ * ```
+ *
+ * @param[out] result A pointer to an `SCUTimerResult` where the measured wall
+ *                    and CPU time are stored.
+ */
+#define SCU_TIME(result)                                        \
+    for (bool scuOnce = true; scuOnce;)                         \
+        for (                                                   \
+            SCUTimer* scuTimer = scu_timer_new();               \
+            scuOnce;                                            \
+            scuOnce = false,                                    \
+            scu_timer_free(scuTimer),                           \
+            scuTimer = nullptr                                  \
+        )                                                       \
+            for (                                               \
+                SCUError scuError = (scuTimer != nullptr)       \
+                    ? scu_timer_start(scuTimer)                 \
+                    : SCU_ERROR_OUT_OF_MEMORY;                  \
+                scuOnce;                                        \
+                scuOnce = false,                                \
+                scu_timer_stop(scuTimer),                       \
+                (result)->wallNs = scu_timer_wall_ns(scuTimer), \
+                (result)->cpuNs = scu_timer_cpu_ns(scuTimer),   \
+                scu_timer_free(scuTimer),                       \
+                scuTimer = nullptr                              \
+            )                                                   \
+                if (scuError != SCU_ERROR_NONE) {               \
+                    (result)->wallNs = -1;                      \
+                    (result)->cpuNs = -1;                       \
+                    break;                                      \
+                }                                               \
+                else
 
 #endif
