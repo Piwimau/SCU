@@ -8,7 +8,7 @@ DEPFLAGS = -MMD -MP
 
 CONFIG ?= debug
 ifeq (${CONFIG}, debug)
-	CFLAGS += -g3 -O0
+	CFLAGS += -g3 -Og
 	LIB_SUFFIX = d
 else ifeq (${CONFIG}, release)
 	CFLAGS += -g0 -O3
