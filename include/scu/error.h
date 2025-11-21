@@ -52,8 +52,8 @@ typedef enum SCUError {
     /** @brief Indicates that an error occurred while renaming a file. */
     SCU_ERROR_RENAMING_FILE,
 
-    /** @brief Indicates that an error occurred while using a timer. */
-    SCU_ERROR_TIMER_FAILED
+    /** @brief Indicates that an error occurred while using a stopwatch. */
+    SCU_ERROR_STOPWATCH_FAILED
 
 } SCUError;
 

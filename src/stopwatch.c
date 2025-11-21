@@ -7,9 +7,9 @@
 #include "scu/alloc.h"
 #include "scu/assert.h"
 #include "scu/common.h"
-#include "scu/timer.h"
+#include "scu/stopwatch.h"
 
-struct SCUTimer {
+struct SCUStopwatch {
 
     /** @brief The starting wall time in nanoseconds. */
     int64_t startWallNs;
@@ -23,8 +23,8 @@ struct SCUTimer {
     /** @brief The accumulated CPU time in nanoseconds. */
     int64_t accCpuNs;
 
-    /** @brief The current state of the timer. */
-    SCUTimerState state;
+    /** @brief The current state of the stopwatch. */
+    SCUStopwatchState state;
 
 };
 
@@ -126,102 +126,102 @@ static inline int64_t scu_cpu_ns() {
 }
 
 [[nodiscard]]
-SCUTimer* scu_timer_new() {
-    SCUTimer* timer = scu_malloc(SCU_SIZEOF(SCUTimer));
-    if (timer != nullptr) {
-        *timer = (SCUTimer) { };
+SCUStopwatch* scu_stopwatch_new() {
+    SCUStopwatch* stopwatch = scu_malloc(SCU_SIZEOF(SCUStopwatch));
+    if (stopwatch != nullptr) {
+        *stopwatch = (SCUStopwatch) { };
     }
-    return timer;
+    return stopwatch;
 }
 
-SCUError scu_timer_start(SCUTimer* timer) {
-    SCU_ASSERT(timer != nullptr);
-    if (timer->state != SCU_TIMER_STATE_RUNNING) {
+SCUError scu_stopwatch_start(SCUStopwatch* stopwatch) {
+    SCU_ASSERT(stopwatch != nullptr);
+    if (stopwatch->state != SCU_STOPWATCH_STATE_RUNNING) {
         int64_t wallNs = scu_wall_ns();
         if (wallNs == -1) {
-            return SCU_ERROR_TIMER_FAILED;
+            return SCU_ERROR_STOPWATCH_FAILED;
         }
         int64_t cpuNs = scu_cpu_ns();
         if (cpuNs == -1) {
-            return SCU_ERROR_TIMER_FAILED;
+            return SCU_ERROR_STOPWATCH_FAILED;
         }
-        timer->startWallNs = wallNs;
-        timer->startCpuNs = cpuNs;
-        timer->state = SCU_TIMER_STATE_RUNNING;
+        stopwatch->startWallNs = wallNs;
+        stopwatch->startCpuNs = cpuNs;
+        stopwatch->state = SCU_STOPWATCH_STATE_RUNNING;
     }
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_timer_restart(SCUTimer* timer) {
-    SCU_ASSERT(timer != nullptr);
+SCUError scu_stopwatch_restart(SCUStopwatch* stopwatch) {
+    SCU_ASSERT(stopwatch != nullptr);
     int64_t wallNs = scu_wall_ns();
     if (wallNs == -1) {
-        return SCU_ERROR_TIMER_FAILED;
+        return SCU_ERROR_STOPWATCH_FAILED;
     }
     int64_t cpuNs = scu_cpu_ns();
     if (cpuNs == -1) {
-        return SCU_ERROR_TIMER_FAILED;
+        return SCU_ERROR_STOPWATCH_FAILED;
     }
-    timer->startWallNs = wallNs;
-    timer->startCpuNs = cpuNs;
-    timer->accWallNs = 0;
-    timer->accCpuNs = 0;
-    timer->state = SCU_TIMER_STATE_RUNNING;
+    stopwatch->startWallNs = wallNs;
+    stopwatch->startCpuNs = cpuNs;
+    stopwatch->accWallNs = 0;
+    stopwatch->accCpuNs = 0;
+    stopwatch->state = SCU_STOPWATCH_STATE_RUNNING;
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_timer_stop(SCUTimer* timer) {
-    SCU_ASSERT(timer != nullptr);
-    if (timer->state == SCU_TIMER_STATE_RUNNING) {
+SCUError scu_stopwatch_stop(SCUStopwatch* stopwatch) {
+    SCU_ASSERT(stopwatch != nullptr);
+    if (stopwatch->state == SCU_STOPWATCH_STATE_RUNNING) {
         int64_t wallNs = scu_wall_ns();
         if (wallNs == -1) {
-            return SCU_ERROR_TIMER_FAILED;
+            return SCU_ERROR_STOPWATCH_FAILED;
         }
         int64_t cpuNs = scu_cpu_ns();
         if (cpuNs == -1) {
-            return SCU_ERROR_TIMER_FAILED;
+            return SCU_ERROR_STOPWATCH_FAILED;
         }
-        timer->accWallNs += wallNs - timer->startWallNs;
-        timer->accCpuNs += cpuNs - timer->startCpuNs;
-        timer->state = SCU_TIMER_STATE_STOPPED;
+        stopwatch->accWallNs += wallNs - stopwatch->startWallNs;
+        stopwatch->accCpuNs += cpuNs - stopwatch->startCpuNs;
+        stopwatch->state = SCU_STOPWATCH_STATE_STOPPED;
     }
     return SCU_ERROR_NONE;
 }
 
-void scu_timer_reset(SCUTimer* timer) {
-    SCU_ASSERT(timer != nullptr);
-    *timer = (SCUTimer) { };
+void scu_stopwatch_reset(SCUStopwatch* stopwatch) {
+    SCU_ASSERT(stopwatch != nullptr);
+    *stopwatch = (SCUStopwatch) { };
 }
 
-SCUTimerState scu_timer_state(const SCUTimer* timer) {
-    SCU_ASSERT(timer != nullptr);
-    return timer->state;
+SCUStopwatchState scu_stopwatch_state(const SCUStopwatch* stopwatch) {
+    SCU_ASSERT(stopwatch != nullptr);
+    return stopwatch->state;
 }
 
-int64_t scu_timer_wall_ns(const SCUTimer* timer) {
-    SCU_ASSERT(timer != nullptr);
-    if (timer->state == SCU_TIMER_STATE_RUNNING) {
+int64_t scu_stopwatch_wall_ns(const SCUStopwatch* stopwatch) {
+    SCU_ASSERT(stopwatch != nullptr);
+    if (stopwatch->state == SCU_STOPWATCH_STATE_RUNNING) {
         int64_t wallNs = scu_wall_ns();
         if (wallNs == -1) {
             return -1;
         }
-        return timer->accWallNs + (wallNs - timer->startWallNs);
+        return stopwatch->accWallNs + (wallNs - stopwatch->startWallNs);
     }
-    return timer->accWallNs;
+    return stopwatch->accWallNs;
 }
 
-int64_t scu_timer_cpu_ns(const SCUTimer* timer) {
-    SCU_ASSERT(timer != nullptr);
-    if (timer->state == SCU_TIMER_STATE_RUNNING) {
+int64_t scu_stopwatch_cpu_ns(const SCUStopwatch* stopwatch) {
+    SCU_ASSERT(stopwatch != nullptr);
+    if (stopwatch->state == SCU_STOPWATCH_STATE_RUNNING) {
         int64_t cpuNs = scu_cpu_ns();
         if (cpuNs == -1) {
             return -1;
         }
-        return timer->accCpuNs + (cpuNs - timer->startCpuNs);
+        return stopwatch->accCpuNs + (cpuNs - stopwatch->startCpuNs);
     }
-    return timer->accCpuNs;
+    return stopwatch->accCpuNs;
 }
 
-void scu_timer_free(SCUTimer* timer) {
-    scu_free(timer);
+void scu_stopwatch_free(SCUStopwatch* stopwatch) {
+    scu_free(stopwatch);
 }
