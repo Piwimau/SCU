@@ -35,7 +35,7 @@ int32_t scu_strncmp(const char* left, const char* right, int64_t count) {
     return (r > 0) - (r < 0);
 }
 
-int64_t scu_str_first(const char* s, char c) {
+int64_t scu_str_index_of(const char* s, char c) {
     SCU_ASSERT(s != nullptr);
     if (c == '\0') {
         return -1;
@@ -44,7 +44,7 @@ int64_t scu_str_first(const char* s, char c) {
     return (p == nullptr) ? -1 : (p - s);
 }
 
-int64_t scu_str_last(const char* s, char c) {
+int64_t scu_str_last_index_of(const char* s, char c) {
     SCU_ASSERT(s != nullptr);
     if (c == '\0') {
         return -1;
@@ -53,7 +53,7 @@ int64_t scu_str_last(const char* s, char c) {
     return (p == nullptr) ? -1 : (p - s);
 }
 
-int64_t scu_str_first_of(const char* s, const char* anyOf) {
+int64_t scu_str_index_of_any(const char* s, const char* anyOf) {
     SCU_ASSERT(s != nullptr);
     SCU_ASSERT(anyOf != nullptr);
     if (anyOf[0] == '\0') {
@@ -63,7 +63,7 @@ int64_t scu_str_first_of(const char* s, const char* anyOf) {
     return (p == nullptr) ? -1 : (p - s);
 }
 
-int64_t scu_str_last_of(const char* s, const char* anyOf) {
+int64_t scu_str_last_index_of_any(const char* s, const char* anyOf) {
     SCU_ASSERT(s != nullptr);
     SCU_ASSERT(anyOf != nullptr);
     if (anyOf[0] == '\0') {
@@ -78,44 +78,7 @@ int64_t scu_str_last_of(const char* s, const char* anyOf) {
     return (last == nullptr) ? -1 : (last - s);
 }
 
-int64_t scu_str_first_not_of(const char* s, const char* noneOf) {
-    SCU_ASSERT(s != nullptr);
-    SCU_ASSERT(noneOf != nullptr);
-    if (noneOf[0] == '\0') {
-        return 0;
-    }
-    bool ignore[UCHAR_MAX + 1] = { false };
-    for (int64_t i = 0; noneOf[i] != '\0'; i++) {
-        ignore[(unsigned char) noneOf[i]] = true;
-    }
-    for (int64_t i = 0; s[i] != '\0'; i++) {
-        if (!ignore[(unsigned char) s[i]]) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int64_t scu_str_last_not_of(const char* s, const char* noneOf) {
-    SCU_ASSERT(s != nullptr);
-    SCU_ASSERT(noneOf != nullptr);
-    int64_t length = scu_strlen(s);
-    if (noneOf[0] == '\0') {
-        return length;
-    }
-    bool ignore[UCHAR_MAX + 1] = { false };
-    for (int64_t i = 0; noneOf[i] != '\0'; i++) {
-        ignore[(unsigned char) noneOf[i]] = true;
-    }
-    for (int64_t i = length - 1; i >= 0; i--) {
-        if (!ignore[(unsigned char) s[i]]) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int64_t scu_str_first_in_range(
+int64_t scu_str_index_in_range(
     const char* s,
     char lowInclusive,
     char highInclusive
@@ -133,7 +96,7 @@ int64_t scu_str_first_in_range(
     return -1;
 }
 
-int64_t scu_str_last_in_range(
+int64_t scu_str_last_index_in_range(
     const char* s,
     char lowInclusive,
     char highInclusive
@@ -152,14 +115,14 @@ int64_t scu_str_last_in_range(
     return last;
 }
 
-int64_t scu_str_first_str(const char* s, const char* other) {
+int64_t scu_str_index_of_str(const char* s, const char* other) {
     SCU_ASSERT(s != nullptr);
     SCU_ASSERT(other != nullptr);
     const char* p = strstr(s, other);
     return (p == nullptr) ? -1 : (p - s);
 }
 
-int64_t scu_str_last_str(const char* s, const char* other) {
+int64_t scu_str_last_index_of_str(const char* s, const char* other) {
     SCU_ASSERT(s != nullptr);
     SCU_ASSERT(other != nullptr);
     if (other[0] == '\0') {

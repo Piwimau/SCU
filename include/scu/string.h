@@ -95,7 +95,7 @@ int32_t scu_strncmp(const char* left, const char* right, int64_t count);
  * @return The zero-based index of the first occurrence of `c` in `s`, or -1 if
  * `c` is not found.
  */
-int64_t scu_str_first(const char* s, char c);
+int64_t scu_str_index_of(const char* s, char c);
 
 /**
  * @brief Returns the index of the last occurrence of a byte in a
@@ -111,7 +111,7 @@ int64_t scu_str_first(const char* s, char c);
  * @return The zero-based index of the last occurrence of `c` in `s`, or -1 if
  * `c` is not found.
  */
-int64_t scu_str_last(const char* s, char c);
+int64_t scu_str_last_index_of(const char* s, char c);
 
 /**
  * @brief Returns the index of the first occurrence of any byte from a
@@ -131,7 +131,7 @@ int64_t scu_str_last(const char* s, char c);
  * @return The zero-based index of the first occurrence of any byte from `anyOf`
  * in `s`, or -1 if no such byte is found.
  */
-int64_t scu_str_first_of(const char* s, const char* anyOf);
+int64_t scu_str_index_of_any(const char* s, const char* anyOf);
 
 /**
  * @brief Returns the index of the last occurrence of any byte from a
@@ -151,49 +151,7 @@ int64_t scu_str_first_of(const char* s, const char* anyOf);
  * @return The zero-based index of the last occurrence of any byte from `anyOf`
  * in `s`, or -1 if no such byte is found.
  */
-int64_t scu_str_last_of(const char* s, const char* anyOf);
-
-/**
- * @brief Returns the index of the first occurrence of any byte in a
- * null-terminated byte string that is not in another null-terminated byte
- * string.
- *
- * @note The terminating null bytes are not compared.
- *
- * If `noneOf` points to an empty byte string, zero is returned (as all bytes
- * are not in the empty byte string).
- *
- * @warning The behavior is undefined if `s` or `noneOf` is not a pointer to a
- * null-terminated byte string.
- *
- * @param[in] s      The null-terminated byte string to examine.
- * @param[in] noneOf The null-terminated byte string containing the bytes to
- *                   ignore.
- * @return The zero-based index of the first occurrence of any byte in `s` that
- * is not in `noneOf`, or -1 if no such byte is found.
- */
-int64_t scu_str_first_not_of(const char* s, const char* noneOf);
-
-/**
- * @brief Returns the index of the last occurrence of any byte in a
- * null-terminated byte string that is not in another null-terminated byte
- * string.
- *
- * @note The terminating null bytes are not compared.
- *
- * If `noneOf` points to an empty byte string, the length of `s` (i.e.,
- * `scu_strlen(s)`) is returned (as all bytes are not in the empty byte string).
- *
- * @warning The behavior is undefined if `s` or `noneOf` is not a pointer to a
- * null-terminated byte string.
- *
- * @param[in] s      The null-terminated byte string to examine.
- * @param[in] noneOf The null-terminated byte string containing the bytes to
- *                   ignore.
- * @return The zero-based index of the last occurrence of any byte in `s` that
- * is not in `noneOf`, or -1 if no such byte is found.
- */
-int64_t scu_str_last_not_of(const char* s, const char* noneOf);
+int64_t scu_str_last_index_of_any(const char* s, const char* anyOf);
 
 /**
  * @brief Returns the index of the first occurrence of any byte within an
@@ -211,7 +169,7 @@ int64_t scu_str_last_not_of(const char* s, const char* noneOf);
  * @return The zero-based index of the first occurrence of any byte within the
  * inclusive range in `s`, or -1 if no such byte is found.
  */
-int64_t scu_str_first_in_range(
+int64_t scu_str_index_in_range(
     const char* s,
     char lowInclusive,
     char highInclusive
@@ -233,7 +191,7 @@ int64_t scu_str_first_in_range(
  * @return The zero-based index of the last occurrence of any byte within the
  * inclusive range in `s`, or -1 if no such byte is found.
  */
-int64_t scu_str_last_in_range(
+int64_t scu_str_last_index_in_range(
     const char* s,
     char lowInclusive,
     char highInclusive
@@ -261,7 +219,7 @@ int64_t scu_str_last_in_range(
  * @return The zero-based index of the first occurrence of `other` in `s`, or -1
  * if `other` is not found.
  */
-int64_t scu_str_first_str(const char* s, const char* other);
+int64_t scu_str_index_of_str(const char* s, const char* other);
 
 /**
  * @brief Returns the index of the last occurrence of a substring in a
@@ -286,7 +244,7 @@ int64_t scu_str_first_str(const char* s, const char* other);
  * @return The zero-based index of the last occurrence of `other` in `s`, or -1
  * if `other` is not found.
  */
-int64_t scu_str_last_str(const char* s, const char* other);
+int64_t scu_str_last_index_of_str(const char* s, const char* other);
 
 /**
  * @brief Determines whether a null-terminated byte string starts with a
