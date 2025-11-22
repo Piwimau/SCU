@@ -654,6 +654,80 @@ SCUError scu_fwriteln(SCUFile* restrict file, const char* restrict buffer);
 SCUError scu_writeln(const char* buffer);
 
 /**
+ * @brief Reads all remaining bytes from a specified file stream into a
+ * dynamically allocated buffer.
+ *
+ * This function reads all remaining bytes from the specified file stream into
+ * `*buffer` and terminates it with a null byte. The buffer is dynamically
+ * reallocated using `scu_realloc()` to fit the entire contents (including the
+ * terminating null byte). The new size is reflected in `*size`.
+ *
+ * @note If `*size` is zero, `*buffer` must be a `nullptr` (and vice versa). In
+ * this case, the function allocates a buffer using `scu_realloc()` and an
+ * unspecified initial size.
+ *
+ * If `*size` is greater than or equal to one and no out-of-memory condition
+ * occurs, `*buffer` is guaranteed to be null-terminated, even if the
+ * end-of-file condition is reached before any bytes are read or if an error
+ * occurs while reading from the specified file stream.
+ *
+ * @warning If `*buffer` is not a `nullptr`, it must have been allocated using
+ * `scu_malloc()`, `scu_calloc()` or `scu_realloc()` (or the underlying
+ * allocator used by these functions). The caller is expected to free `*buffer`
+ * with `scu_free()` when it is no longer needed.
+ *
+ * @param[in, out] file   The file stream to read from.
+ * @param[in, out] buffer A pointer to a buffer to write the data to.
+ * @param[in, out] size   A pointer to the size of the buffer (in bytes,
+ *                        including the terminating null byte).
+ * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
+ * `SCU_ERROR_END_OF_FILE` if the end-of-file condition is reached before any
+ * bytes are read, `SCU_ERROR_READING_FILE` if an error occurred while reading
+ * from the specified file stream, or `SCU_ERROR_NONE` on success.
+ */
+SCUError scu_freadall(
+    SCUFile* restrict file,
+    char** restrict buffer,
+    int64_t* restrict size
+);
+
+/**
+ * @brief Reads all remaining bytes from the standard input stream into a
+ * dynamically allocated buffer.
+ *
+ * This function reads all remaining bytes from the standard input stream into
+ * `*buffer` and terminates it with a null byte. The buffer is dynamically
+ * reallocated using `scu_realloc()` to fit the entire contents (including the
+ * terminating null byte). The new size is reflected in `*size`.
+ *
+ * @note If `*size` is zero, `*buffer` must be a `nullptr` (and vice versa). In
+ * this case, the function allocates a buffer using `scu_realloc()` and an
+ * unspecified initial size.
+ *
+ * If `*size` is greater than or equal to one and no out-of-memory condition
+ * occurs, `*buffer` is guaranteed to be null-terminated, even if the
+ * end-of-file condition is reached before any bytes are read or if an error
+ * occurs while reading from the specified file stream.
+ *
+ * Calling this function is equivalent to calling `scu_freadall(SCU_STDIN,
+ * buffer, size)`.
+ *
+ * @warning If `*buffer` is not a `nullptr`, it must have been allocated using
+ * `scu_malloc()`, `scu_calloc()` or `scu_realloc()` (or the underlying
+ * allocator used by these functions). The caller is expected to free `*buffer`
+ * with `scu_free()` when it is no longer needed.
+ *
+ * @param[in, out] buffer A pointer to a buffer to write the data to.
+ * @param[in, out] size   A pointer to the size of the buffer (in bytes,
+ *                        including the terminating null byte).
+ * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
+ * `SCU_ERROR_END_OF_FILE` if the end-of-file condition is reached before any
+ * bytes are read, `SCU_ERROR_READING_FILE` if an error occurred while reading
+ * from the standard input stream, or `SCU_ERROR_NONE` on success.
+ */
+SCUError scu_readall(char** restrict buffer, int64_t* restrict size);
+
+/**
  * @brief Reads formatted input from a specified file stream.
  *
  * This function reads data from the specified file stream and interprets it

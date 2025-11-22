@@ -16,8 +16,8 @@ struct SCUFile {
 /** @brief The factor used when growing dynamically allocated buffers. */
 static constexpr int64_t SCU_GROWTH_FACTOR = 2;
 
-/** @brief The chunk size used when reading lines from a file stream. */
-static constexpr int64_t SCU_CHUNK_SIZE = 256;
+/** @brief The chunk size used when reading from a file stream. */
+static constexpr int64_t SCU_CHUNK_SIZE = 4096;
 
 /**
  * @brief A flag to ensure the file stream associated with the standard input
@@ -409,6 +409,49 @@ SCUError scu_fwriteln(SCUFile* restrict file, const char* restrict buffer) {
 
 SCUError scu_writeln(const char* buffer) {
     return scu_fwriteln(SCU_STDOUT, buffer);
+}
+
+SCUError scu_freadall(
+    SCUFile* restrict file,
+    char** restrict buffer,
+    int64_t* restrict size
+) {
+    SCU_ASSERT(file != nullptr);
+    SCU_ASSERT(file->handle != nullptr);
+    SCU_ASSERT(buffer != nullptr);
+    SCU_ASSERT(size != nullptr);
+    SCU_ASSERT((*buffer == nullptr) == (*size == 0));
+    SCU_ASSERT(*size >= 0);
+    int64_t used = 0;
+    while (true) {
+        SCUError error = scu_ensure_size(
+            buffer,
+            size,
+            (used + SCU_CHUNK_SIZE) * SCU_SIZEOF(char)
+        );
+        if (error != SCU_ERROR_NONE) {
+            return error;
+        }
+        int64_t available = *size - used - 1;
+        int64_t read = (int64_t) fread(
+            *buffer + used,
+            sizeof(char),
+            (size_t) available,
+            file->handle
+        );
+        used += read;
+        if (read < available) {
+            (*buffer)[used] = '\0';
+            if (ferror(file->handle)) {
+                return SCU_ERROR_READING_FILE;
+            }
+            return (used == 0) ? SCU_ERROR_END_OF_FILE : SCU_ERROR_NONE;
+        }
+    }
+}
+
+SCUError scu_readall(char** restrict buffer, int64_t* restrict size) {
+    return scu_freadall(SCU_STDIN, buffer, size);
 }
 
 int64_t scu_vfscanf(
