@@ -596,12 +596,13 @@ SCUError scu_freadln(
  * reflected in `*size`.
  *
  * @note If `*size` is zero, `*buffer` must be a `nullptr` (and vice versa). In
- * this case, the function allocates a buffer using `scu_malloc()` and an
+ * this case, the function allocates a buffer using `scu_realloc()` and an
  * unspecified initial size.
  *
- * If `*size` is greater than or equal to one, `*buffer` is guaranteed to be
- * null-terminated, even if the end-of-file condition is reached before any
- * bytes are read or if an error occurs.
+ * If `*size` is greater than or equal to one and no out-of-memory condition
+ * occurs, `*buffer` is guaranteed to be null-terminated, even if the
+ * end-of-file condition is reached before any bytes are read or if an error
+ * occurs while reading from the specified file stream.
  *
  * Calling this function is equivalent to calling `scu_freadln(SCU_STDIN,
  * buffer, size)`.

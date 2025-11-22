@@ -36,8 +36,8 @@
 /**
  * @brief Returns the number of elements in a statically allocated array.
  *
- * @warning Do not use this macro with a pointer to a dynamically allocated
- * array, as it will yield an incorrect result.
+ * @warning Do not use this macro with a pointer instead of a statically
+ * allocated array, as it will yield an incorrect result.
  *
  * @param[in] array The statically allocated array.
  * @return The number of elements in the statically allocated array.
