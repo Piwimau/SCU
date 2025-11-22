@@ -26,6 +26,30 @@
 #define SCU_XSTRINGIFY(expr) SCU_STRINGIFY(expr)
 
 /**
+ * @brief Concatenates two tokens into a single token.
+ *
+ * @note In contrast to `SCU_XCONCAT()`, this macro does not expand `a` and `b`
+ * before concatenating them.
+ *
+ * @param[in] a The first token.
+ * @param[in] b The second token.
+ * @return The concatenated token.
+ */
+#define SCU_CONCAT(a, b) a##b
+
+/**
+ * @brief Expands two tokens and concatenates them into a single token.
+ *
+ * @note In contrast to `SCU_CONCAT()`, this macro expands `a` and `b` before
+ * concatenating them.
+ *
+ * @param[in] a The first token.
+ * @param[in] b The second token.
+ * @return The concatenated token after expanding `a` and `b`.
+ */
+#define SCU_XCONCAT(a, b) SCU_CONCAT(a, b)
+
+/**
  * @brief Returns the size of an expression (in bytes) as an `int64_t`.
  *
  * @param[in] expr The expression to evaluate the size of.
@@ -43,5 +67,32 @@
  * @return The number of elements in the statically allocated array.
  */
 #define SCU_COUNTOF(array) (SCU_SIZEOF(array) / SCU_SIZEOF((array)[0]))
+
+/**
+ * @brief Iterates over each element in a statically allocated array.
+ *
+ * This macro expands to a for loop that iterates over each element in the
+ * specified statically allocated array. During each iteration, the provided
+ * variable is assigned a pointer to the current element.
+ *
+ * ```c
+ * int values[] = { 1, 2, 3 };
+ * SCU_FOREACH(value, values) {
+ *     // Do something with *value.
+ * }
+ * ```
+ *
+ * @warning Do not use this macro with a pointer instead of a statically
+ * allocated array, as it will behave incorrectly.
+ *
+ * @param[in, out] elem  A pointer to the current element during each iteration.
+ * @param[in]      array The statically allocated array to iterate over.
+ */
+#define SCU_FOREACH(elem, array)                 \
+    for (                                        \
+        typeof((array)[0])* elem = (array);      \
+        (elem) < ((array) + SCU_COUNTOF(array)); \
+        (elem)++                                 \
+    )
 
 #endif
