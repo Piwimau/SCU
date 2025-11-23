@@ -19,7 +19,7 @@ void scu_fatal(
     SCU_ASSERT(fmt != nullptr);
     scu_fprintf(
         SCU_STDERR,
-        "SCU: Fatal error occurred at %s:%" PRIi64 " in %s().\n",
+        "SCU: Fatal error occurred at %s:%" PRId64 " in %s().\n",
         file,
         line,
         func

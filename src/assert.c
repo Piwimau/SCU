@@ -15,7 +15,7 @@ void scu_assert_fail(
 ) {
     fprintf(
         stderr,
-        "SCU: Assertion '%s' failed at %s:%" PRIi64 " in %s().\n",
+        "SCU: Assertion '%s' failed at %s:%" PRId64 " in %s().\n",
         expr,
         file,
         line,
