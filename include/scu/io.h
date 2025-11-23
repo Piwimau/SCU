@@ -582,7 +582,7 @@ SCUError scu_writes(const char* buffer);
  */
 SCUError scu_freadln(
     SCUFile* restrict file,
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size
 );
 
@@ -620,7 +620,7 @@ SCUError scu_freadln(
  * bytes are read, `SCU_ERROR_READING_FILE` if an error occurred while reading
  * from the standard input stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_readln(char** restrict buffer, int64_t* restrict size);
+SCUError scu_readln(char* restrict* restrict buffer, int64_t* restrict size);
 
 /**
  * @brief Writes a byte string followed by a newline to a specified file stream.
@@ -687,7 +687,7 @@ SCUError scu_writeln(const char* buffer);
  */
 SCUError scu_freadall(
     SCUFile* restrict file,
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size
 );
 
@@ -725,7 +725,7 @@ SCUError scu_freadall(
  * bytes are read, `SCU_ERROR_READING_FILE` if an error occurred while reading
  * from the standard input stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_readall(char** restrict buffer, int64_t* restrict size);
+SCUError scu_readall(char* restrict* restrict buffer, int64_t* restrict size);
 
 /**
  * @brief Reads formatted input from a specified file stream.
@@ -1055,7 +1055,7 @@ int64_t scu_snprintf(
  * or `SCU_ERROR_NONE` on success.
  */
 SCUError scu_vrsnprintf(
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size,
     const char* restrict format,
     va_list args
@@ -1094,7 +1094,7 @@ SCUError scu_vrsnprintf(
  * or `SCU_ERROR_NONE` on success.
  */
 SCUError scu_rsnprintf(
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size,
     const char* restrict format,
     ...
@@ -1137,7 +1137,7 @@ SCUError scu_rsnprintf(
  * buffer, or `SCU_ERROR_NONE` on success.
  */
 SCUError scu_vrasnprintf(
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size,
     const char* restrict format,
     va_list args
@@ -1177,7 +1177,7 @@ SCUError scu_vrasnprintf(
  * buffer, or `SCU_ERROR_NONE` on success.
  */
 SCUError scu_rasnprintf(
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size,
     const char* restrict format,
     ...

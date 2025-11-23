@@ -334,7 +334,7 @@ SCUError scu_writes(const char* buffer) {
  * `SCU_ERROR_NONE` on success.
  */
 static inline SCUError scu_ensure_size(
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size,
     int64_t requiredSize
 ) {
@@ -360,7 +360,7 @@ static inline SCUError scu_ensure_size(
 
 SCUError scu_freadln(
     SCUFile* restrict file,
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size
 ) {
     SCU_ASSERT(file != nullptr);
@@ -395,7 +395,7 @@ SCUError scu_freadln(
     }
 }
 
-SCUError scu_readln(char** restrict buffer, int64_t* restrict size) {
+SCUError scu_readln(char* restrict* restrict buffer, int64_t* restrict size) {
     return scu_freadln(SCU_STDIN, buffer, size);
 }
 
@@ -413,7 +413,7 @@ SCUError scu_writeln(const char* buffer) {
 
 SCUError scu_freadall(
     SCUFile* restrict file,
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size
 ) {
     SCU_ASSERT(file != nullptr);
@@ -450,7 +450,7 @@ SCUError scu_freadall(
     }
 }
 
-SCUError scu_readall(char** restrict buffer, int64_t* restrict size) {
+SCUError scu_readall(char* restrict* restrict buffer, int64_t* restrict size) {
     return scu_freadall(SCU_STDIN, buffer, size);
 }
 
@@ -574,7 +574,7 @@ int64_t scu_snprintf(
 }
 
 SCUError scu_vrsnprintf(
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size,
     const char* restrict format,
     va_list args
@@ -607,7 +607,7 @@ SCUError scu_vrsnprintf(
 }
 
 SCUError scu_rsnprintf(
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size,
     const char* restrict format,
     ...
@@ -620,7 +620,7 @@ SCUError scu_rsnprintf(
 }
 
 SCUError scu_vrasnprintf(
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size,
     const char* restrict format,
     va_list args
@@ -655,7 +655,7 @@ SCUError scu_vrasnprintf(
 }
 
 SCUError scu_rasnprintf(
-    char** restrict buffer,
+    char* restrict* restrict buffer,
     int64_t* restrict size,
     const char* restrict format,
     ...
