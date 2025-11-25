@@ -4,9 +4,6 @@
 /**
  * @brief Returns the minimum of two values.
  *
- * @warning Do not pass expressions with side effects as arguments, as they may
- * be evaluated more than once.
- *
  * @param[in] a The first value.
  * @param[in] b The second value.
  * @return The minimum of `a` and `b`.
@@ -15,9 +12,6 @@
 
 /**
  * @brief Returns the maximum of two values.
- *
- * @warning Do not pass expressions with side effects as arguments, as they may
- * be evaluated more than once.
  *
  * @param[in] a The first value.
  * @param[in] b The second value.

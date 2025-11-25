@@ -26,8 +26,13 @@
  * @note As of C23, `static_assert` became a keyword (instead of a macro defined
  * in `assert.h`). This macro is simply provided for reasons of completeness and
  * consistency with the `SCU_ASSERT()` macro.
+ * 
+ * @param[in] expr The expression to test.
+ * @param[in] ...  An optional message providing additional information if the
+ *                 assertion fails.
  */
-#define SCU_STATIC_ASSERT static_assert
+#define SCU_STATIC_ASSERT(expr, ...)                \
+    static_assert((expr) __VA_OPT__(,) __VA_ARGS__)
 
 /**
  * @brief Handles a runtime assertion failure.
