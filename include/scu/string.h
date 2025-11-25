@@ -95,7 +95,56 @@ int32_t scu_strncmp(const char* left, const char* right, int64_t count);
  * @return The zero-based index of the first occurrence of `c` in `s`, or -1 if
  * `c` is not found.
  */
-int64_t scu_str_index_of(const char* s, char c);
+int64_t scu_str_index_of_byte(const char* s, char c);
+
+/**
+ * @brief Returns the index of the first occurrence of a substring in a
+ * null-terminated byte string.
+ *
+ * @note This function compares the strings solely based on their byte
+ * representation. For strings that use a multi-byte character encoding (e.g.,
+ * UTF-8), the return value may be misleading, for example if certain characters
+ * considered equal can be represented by different byte sequences.
+ *
+ * The terminating null bytes are not compared.
+ *
+ * If `other` points to an empty byte string, zero is returned (as the empty
+ * byte string is considered to be the prefix of any byte string).
+ *
+ * @warning The behavior is undefined if `s` or `other` is not a pointer to a
+ * null-terminated byte string.
+ *
+ * @param[in] s     The null-terminated byte string to examine.
+ * @param[in] other The null-terminated byte string to search for.
+ * @return The zero-based index of the first occurrence of `other` in `s`, or -1
+ * if `other` is not found.
+ */
+int64_t scu_str_index_of_str(const char* s, const char* other);
+
+/**
+ * @brief Returns the index of the first occurrence of a byte or substring in a
+ * null-terminated byte string.
+ *
+ * @note This is a type-generic macro that resolves to either
+ * `scu_str_index_of_byte()` or `scu_str_index_of_str()` depending on the type
+ * of `other`. For details on the semantics of these functions, see their
+ * respective documentation.
+ *
+ * @warning The behavior is undefined if `s` not a pointer to a null-terminated
+ * byte string or if `other` is neither a `char` nor a pointer to a
+ * null-terminated byte string.
+ *
+ * @param[in] s     The null-terminated byte string to examine.
+ * @param[in] other The byte or null-terminated byte string to search for.
+ * @return The zero-based index of the first occurrence of `other` in `s`, or -1
+ * if `other` is not found.
+ */
+#define scu_str_index_of(s, other)   \
+    _Generic(                        \
+        (other),                     \
+        char: scu_str_index_of_byte, \
+        char*: scu_str_index_of_str  \
+    )(s, other)
 
 /**
  * @brief Returns the index of the last occurrence of a byte in a
@@ -111,7 +160,57 @@ int64_t scu_str_index_of(const char* s, char c);
  * @return The zero-based index of the last occurrence of `c` in `s`, or -1 if
  * `c` is not found.
  */
-int64_t scu_str_last_index_of(const char* s, char c);
+int64_t scu_str_last_index_of_byte(const char* s, char c);
+
+/**
+ * @brief Returns the index of the last occurrence of a substring in a
+ * null-terminated byte string.
+ *
+ * @note This function compares the strings solely based on their byte
+ * representation. For strings that use a multi-byte character encoding (e.g.,
+ * UTF-8), the return value may be misleading, for example if certain characters
+ * considered equal can be represented by different byte sequences.
+ *
+ * The terminating null bytes are not compared.
+ *
+ * If `other` points to an empty byte string, the length of `s` (i.e.,
+ * `scu_strlen(s)`) is returned (as the empty byte string is considered to be
+ * the suffix of any byte string).
+ *
+ * @warning The behavior is undefined if `s` or `other` is not a pointer to a
+ * null-terminated byte string.
+ *
+ * @param[in] s     The null-terminated byte string to examine.
+ * @param[in] other The null-terminated byte string to search for.
+ * @return The zero-based index of the last occurrence of `other` in `s`, or -1
+ * if `other` is not found.
+ */
+int64_t scu_str_last_index_of_str(const char* s, const char* other);
+
+/**
+ * @brief Returns the index of the last occurrence of a byte or substring in a
+ * null-terminated byte string.
+ *
+ * @note This is a type-generic macro that resolves to either
+ * `scu_str_last_index_of_byte()` or `scu_str_last_index_of_str()` depending on
+ * the type of `other`. For details on the semantics of these functions, see
+ * their respective documentation.
+ *
+ * @warning The behavior is undefined if `s` not a pointer to a null-terminated
+ * byte string or if `other` is neither a `char` nor a pointer to a
+ * null-terminated byte string.
+ *
+ * @param[in] s     The null-terminated byte string to examine.
+ * @param[in] other The byte or null-terminated byte string to search for.
+ * @return The zero-based index of the last occurrence of `other` in `s`, or -1
+ * if `other` is not found.
+ */
+#define scu_str_last_index_of(s, other)   \
+    _Generic(                             \
+        (other),                          \
+        char: scu_str_last_index_of_byte, \
+        char*: scu_str_last_index_of_str  \
+    )(s, other)
 
 /**
  * @brief Returns the index of the first occurrence of any byte from a
@@ -198,57 +297,23 @@ int64_t scu_str_last_index_in_range(
 );
 
 /**
- * @brief Returns the index of the first occurrence of a substring in a
+ * @brief Determines whether a null-terminated byte string starts with a
+ * specified prefix byte.
+ *
+ * @note The terminating null byte is not compared.
+ *
+ * @warning The behavior is undefined if `s` is not a pointer to a
  * null-terminated byte string.
  *
- * @note This function compares the strings solely based on their byte
- * representation. For strings that use a multi-byte character encoding (e.g.,
- * UTF-8), the return value may be misleading, for example if certain characters
- * considered equal can be represented by different byte sequences.
- *
- * The terminating null bytes are not compared.
- *
- * If `other` points to an empty byte string, zero is returned (as the empty
- * byte string is considered to be the prefix of any byte string).
- *
- * @warning The behavior is undefined if `s` or `other` is not a pointer to a
- * null-terminated byte string.
- *
- * @param[in] s     The null-terminated byte string to examine.
- * @param[in] other The null-terminated byte string to search for.
- * @return The zero-based index of the first occurrence of `other` in `s`, or -1
- * if `other` is not found.
+ * @param[in] s The null-terminated byte string to examine.
+ * @param[in] c The byte to find as a prefix.
+ * @return `true` if `s` starts with `c`, otherwise `false`.
  */
-int64_t scu_str_index_of_str(const char* s, const char* other);
-
-/**
- * @brief Returns the index of the last occurrence of a substring in a
- * null-terminated byte string.
- *
- * @note This function compares the strings solely based on their byte
- * representation. For strings that use a multi-byte character encoding (e.g.,
- * UTF-8), the return value may be misleading, for example if certain characters
- * considered equal can be represented by different byte sequences.
- *
- * The terminating null bytes are not compared.
- *
- * If `other` points to an empty byte string, the length of `s` (i.e.,
- * `scu_strlen(s)`) is returned (as the empty byte string is considered to be
- * the suffix of any byte string).
- *
- * @warning The behavior is undefined if `s` or `other` is not a pointer to a
- * null-terminated byte string.
- *
- * @param[in] s     The null-terminated byte string to examine.
- * @param[in] other The null-terminated byte string to search for.
- * @return The zero-based index of the last occurrence of `other` in `s`, or -1
- * if `other` is not found.
- */
-int64_t scu_str_last_index_of_str(const char* s, const char* other);
+bool scu_str_starts_with_byte(const char* s, char c);
 
 /**
  * @brief Determines whether a null-terminated byte string starts with a
- * specified prefix.
+ * specified prefix string.
  *
  * @note This function compares the strings solely based on their byte
  * representation. For strings that use a multi-byte character encoding (e.g.,
@@ -265,11 +330,51 @@ int64_t scu_str_last_index_of_str(const char* s, const char* other);
  * @param[in] prefix The null-terminated byte string to find as a prefix.
  * @return `true` if `s` starts with `prefix`, otherwise `false`.
  */
-bool scu_str_starts_with(const char* s, const char* prefix);
+bool scu_str_starts_with_str(const char* s, const char* prefix);
+
+/**
+ * @brief Determines whether a null-terminated byte string starts with a
+ * specified byte or prefix string.
+ *
+ * @note This is a type-generic macro that resolves to either
+ * `scu_str_starts_with_byte()` or `scu_str_starts_with_str()` depending on the
+ * type of `prefix`. For details on the semantics of these functions, see their
+ * respective documentation.
+ *
+ * @warning The behavior is undefined if `s` is not a pointer to a
+ * null-terminated byte string or if `prefix` is neither a `char` nor a pointer
+ * to a null-terminated byte string.
+ *
+ * @param[in] s      The null-terminated byte string to examine.
+ * @param[in] prefix The byte or null-terminated byte string to find as a
+ *                   prefix.
+ * @return `true` if `s` starts with `prefix`, otherwise `false`.
+ */
+#define scu_str_starts_with(s, prefix)  \
+    _Generic(                           \
+        (prefix),                       \
+        char: scu_str_starts_with_byte, \
+        char*: scu_str_starts_with_str  \
+    )(s, prefix)
 
 /**
  * @brief Determines whether a null-terminated byte string ends with a specified
- * suffix.
+ * suffix byte.
+ *
+ * @note The terminating null byte is not compared.
+ *
+ * @warning The behavior is undefined if `s` is not a pointer to a
+ * null-terminated byte string.
+ *
+ * @param[in] s The null-terminated byte string to examine.
+ * @param[in] c The byte to find as a suffix.
+ * @return `true` if `s` ends with `c`, otherwise `false`.
+ */
+bool scu_str_ends_with_byte(const char* s, char c);
+
+/**
+ * @brief Determines whether a null-terminated byte string ends with a specified
+ * suffix string.
  *
  * @note This function compares the strings solely based on their byte
  * representation. For strings that use a multi-byte character encoding (e.g.,
@@ -286,7 +391,32 @@ bool scu_str_starts_with(const char* s, const char* prefix);
  * @param[in] suffix The null-terminated byte string to find as a suffix.
  * @return `true` if `s` ends with `suffix`, otherwise `false`.
  */
-bool scu_str_ends_with(const char* s, const char* suffix);
+bool scu_str_ends_with_str(const char* s, const char* suffix);
+
+/**
+ * @brief Determines whether a null-terminated byte string ends with a specified
+ * byte or suffix string.
+ *
+ * @note This is a type-generic macro that resolves to either
+ * `scu_str_ends_with_byte()` or `scu_str_ends_with_str()` depending on the type
+ * of `suffix`. For details on the semantics of these functions, see their
+ * respective documentation.
+ *
+ * @warning The behavior is undefined if `s` is not a pointer to a
+ * null-terminated byte string or if `suffix` is neither a `char` nor a pointer
+ * to a null-terminated byte string.
+ *
+ * @param[in] s      The null-terminated byte string to examine.
+ * @param[in] suffix The byte or null-terminated byte string to find as a
+ *                   suffix.
+ * @return `true` if `s` ends with `suffix`, otherwise `false`.
+ */
+#define scu_str_ends_with(s, suffix)  \
+    _Generic(                         \
+        (suffix),                     \
+        char: scu_str_ends_with_byte, \
+        char*: scu_str_ends_with_str  \
+    )(s, suffix)
 
 /**
  * @brief Returns a pointer to a dynamically allocated copy of a null-terminated

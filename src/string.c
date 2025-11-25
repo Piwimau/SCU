@@ -35,7 +35,7 @@ int32_t scu_strncmp(const char* left, const char* right, int64_t count) {
     return (r > 0) - (r < 0);
 }
 
-int64_t scu_str_index_of(const char* s, char c) {
+int64_t scu_str_index_of_byte(const char* s, char c) {
     SCU_ASSERT(s != nullptr);
     if (c == '\0') {
         return -1;
@@ -44,13 +44,35 @@ int64_t scu_str_index_of(const char* s, char c) {
     return (p == nullptr) ? -1 : (p - s);
 }
 
-int64_t scu_str_last_index_of(const char* s, char c) {
+int64_t scu_str_index_of_str(const char* s, const char* other) {
+    SCU_ASSERT(s != nullptr);
+    SCU_ASSERT(other != nullptr);
+    const char* p = strstr(s, other);
+    return (p == nullptr) ? -1 : (p - s);
+}
+
+int64_t scu_str_last_index_of_byte(const char* s, char c) {
     SCU_ASSERT(s != nullptr);
     if (c == '\0') {
         return -1;
     }
     const char* p = strrchr(s, c);
     return (p == nullptr) ? -1 : (p - s);
+}
+
+int64_t scu_str_last_index_of_str(const char* s, const char* other) {
+    SCU_ASSERT(s != nullptr);
+    SCU_ASSERT(other != nullptr);
+    if (other[0] == '\0') {
+        return (int64_t) strlen(s);
+    }
+    const char* last = nullptr;
+    const char* p = s;
+    while ((p = strstr(p, other)) != nullptr) {
+        last = p;
+        p++;
+    }
+    return (last == nullptr) ? -1 : (last - s);
 }
 
 int64_t scu_str_index_of_any(const char* s, const char* anyOf) {
@@ -115,29 +137,12 @@ int64_t scu_str_last_index_in_range(
     return last;
 }
 
-int64_t scu_str_index_of_str(const char* s, const char* other) {
+bool scu_str_starts_with_byte(const char* s, char c) {
     SCU_ASSERT(s != nullptr);
-    SCU_ASSERT(other != nullptr);
-    const char* p = strstr(s, other);
-    return (p == nullptr) ? -1 : (p - s);
+    return (s[0] != '\0') && (s[0] == c);
 }
 
-int64_t scu_str_last_index_of_str(const char* s, const char* other) {
-    SCU_ASSERT(s != nullptr);
-    SCU_ASSERT(other != nullptr);
-    if (other[0] == '\0') {
-        return (int64_t) strlen(s);
-    }
-    const char* last = nullptr;
-    const char* p = s;
-    while ((p = strstr(p, other)) != nullptr) {
-        last = p;
-        p++;
-    }
-    return (last == nullptr) ? -1 : (last - s);
-}
-
-bool scu_str_starts_with(const char* s, const char* prefix) {
+bool scu_str_starts_with_str(const char* s, const char* prefix) {
     SCU_ASSERT(s != nullptr);
     SCU_ASSERT(prefix != nullptr);
     int64_t i = 0;
@@ -147,7 +152,13 @@ bool scu_str_starts_with(const char* s, const char* prefix) {
     return prefix[i] == '\0';
 }
 
-bool scu_str_ends_with(const char* s, const char* suffix) {
+bool scu_str_ends_with_byte(const char* s, char c) {
+    SCU_ASSERT(s != nullptr);
+    int64_t length = scu_strlen(s);
+    return (length > 0) && (s[length - 1] == c);
+}
+
+bool scu_str_ends_with_str(const char* s, const char* suffix) {
     SCU_ASSERT(s != nullptr);
     SCU_ASSERT(suffix != nullptr);
     int64_t suffixLength = scu_strlen(suffix);
