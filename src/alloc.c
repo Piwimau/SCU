@@ -12,38 +12,22 @@
  * allocated with, such that `scu_realloc()` and `scu_free()` use the correct
  * allocator even if a different global allocator is later set using
  * `scu_set_allocator()`.
- *
- * In debug builds, a magic number is stored in the header as well, to help
- * detect memory corruption.
  */
-typedef struct SCUHeader {
+typedef struct SCUAllocHeader {
 
     /** @brief The original allocator the block of memory was allocated with. */
     const SCUAllocator* allocator;
 
-#ifndef NDEBUG
-    /** @brief A magic number used to help detect memory corruption. */
-    uint64_t magic;
-#endif
-
     /**
-     * @brief The actual payload (i.e., the block of memory returned to the
-     * user).
+     * @brief The actual data (i.e., the block of memory returned to the user).
      *
-     * Note that this is a so-called flexible array member, which is aligned as
-     * strictly as `max_align_t` to ensure proper alignment for any type with
-     * fundamental alignment requirements.
+     * @note This is a flexible array member, which is aligned as strictly as
+     * `max_align_t` to ensure proper alignment for any type with fundamental
+     * alignment requirements.
      */
-    alignas(max_align_t) unsigned char payload[];
+    alignas(max_align_t) unsigned char data[];
 
-} SCUHeader;
-
-#ifndef NDEBUG
-
-/** @brief A magic number used to help detect memory corruption. */
-static constexpr uint64_t SCU_HEADER_MAGIC = 0xCAFEBABEDEADBEEFULL;
-
-#endif
+} SCUAllocHeader;
 
 /**
  * @brief Allocates an uninitialized block of memory of at least `size`
@@ -131,65 +115,19 @@ void scu_set_allocator(const SCUAllocator* allocator) {
     );
 }
 
-/**
- * @brief Returns a pointer to the actual payload given the header of a block of
- * memory.
- *
- * @param[in] header A pointer to the header of the block of memory.
- * @return A pointer to the actual payload.
- */
-static inline void* scu_header_to_payload(SCUHeader* header) {
-    SCU_ASSERT(header != nullptr);
-    SCU_ASSERT(
-        header->magic == SCU_HEADER_MAGIC,
-        "Detected invalid header (header = %p, magic = 0x%016" PRIX64
-        ", expected = 0x%016" PRIX64 ").",
-        header,
-        header->magic,
-        SCU_HEADER_MAGIC
-    );
-    return header->payload;
-}
-
-/**
- * @brief Returns a pointer to the header of a block of memory given its
- * payload.
- *
- * @param[in] payload A pointer to the actual payload.
- * @return A pointer to the header of the block of memory.
- */
-static inline SCUHeader* scu_payload_to_header(void* payload) {
-    SCU_ASSERT(payload != nullptr);
-    SCUHeader* header = (SCUHeader*) (
-        (unsigned char*) payload - SCU_SIZEOF(SCUHeader)
-    );
-    SCU_ASSERT(
-        header->magic == SCU_HEADER_MAGIC,
-        "Detected invalid header (header = %p, magic = 0x%016" PRIX64
-        ", expected = 0x%016" PRIX64 ").",
-        header,
-        header->magic,
-        SCU_HEADER_MAGIC
-    );
-    return header;
-}
-
 [[nodiscard]]
 void* scu_malloc(int64_t size) {
     SCU_ASSERT(size >= 0);
     const SCUAllocator* allocator = scu_get_allocator();
-    SCUHeader* header = allocator->malloc(
+    SCUAllocHeader* header = allocator->malloc(
         allocator->context,
-        SCU_SIZEOF(SCUHeader) + size
+        SCU_SIZEOF(SCUAllocHeader) + size
     );
     if (header == nullptr) {
         return nullptr;
     }
     header->allocator = allocator;
-#ifndef NDEBUG
-    header->magic = SCU_HEADER_MAGIC;
-#endif
-    return scu_header_to_payload(header);
+    return header->data;
 }
 
 [[nodiscard]]
@@ -197,19 +135,29 @@ void* scu_calloc(int64_t count, int64_t size) {
     SCU_ASSERT(count >= 0);
     SCU_ASSERT(size >= 0);
     const SCUAllocator* allocator = scu_get_allocator();
-    SCUHeader* header = allocator->calloc(
+    SCUAllocHeader* header = allocator->calloc(
         allocator->context,
         1,
-        SCU_SIZEOF(SCUHeader) + (count * size)
+        SCU_SIZEOF(SCUAllocHeader) + (count * size)
     );
     if (header == nullptr) {
         return nullptr;
     }
     header->allocator = allocator;
-#ifndef NDEBUG
-    header->magic = SCU_HEADER_MAGIC;
-#endif
-    return scu_header_to_payload(header);
+    return header->data;
+}
+
+/**
+ * @brief Returns a pointer to the header of a block of memory given its data.
+ *
+ * @param[in] data A pointer to the actual data.
+ * @return A pointer to the header of the block of memory.
+ */
+static inline SCUAllocHeader* scu_data_to_header(void* data) {
+    SCU_ASSERT(data != nullptr);
+    return (SCUAllocHeader*) (
+        ((unsigned char*) data) - SCU_SIZEOF(SCUAllocHeader)
+    );
 }
 
 [[nodiscard]]
@@ -218,19 +166,19 @@ void* scu_realloc(void* block, int64_t newSize) {
     if (block == nullptr) {
         return scu_malloc(newSize);
     }
-    SCUHeader* oldHeader = scu_payload_to_header(block);
+    SCUAllocHeader* oldHeader = scu_data_to_header(block);
     const SCUAllocator* allocator = oldHeader->allocator;
-    SCUHeader* newHeader = allocator->realloc(
+    SCUAllocHeader* newHeader = allocator->realloc(
         allocator->context,
         oldHeader,
-        SCU_SIZEOF(SCUHeader) + newSize
+        SCU_SIZEOF(SCUAllocHeader) + newSize
     );
-    return (newHeader == nullptr) ? nullptr : scu_header_to_payload(newHeader);
+    return (newHeader == nullptr) ? nullptr : newHeader->data;
 }
 
 void scu_free(void* block) {
     if (block != nullptr) {
-        SCUHeader* header = scu_payload_to_header(block);
+        SCUAllocHeader* header = scu_data_to_header(block);
         const SCUAllocator* allocator = header->allocator;
         allocator->free(allocator->context, header);
     }
