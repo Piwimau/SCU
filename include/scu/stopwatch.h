@@ -49,7 +49,7 @@ SCUStopwatch* scu_stopwatch_new();
 /**
  * @brief Starts an `SCUStopwatch`.
  *
- * @note If `stopwatch` is already running, this function has no effect.
+ * @note If `stopwatch` is already running, this function does nothing.
  * Otherwise, it starts measuring time from zero (if `stopwatch` was never
  * started before or was previously reset) or resumes measuring time from the
  * accumulated wall and CPU time (if `stopwatch` was previously stopped).
@@ -83,7 +83,7 @@ SCUError scu_stopwatch_restart(SCUStopwatch* stopwatch);
  * @brief Stops an `SCUStopwatch`.
  *
  * @note If `stopwatch` was never started before or was previously stopped or
- * reset, this function has no effect. Otherwise, it stops measuring time and
+ * reset, this function does nothing. Otherwise, it stops measuring time and
  * retains the accumulated wall and CPU time.
  *
  * This function does not reset the accumulated wall and CPU time.
@@ -98,7 +98,7 @@ SCUError scu_stopwatch_stop(SCUStopwatch* stopwatch);
  * @brief Resets an `SCUStopwatch`.
  *
  * @note If `stopwatch` was never started before or was previously reset, this
- * function has no effect. Otherwise, it stops measuring time (if `stopwatch` is
+ * function does nothing. Otherwise, it stops measuring time (if `stopwatch` is
  * running) and resets the accumulated wall and CPU time to zero.
  *
  * This function resets the accumulated wall and CPU time. It does not start
@@ -148,7 +148,7 @@ int64_t scu_stopwatch_cpu_ns(const SCUStopwatch* stopwatch);
 /**
  * @brief Deallocates an `SCUStopwatch`.
  *
- * @note If `stopwatch` is `nullptr`, this function has no effect.
+ * @note If `stopwatch` is a `nullptr`, this function does nothing.
  *
  * @warning The behavior is undefined if `stopwatch` is used after it has been
  * deallocated.
