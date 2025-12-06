@@ -18,8 +18,8 @@ typedef enum SCUStopwatchState {
 
 } SCUStopwatchState;
 
-/** @brief Represents a timing result. */
-typedef struct SCUTimingResult {
+/** @brief Represents a timing. */
+typedef struct SCUTiming {
 
     /** @brief The measured wall time in nanoseconds. */
     int64_t wallNs;
@@ -27,7 +27,7 @@ typedef struct SCUTimingResult {
     /** @brief The measured CPU time in nanoseconds. */
     int64_t cpuNs;
 
-} SCUTimingResult;
+} SCUTiming;
 
 /**
  * @brief Allocates and initializes a new `SCUStopwatch`.
@@ -164,26 +164,27 @@ void scu_stopwatch_free(SCUStopwatch* stopwatch);
  * to execute a block of code. It allocates a new `SCUStopwatch`, starts it,
  * executes the block of code, stops the stopwatch, retrieves the measured
  * times, and deallocates the stopwatch. If any error occurs during this
- * process, the macro sets the wall and CPU time in the `SCUTimingResult`
- * pointed to by `result` to -1.
+ * process, the macro sets the wall and CPU time in `timing` to -1.
+ *
+ * The following example demonstrates the basic usage of this macro:
  *
  * ```c
- * SCUTimingResult result;
- * SCU_TIME(&result) {
+ * SCUTiming timing;
+ * SCU_TIME(&timing) {
  *     // Some code to be timed...
  * }
- * if ((result.wallNs == -1) || (result.cpuNs == -1)) {
+ * if ((timing.wallNs == -1) || (timing.cpuNs == -1)) {
  *     // Handle error...
  * }
  * else {
- *     // Use result.wallNs and result.cpuNs...
+ *     // Use timing.wallNs and timing.cpuNs...
  * }
  * ```
  *
- * @param[out] result A pointer to an `SCUTimingResult` where the measured wall
- * and CPU time are stored.
+ * @param[out] timing A pointer to an `SCUTiming` where the measured wall and
+ * CPU time are stored.
  */
-#define SCU_TIME(result)                                                \
+#define SCU_TIME(timing)                                                \
     for (bool scuOnce = true; scuOnce;)                                 \
         for (                                                           \
             SCUStopwatch* scuStopwatch = scu_stopwatch_new();           \
@@ -199,14 +200,14 @@ void scu_stopwatch_free(SCUStopwatch* stopwatch);
                 scuOnce;                                                \
                 scuOnce = false,                                        \
                 scu_stopwatch_stop(scuStopwatch),                       \
-                (result)->wallNs = scu_stopwatch_wall_ns(scuStopwatch), \
-                (result)->cpuNs = scu_stopwatch_cpu_ns(scuStopwatch),   \
+                (timing)->wallNs = scu_stopwatch_wall_ns(scuStopwatch), \
+                (timing)->cpuNs = scu_stopwatch_cpu_ns(scuStopwatch),   \
                 scu_stopwatch_free(scuStopwatch),                       \
                 scuStopwatch = nullptr                                  \
             )                                                           \
                 if (scuError != SCU_ERROR_NONE) {                       \
-                    (result)->wallNs = -1;                              \
-                    (result)->cpuNs = -1;                               \
+                    (timing)->wallNs = -1;                              \
+                    (timing)->cpuNs = -1;                               \
                     break;                                              \
                 }                                                       \
                 else
