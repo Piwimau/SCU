@@ -339,4 +339,35 @@ SCUError scu_list_trim_excess_impl(void** list);
  */
 void scu_list_free(void* list);
 
+/**
+ * @brief Iterates over each element in a specified list.
+ *
+ * This macro expands to a for loop that iterates over each element in the
+ * specified list. During each iteration, the provided variable is assigned a
+ * pointer to the current element.
+ *
+ * The following example demonstrates the basic usage of this macro:
+ *
+ * ```c
+ * // T is the type of the elements stored in the list.
+ * T* list = scu_list_new(SCU_SIZEOF(T));
+ * ...
+ * T* elem;
+ * SCU_LIST_FOREACH(elem, list) {
+ *    // Do something with *elem.
+ * }
+ * ```
+ *
+ * @note The variable `elem` must be declared manually before the loop. It must
+ * be of a pointer type compatible with the list's element type.
+ *
+ * @warning The behavior is undefined if the list is modified (e.g., elements
+ * are added or removed) while being iterated over.
+ *
+ * @param[out] elem A pointer to the current element during each iteration.
+ * @param[in]  list The list to iterate over.
+ */
+#define SCU_LIST_FOREACH(elem, list)                                          \
+    for ((elem) = (list); (elem) < ((list) + scu_list_count(list)); (elem)++)
+
 #endif
