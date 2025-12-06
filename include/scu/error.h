@@ -53,7 +53,10 @@ typedef enum SCUError {
     SCU_ERROR_RENAMING_FILE,
 
     /** @brief Indicates that an error occurred while using a stopwatch. */
-    SCU_ERROR_STOPWATCH_FAILED
+    SCU_ERROR_STOPWATCH_FAILED,
+
+    /** @brief Indicates that an element is already present in a collection. */
+    SCU_ERROR_ELEM_PRESENT
 
 } SCUError;
 

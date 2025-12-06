@@ -9,6 +9,7 @@
 #include "scu/list.h"
 #include "scu/math.h"
 #include "scu/memory.h"
+#include "scu/set.h"
 #include "scu/stopwatch.h"
 #include "scu/string.h"
 
