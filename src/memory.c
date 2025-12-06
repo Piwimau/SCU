@@ -97,3 +97,19 @@ void* scu_memmove(void* dest, const void* src, int64_t count) {
     SCU_ASSERT(src != nullptr);
     return memmove(dest, src, (size_t) count);
 }
+
+void scu_memswap(void* restrict left, void* restrict right, int64_t count) {
+    SCU_ASSERT(count >= 0);
+    if (count == 0) {
+        return;
+    }
+    SCU_ASSERT(left != nullptr);
+    SCU_ASSERT(right != nullptr);
+    unsigned char* l = (unsigned char*) left;
+    unsigned char* r = (unsigned char*) right;
+    for (int64_t i = 0; i < count; i++) {
+        unsigned char temp = l[i];
+        l[i] = r[i];
+        r[i] = temp;
+    }
+}

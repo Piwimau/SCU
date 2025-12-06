@@ -178,4 +178,21 @@ void* scu_mempcpy(void* restrict dest, const void* restrict src, int64_t count);
  */
 void* scu_memmove(void* dest, const void* src, int64_t count);
 
+/**
+ * @brief Swaps the contents of two non-overlapping blocks of memory.
+ *
+ * @note If `count` is zero, no bytes are swapped and the function immediately
+ * returns. Both `left` and `right` are ignored in this case (and may be a
+ * `nullptr` each).
+ *
+ * @warning The behavior is undefined if either `left` or `right` is not a
+ * pointer to a block of memory of at least `count` contiguous bytes, or if
+ * `left` and `right` overlap.
+ *
+ * @param[in, out] left  The first block of memory.
+ * @param[in, out] right The second block of memory.
+ * @param[in]      count The number of bytes to swap.
+ */
+void scu_memswap(void* restrict left, void* restrict right, int64_t count);
+
 #endif
