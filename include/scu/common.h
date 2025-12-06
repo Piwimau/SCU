@@ -4,6 +4,33 @@
 #include <stdint.h>
 
 /**
+ * @brief Returns a hash for a specified element.
+ *
+ * @param[in] elem A pointer to the element to hash.
+ * @return A hash for the specified element.
+ */
+typedef uint64_t SCUHashFunc(const void* elem);
+
+/**
+ * @brief Determines whether two specified elements are equal.
+ *
+ * @param[in] a A pointer to the first element.
+ * @param[in] b A pointer to the second element.
+ * @return `true` if `a` and `b` are equal, otherwise `false`.
+ */
+typedef bool SCUEqualFunc(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified elements.
+ *
+ * @param[in] a A pointer to the first element.
+ * @param[in] b A pointer to the second element.
+ * @return A negative value if `a` is less than `b`, zero if they are equal, or
+ * a positive value if `a` is greater than `b`.
+ */
+typedef int32_t SCUCompareFunc(const void* a, const void* b);
+
+/**
  * @brief Converts an expression to a string literal.
  *
  * @note In contrast to `SCU_XSTRINGIFY()`, this macro does not expand `expr`
