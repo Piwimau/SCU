@@ -102,24 +102,28 @@ typedef int32_t SCUCompareFunc(const void* a, const void* b);
  * specified statically allocated array. During each iteration, the provided
  * variable is assigned a pointer to the current element.
  *
+ * The following example demonstrates the basic usage of this macro:
+ *
  * ```c
- * int values[] = { 1, 2, 3 };
- * SCU_FOREACH(value, values) {
- *     // Do something with *value.
+ * // T is the type of the elements stored in the statically allocated array.
+ * T elems[] = { ... };
+ * ...
+ * T* elem;
+ * SCU_FOREACH(elem, elems) {
+ *     // Do something with *elem.
  * }
  * ```
  *
- * @warning Do not use this macro with a pointer instead of a statically
- * allocated array, as it will behave incorrectly.
+ * @note The variable `elem` must be declared manually before the loop. It must
+ * be of a pointer type compatible with the array's element type.
  *
- * @param[in, out] elem  A pointer to the current element during each iteration.
- * @param[in]      array The statically allocated array to iterate over.
+ * @warning The behavior is undefined if `array` is not a statically allocated
+ * array.
+ *
+ * @param[out] elem  A pointer to the current element during each iteration.
+ * @param[in]  array The statically allocated array to iterate over.
  */
-#define SCU_FOREACH(elem, array)                 \
-    for (                                        \
-        typeof((array)[0])* elem = (array);      \
-        (elem) < ((array) + SCU_COUNTOF(array)); \
-        (elem)++                                 \
-    )
+#define SCU_FOREACH(elem, array)                                              \
+    for ((elem) = (array); (elem) < ((array) + SCU_COUNTOF(array)); (elem)++)
 
 #endif
