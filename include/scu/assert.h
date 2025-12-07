@@ -31,8 +31,8 @@
  * @param[in] ...  An optional message providing additional information if the
  *                 assertion fails.
  */
-#define SCU_STATIC_ASSERT(expr, ...)                \
-    static_assert((expr) __VA_OPT__(,) __VA_ARGS__)
+#define SCU_STATIC_ASSERT(expr, ...)              \
+    static_assert(expr __VA_OPT__(,) __VA_ARGS__)
 
 /**
  * @brief Handles a runtime assertion failure.
