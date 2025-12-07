@@ -55,7 +55,7 @@ int64_t scu_list_capacity(const void* list);
 
 /**
  * @brief Returns the number of elements in a specified list.
- * 
+ *
  * @param[in] list The list to examine.
  * @return The number of elements in the specified list.
  */
@@ -160,8 +160,7 @@ SCUError scu_list_add_impl(void** restrict list, const void* restrict elem);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-#define scu_list_add(list, elem)                                  \
-    scu_list_add_impl((void**) &(list), &(typeof(elem)) { elem })
+#define scu_list_add(list, elem) scu_list_add_impl((void**) &(list), &(elem))
 
 /**
  * @brief Inserts a new element at a specified index into a specified list.
@@ -230,8 +229,8 @@ SCUError scu_list_insert_at_impl(
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-#define scu_list_insert_at(list, index, elem)                                  \
-    scu_list_insert_at_impl((void**) &(list), index, &(typeof(elem)) { elem })
+#define scu_list_insert_at(list, index, elem)                 \
+    scu_list_insert_at_impl((void**) &(list), index, &(elem))
 
 /**
  * @brief Removes an element at a specified index from a specified list.

@@ -135,7 +135,7 @@ SCUError scu_set_add_impl(SCUSet* restrict set, const void* restrict elem);
  * `SCU_ERROR_ELEM_PRESENT` if the element is already present, or
  * `SCU_ERROR_NONE` on success.
  */
-#define scu_set_add(set, elem) scu_set_add_impl(set, &(typeof(elem)) { elem })
+#define scu_set_add(set, elem) scu_set_add_impl(set, &(elem))
 
 /**
  * @brief Determines whether a specified set contains a specified element.
@@ -156,8 +156,7 @@ bool scu_set_contains_impl(const SCUSet* set, const void* elem);
  * @param[in] elem The element to search for.
  * @return `true` if the element is present in the set, otherwise `false`.
  */
-#define scu_set_contains(set, elem)                      \
-    scu_set_contains_impl(set, &(typeof(elem)) { elem })
+#define scu_set_contains(set, elem) scu_set_contains_impl(set, &(elem))
 
 /**
  * @brief Removes a specified element from a specified set.
@@ -194,8 +193,7 @@ bool scu_set_remove_impl(SCUSet* restrict set, const void* restrict elem);
  * @param[in]      elem The element to remove.
  * @return `true` if the element was present and removed, otherwise `false`.
  */
-#define scu_set_remove(set, elem)                      \
-    scu_set_remove_impl(set, &(typeof(elem)) { elem })
+#define scu_set_remove(set, elem) scu_set_remove_impl(set, &(elem))
 
 /**
  * @brief Removes all elements from a specified set.
