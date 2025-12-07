@@ -16,10 +16,6 @@ else ifeq (${CONFIG}, release)
 	LIB_SUFFIX =
 endif
 
-ifdef NATIVE
-	CFLAGS += -march=native -mtune=native
-endif
-
 ifdef V
 	Q =
 else
@@ -64,5 +60,4 @@ help:
 	@echo ""
 	@echo "Variables:"
 	@echo "  CONFIG={debug|release}  Set the build configuration (default: debug)."
-	@echo "  NATIVE                  Enable machine-specific optimizations."
 	@echo "  V                       Enable verbose build output."
