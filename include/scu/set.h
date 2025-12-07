@@ -3,7 +3,9 @@
 
 #include <stdint.h>
 #include "scu/common.h"
+#include "scu/equal.h"
 #include "scu/error.h"
+#include "scu/hash.h"
 
 /** @brief Represents an unordered set of elements. */
 typedef struct SCUSet SCUSet;
