@@ -131,7 +131,7 @@ int64_t scu_str_index_of_str(const char* s, const char* other);
  * respective documentation.
  *
  * @warning The behavior is undefined if `s` not a pointer to a null-terminated
- * byte string or if `other` is neither a `char` nor a pointer to a
+ * byte string or if `other` is neither a `char`, an `int`, nor a pointer to a
  * null-terminated byte string.
  *
  * @param[in] s     The null-terminated byte string to examine.
@@ -143,6 +143,7 @@ int64_t scu_str_index_of_str(const char* s, const char* other);
     _Generic(                        \
         (other),                     \
         char: scu_str_index_of_byte, \
+        int: scu_str_index_of_byte,  \
         char*: scu_str_index_of_str  \
     )(s, other)
 
@@ -197,7 +198,7 @@ int64_t scu_str_last_index_of_str(const char* s, const char* other);
  * their respective documentation.
  *
  * @warning The behavior is undefined if `s` not a pointer to a null-terminated
- * byte string or if `other` is neither a `char` nor a pointer to a
+ * byte string or if `other` is neither a `char`, an `int`, nor a pointer to a
  * null-terminated byte string.
  *
  * @param[in] s     The null-terminated byte string to examine.
@@ -209,6 +210,7 @@ int64_t scu_str_last_index_of_str(const char* s, const char* other);
     _Generic(                             \
         (other),                          \
         char: scu_str_last_index_of_byte, \
+        int: scu_str_last_index_of_byte,  \
         char*: scu_str_last_index_of_str  \
     )(s, other)
 
@@ -342,8 +344,8 @@ bool scu_str_starts_with_str(const char* s, const char* prefix);
  * respective documentation.
  *
  * @warning The behavior is undefined if `s` is not a pointer to a
- * null-terminated byte string or if `prefix` is neither a `char` nor a pointer
- * to a null-terminated byte string.
+ * null-terminated byte string or if `prefix` is neither a `char`, an `int`, nor
+ * a pointer to a null-terminated byte string.
  *
  * @param[in] s      The null-terminated byte string to examine.
  * @param[in] prefix The byte or null-terminated byte string to find as a
@@ -354,6 +356,7 @@ bool scu_str_starts_with_str(const char* s, const char* prefix);
     _Generic(                           \
         (prefix),                       \
         char: scu_str_starts_with_byte, \
+        int: scu_str_starts_with_byte,  \
         char*: scu_str_starts_with_str  \
     )(s, prefix)
 
@@ -403,8 +406,8 @@ bool scu_str_ends_with_str(const char* s, const char* suffix);
  * respective documentation.
  *
  * @warning The behavior is undefined if `s` is not a pointer to a
- * null-terminated byte string or if `suffix` is neither a `char` nor a pointer
- * to a null-terminated byte string.
+ * null-terminated byte string or if `suffix` is neither a `char`, an `int`, nor
+ * a pointer to a null-terminated byte string.
  *
  * @param[in] s      The null-terminated byte string to examine.
  * @param[in] suffix The byte or null-terminated byte string to find as a
@@ -415,6 +418,7 @@ bool scu_str_ends_with_str(const char* s, const char* suffix);
     _Generic(                         \
         (suffix),                     \
         char: scu_str_ends_with_byte, \
+        int: scu_str_ends_with_byte,  \
         char*: scu_str_ends_with_str  \
     )(s, suffix)
 
