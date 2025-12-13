@@ -55,7 +55,10 @@ enum SCUError {
     SCU_ERROR_STOPWATCH_FAILED,
 
     /** @brief Indicates that an element is already present in a collection. */
-    SCU_ERROR_ELEM_PRESENT
+    SCU_ERROR_ELEM_PRESENT,
+
+    /** @brief Indicates that an input was not in the expected format. */
+    SCU_ERROR_INVALID_FORMAT
 
 };
 
