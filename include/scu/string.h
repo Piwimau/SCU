@@ -59,6 +59,22 @@ int64_t scu_strnlen(const char* s, int64_t count);
 int32_t scu_strcmp(const char* left, const char* right);
 
 /**
+ * @brief Determines whether two null-terminated byte strings compare equal.
+ *
+ * @note This is a macro that resolves to a call to `scu_strcmp()` and is mainly
+ * provided for convenience and to improve code readability. See the respective
+ * documentation of `scu_strcmp()` for details on the comparison semantics.
+ *
+ * @warning The behavior is undefined if `left` or `right` is not a pointer to a
+ * null-terminated byte string.
+ *
+ * @param[in] left  The first null-terminated byte string.
+ * @param[in] right The second null-terminated byte string.
+ * @return `true` if `left` and `right` compare equal, otherwise `false`.
+ */
+#define scu_str_equals(left, right) (scu_strcmp(left, right) == 0)
+
+/**
  * @brief Compares a span of two null-terminated byte strings lexicographically.
  *
  * @note This function compares the strings solely based on their byte
