@@ -10,14 +10,7 @@
 /** @brief Represents an unordered set of elements. */
 typedef struct SCUSet SCUSet;
 
-/**
- * @brief Represents an iterator for a set.
- *
- * @note The internal representation of the iterator is an implementation detail
- * and should not be relied upon. Most importantly, the behavior is undefined if
- * its fields are accessed directly.
- */
-typedef struct SCUSetIterator {
+struct SCUSetIterator {
 
     /** @brief The set being iterated over. */
     SCUSet* set;
@@ -25,7 +18,16 @@ typedef struct SCUSetIterator {
     /** @brief The current index within the set. */
     int64_t index;
 
-} SCUSetIterator;
+};
+
+/**
+ * @brief Represents an iterator for a set.
+ *
+ * @note The internal representation of the iterator is an implementation detail
+ * and should not be relied upon. Most importantly, the behavior is undefined if
+ * its fields are accessed directly.
+ */
+typedef struct SCUSetIterator SCUSetIterator;
 
 /**
  * @brief Allocates a new set with a specified element size, hash function,

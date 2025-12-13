@@ -3,8 +3,7 @@
 #include "scu/memory.h"
 #include "scu/set.h"
 
-/** @brief Represents a bucket in a hash set. */
-typedef struct SCUBucket {
+struct SCUBucket {
 
     /** @brief The hash of the element stored in the bucket. */
     uint64_t hash;
@@ -22,7 +21,10 @@ typedef struct SCUBucket {
      */
     alignas(max_align_t) unsigned char elem[];
 
-} SCUBucket;
+};
+
+/** @brief Represents a bucket in a hash set. */
+typedef struct SCUBucket SCUBucket;
 
 struct SCUSet {
 

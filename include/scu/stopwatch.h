@@ -7,8 +7,7 @@
 /** @brief Represents a stopwatch able to measure wall and CPU time. */
 typedef struct SCUStopwatch SCUStopwatch;
 
-/** @brief Represents the state of an `SCUStopwatch`. */
-typedef enum SCUStopwatchState {
+enum SCUStopwatchState {
 
     /** @brief Indicates that a stopwatch is stopped and not measuring time. */
     SCU_STOPWATCH_STATE_STOPPED,
@@ -16,10 +15,12 @@ typedef enum SCUStopwatchState {
     /** @brief Indicates that a stopwatch is running and measuring time. */
     SCU_STOPWATCH_STATE_RUNNING
 
-} SCUStopwatchState;
+};
 
-/** @brief Represents a timing. */
-typedef struct SCUTiming {
+/** @brief Represents the state of an `SCUStopwatch`. */
+typedef enum SCUStopwatchState SCUStopwatchState;
+
+struct SCUTiming {
 
     /** @brief The measured wall time in nanoseconds. */
     int64_t wallNs;
@@ -27,7 +28,10 @@ typedef struct SCUTiming {
     /** @brief The measured CPU time in nanoseconds. */
     int64_t cpuNs;
 
-} SCUTiming;
+};
+
+/** @brief Represents a timing. */
+typedef struct SCUTiming SCUTiming;
 
 /**
  * @brief Allocates and initializes a new `SCUStopwatch`.

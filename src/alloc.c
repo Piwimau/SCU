@@ -5,15 +5,7 @@
 #include "scu/assert.h"
 #include "scu/common.h"
 
-/**
- * @brief Represents a header stored before each allocated block of memory.
- *
- * The header stores a pointer to the original allocator the block of memory was
- * allocated with, such that `scu_realloc()` and `scu_free()` use the correct
- * allocator even if a different global allocator is later set using
- * `scu_set_allocator()`.
- */
-typedef struct SCUAllocHeader {
+struct SCUAllocHeader {
 
     /** @brief The original allocator the block of memory was allocated with. */
     const SCUAllocator* allocator;
@@ -27,7 +19,17 @@ typedef struct SCUAllocHeader {
      */
     alignas(max_align_t) unsigned char data[];
 
-} SCUAllocHeader;
+};
+
+/**
+ * @brief Represents a header stored before each allocated block of memory.
+ *
+ * The header stores a pointer to the original allocator the block of memory was
+ * allocated with, such that `scu_realloc()` and `scu_free()` use the correct
+ * allocator even if a different global allocator is later set using
+ * `scu_set_allocator()`.
+ */
+typedef struct SCUAllocHeader SCUAllocHeader;
 
 /**
  * @brief Allocates an uninitialized block of memory of at least `size`

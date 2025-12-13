@@ -76,8 +76,7 @@ typedef void* SCUReallocFunc(void* context, void* block, int64_t newSize);
  */
 typedef void SCUFreeFunc(void* context, void* block);
 
-/** @brief Represents a custom allocator. */
-typedef struct SCUAllocator {
+struct SCUAllocator {
 
     /**
      * @brief The allocator's malloc-like operation.
@@ -114,7 +113,10 @@ typedef struct SCUAllocator {
      */
     void* context;
 
-} SCUAllocator;
+};
+
+/** @brief Represents a custom allocator. */
+typedef struct SCUAllocator SCUAllocator;
 
 /**
  * @brief Returns the global allocator.

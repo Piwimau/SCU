@@ -3,8 +3,7 @@
 
 #include <stdint.h>
 
-/** @brief Represents an error code used to signal success or failure. */
-typedef enum SCUError {
+enum SCUError {
 
     /** @brief Indicates that no error occurred. */
     SCU_ERROR_NONE,
@@ -58,7 +57,10 @@ typedef enum SCUError {
     /** @brief Indicates that an element is already present in a collection. */
     SCU_ERROR_ELEM_PRESENT
 
-} SCUError;
+};
+
+/** @brief Represents an error code used to signal success or failure. */
+typedef enum SCUError SCUError;
 
 /**
  * @brief Prints a diagnostic message to the standard error stream and
