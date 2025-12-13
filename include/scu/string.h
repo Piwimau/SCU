@@ -157,7 +157,7 @@ int64_t scu_str_index_of_str(const char* s, const char* other);
  */
 #define scu_str_index_of(s, other)   \
     _Generic(                        \
-        other,                       \
+        (typeof_unqual(other)) { },  \
         char: scu_str_index_of_byte, \
         int: scu_str_index_of_byte,  \
         char*: scu_str_index_of_str  \
@@ -224,7 +224,7 @@ int64_t scu_str_last_index_of_str(const char* s, const char* other);
  */
 #define scu_str_last_index_of(s, other)   \
     _Generic(                             \
-        other,                            \
+        (typeof_unqual(other)) { },       \
         char: scu_str_last_index_of_byte, \
         int: scu_str_last_index_of_byte,  \
         char*: scu_str_last_index_of_str  \
@@ -370,7 +370,7 @@ bool scu_str_starts_with_str(const char* s, const char* prefix);
  */
 #define scu_str_starts_with(s, prefix)  \
     _Generic(                           \
-        prefix,                         \
+        (typeof_unqual(prefix)) { },    \
         char: scu_str_starts_with_byte, \
         int: scu_str_starts_with_byte,  \
         char*: scu_str_starts_with_str  \
@@ -432,7 +432,7 @@ bool scu_str_ends_with_str(const char* s, const char* suffix);
  */
 #define scu_str_ends_with(s, suffix)  \
     _Generic(                         \
-        suffix,                       \
+        (typeof_unqual(suffix)) { },  \
         char: scu_str_ends_with_byte, \
         int: scu_str_ends_with_byte,  \
         char*: scu_str_ends_with_str  \
