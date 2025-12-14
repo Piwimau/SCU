@@ -1,7 +1,7 @@
 #include "scu/alloc.h"
 #include "scu/assert.h"
 #include "scu/memory.h"
-#include "scu/set.h"
+#include "scu/hash-set.h"
 
 struct SCUBucket {
 
@@ -26,7 +26,7 @@ struct SCUBucket {
 /** @brief Represents a bucket in a hash set. */
 typedef struct SCUBucket SCUBucket;
 
-struct SCUSet {
+struct SCUHashSet {
 
     /** @brief The size of each element (in bytes). */
     int64_t elemSize;
@@ -75,12 +75,12 @@ static constexpr int64_t SCU_MAX_LOAD_FACTOR_DEN = 10;
 static constexpr int64_t SCU_GROWTH_FACTOR = 2;
 
 [[nodiscard]]
-SCUSet* scu_set_new(
+SCUHashSet* scu_hash_set_new(
     int64_t elemSize,
     SCUHashFunc* hashFunc,
     SCUEqualFunc* equalFunc
 ) {
-    return scu_set_new_with_capacity(
+    return scu_hash_set_new_with_capacity(
         elemSize,
         SCU_DEFAULT_CAPACITY,
         hashFunc,
@@ -114,7 +114,7 @@ static inline int64_t scu_next_power_of_two(int64_t n) {
 }
 
 [[nodiscard]]
-SCUSet* scu_set_new_with_capacity(
+SCUHashSet* scu_hash_set_new_with_capacity(
     int64_t elemSize,
     int64_t capacity,
     SCUHashFunc* hashFunc,
@@ -124,38 +124,38 @@ SCUSet* scu_set_new_with_capacity(
     SCU_ASSERT(capacity >= 0);
     SCU_ASSERT(hashFunc != nullptr);
     SCU_ASSERT(equalFunc != nullptr);
-    SCUSet* set = scu_malloc(SCU_SIZEOF(SCUSet));
-    if (set == nullptr) {
+    SCUHashSet* hashSet = scu_malloc(SCU_SIZEOF(SCUHashSet));
+    if (hashSet == nullptr) {
         return nullptr;
     }
-    set->elemSize = elemSize;
-    set->stride = SCU_SIZEOF(SCUBucket) + elemSize;
-    set->count = 0;
-    set->hashFunc = hashFunc;
-    set->equalFunc = equalFunc;
+    hashSet->elemSize = elemSize;
+    hashSet->stride = SCU_SIZEOF(SCUBucket) + elemSize;
+    hashSet->count = 0;
+    hashSet->hashFunc = hashFunc;
+    hashSet->equalFunc = equalFunc;
     if (capacity > 0) {
-        set->capacity = scu_next_power_of_two(capacity);
-        set->buckets = scu_calloc(set->capacity, set->stride);
-        if (set->buckets == nullptr) {
-            scu_free(set);
+        hashSet->capacity = scu_next_power_of_two(capacity);
+        hashSet->buckets = scu_calloc(hashSet->capacity, hashSet->stride);
+        if (hashSet->buckets == nullptr) {
+            scu_free(hashSet);
             return nullptr;
         }
     }
     else {
-        set->capacity = 0;
-        set->buckets = nullptr;
+        hashSet->capacity = 0;
+        hashSet->buckets = nullptr;
     }
-    return set;
+    return hashSet;
 }
 
-int64_t scu_set_capacity(const SCUSet* set) {
-    SCU_ASSERT(set != nullptr);
-    return set->capacity;
+int64_t scu_hash_set_capacity(const SCUHashSet* hashSet) {
+    SCU_ASSERT(hashSet != nullptr);
+    return hashSet->capacity;
 }
 
-int64_t scu_set_count(const SCUSet* set) {
-    SCU_ASSERT(set != nullptr);
-    return set->count;
+int64_t scu_hash_set_count(const SCUHashSet* hashSet) {
+    SCU_ASSERT(hashSet != nullptr);
+    return hashSet->count;
 }
 
 /**
@@ -208,8 +208,8 @@ static inline int64_t scu_wrap_index(int64_t index, int64_t capacity) {
  * @note The probe distance is the number of positions an element had to travel
  * forward (with wrap-around) from its ideal position due to collisions.
  *
- * @param[in] hash  The hash of the element.
- * @param[in] index The index of the element.
+ * @param[in] hash     The hash of the element.
+ * @param[in] index    The index of the element.
  * @param[in] capacity The capacity (in number of buckets).
  * @return The probe distance of the element.
  */
@@ -225,198 +225,216 @@ static inline int64_t scu_probe_distance(
 }
 
 /**
- * @brief Rehashes old buckets by adding their elements to a specified set.
+ * @brief Rehashes old buckets by adding their elements to a specified hash set.
  *
- * @warning This function assumes that the specified set has enough capacity to
- * hold all elements of the old buckets. Additionally, the contents of
- * `oldBuckets` may be modified during the rehashing process for optimization
+ * @warning This function assumes that the specified hash set has enough
+ * capacity to hold all elements of the old buckets. Additionally, the contents
+ * of `oldBuckets` may be modified during the rehashing process for optimization
  * purposes. After this function returns, the state of `oldBuckets` is
  * explicitly undefined.
  *
- * @param[in, out] set         The set to rehash into.
+ * @param[in, out] hashSet     The hash set to rehash into.
  * @param[in, out] oldBuckets  The buckets to rehash.
  * @param[in]      oldCapacity The old capacity (in number of buckets).
  */
-static inline void scu_set_rehash_buckets(
-    SCUSet* set,
+static inline void scu_hash_set_rehash_buckets(
+    SCUHashSet* hashSet,
     SCUBucket* oldBuckets,
     int64_t oldCapacity
 ) {
-    SCU_ASSERT(set != nullptr);
+    SCU_ASSERT(hashSet != nullptr);
     SCU_ASSERT(oldBuckets != nullptr);
     SCU_ASSERT(oldCapacity > 0);
     for (int64_t i = 0; i < oldCapacity; i++) {
-        SCUBucket* oldBucket = scu_bucket_at(oldBuckets, i, set->stride);
+        SCUBucket* oldBucket = scu_bucket_at(oldBuckets, i, hashSet->stride);
         if (oldBucket->isOccupied) {
-            int64_t index = scu_ideal_index(oldBucket->hash, set->capacity);
+            int64_t index = scu_ideal_index(oldBucket->hash, hashSet->capacity);
             int64_t distance = 0;
             while (true) {
                 SCUBucket* newBucket = scu_bucket_at(
-                    set->buckets,
+                    hashSet->buckets,
                     index,
-                    set->stride
+                    hashSet->stride
                 );
                 if (!newBucket->isOccupied) {
-                    scu_memcpy(newBucket, oldBucket, set->stride);
-                    set->count++;
+                    scu_memcpy(newBucket, oldBucket, hashSet->stride);
+                    hashSet->count++;
                     break;
                 }
                 int64_t otherDistance = scu_probe_distance(
                     newBucket->hash,
                     index,
-                    set->capacity
+                    hashSet->capacity
                 );
                 if (distance > otherDistance) {
-                    scu_memswap(oldBucket, newBucket, set->stride);
+                    scu_memswap(oldBucket, newBucket, hashSet->stride);
                     distance = otherDistance;
                 }
-                index = scu_wrap_index(index + 1, set->capacity);
+                index = scu_wrap_index(index + 1, hashSet->capacity);
                 distance++;
             }
         }
     }
 }
 
-SCUError scu_set_ensure_capacity(SCUSet* set, int64_t capacity) {
-    SCU_ASSERT(set != nullptr);
+SCUError scu_hash_set_ensure_capacity(SCUHashSet* hashSet, int64_t capacity) {
+    SCU_ASSERT(hashSet != nullptr);
     SCU_ASSERT(capacity >= 0);
     int64_t minCapacity = ((capacity * SCU_MAX_LOAD_FACTOR_DEN)
         + SCU_MAX_LOAD_FACTOR_NUM - 1) / SCU_MAX_LOAD_FACTOR_NUM;
-    if (set->capacity >= minCapacity) {
+    if (hashSet->capacity >= minCapacity) {
         return SCU_ERROR_NONE;
     }
     int64_t newCapacity = scu_next_power_of_two(minCapacity);
-    SCUBucket* newBuckets = scu_calloc(newCapacity, set->stride);
+    SCUBucket* newBuckets = scu_calloc(newCapacity, hashSet->stride);
     if (newBuckets == nullptr) {
         return SCU_ERROR_OUT_OF_MEMORY;
     }
-    int64_t oldCapacity = set->capacity;
-    int64_t oldCount = set->count;
-    SCUBucket* oldBuckets = set->buckets;
-    set->capacity = newCapacity;
-    set->count = 0;
-    set->buckets = newBuckets;
+    int64_t oldCapacity = hashSet->capacity;
+    int64_t oldCount = hashSet->count;
+    SCUBucket* oldBuckets = hashSet->buckets;
+    hashSet->capacity = newCapacity;
+    hashSet->count = 0;
+    hashSet->buckets = newBuckets;
     if (oldCount > 0) {
-        scu_set_rehash_buckets(set, oldBuckets, oldCapacity);
+        scu_hash_set_rehash_buckets(hashSet, oldBuckets, oldCapacity);
     }
     scu_free(oldBuckets);
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_set_add_impl(SCUSet* restrict set, const void* restrict elem) {
-    SCU_ASSERT(set != nullptr);
+SCUError scu_hash_set_add_impl(
+    SCUHashSet* restrict hashSet,
+    const void* restrict elem
+) {
+    SCU_ASSERT(hashSet != nullptr);
     SCU_ASSERT(elem != nullptr);
-    if ((set->count * SCU_MAX_LOAD_FACTOR_DEN)
-            >= (set->capacity * SCU_MAX_LOAD_FACTOR_NUM)) {
-        int64_t newCapacity = (set->capacity == 0)
+    if ((hashSet->count * SCU_MAX_LOAD_FACTOR_DEN)
+            >= (hashSet->capacity * SCU_MAX_LOAD_FACTOR_NUM)) {
+        int64_t newCapacity = (hashSet->capacity == 0)
             ? SCU_DEFAULT_CAPACITY
-            : (set->capacity * SCU_GROWTH_FACTOR);
-        SCUError error = scu_set_ensure_capacity(set, newCapacity);
+            : (hashSet->capacity * SCU_GROWTH_FACTOR);
+        SCUError error = scu_hash_set_ensure_capacity(hashSet, newCapacity);
         if (error != SCU_ERROR_NONE) {
             return error;
         }
     }
-    SCUBucket* tempBucket = scu_malloc(set->stride);
+    SCUBucket* tempBucket = scu_malloc(hashSet->stride);
     if (tempBucket == nullptr) {
         return SCU_ERROR_OUT_OF_MEMORY;
     }
-    tempBucket->hash = set->hashFunc(elem);
+    tempBucket->hash = hashSet->hashFunc(elem);
     tempBucket->isOccupied = true;
-    scu_memcpy(tempBucket->elem, elem, set->elemSize);
-    int64_t index = scu_ideal_index(tempBucket->hash, set->capacity);
+    scu_memcpy(tempBucket->elem, elem, hashSet->elemSize);
+    int64_t index = scu_ideal_index(tempBucket->hash, hashSet->capacity);
     int64_t distance = 0;
     while (true) {
-        SCUBucket* bucket = scu_bucket_at(set->buckets, index, set->stride);
+        SCUBucket* bucket = scu_bucket_at(
+            hashSet->buckets,
+            index,
+            hashSet->stride
+        );
         if (!bucket->isOccupied) {
-            scu_memcpy(bucket, tempBucket, set->stride);
-            set->count++;
+            scu_memcpy(bucket, tempBucket, hashSet->stride);
+            hashSet->count++;
             scu_free(tempBucket);
             return SCU_ERROR_NONE;
         }
         if ((bucket->hash == tempBucket->hash)
-                && set->equalFunc(bucket->elem, tempBucket->elem)) {
+                && hashSet->equalFunc(bucket->elem, tempBucket->elem)) {
             scu_free(tempBucket);
             return SCU_ERROR_ELEM_PRESENT;
         }
         int64_t otherDistance = scu_probe_distance(
             bucket->hash,
             index,
-            set->capacity
+            hashSet->capacity
         );
         if (distance > otherDistance) {
-            scu_memswap(bucket, tempBucket, set->stride);
+            scu_memswap(bucket, tempBucket, hashSet->stride);
             distance = otherDistance;
         }
-        index = scu_wrap_index(index + 1, set->capacity);
+        index = scu_wrap_index(index + 1, hashSet->capacity);
         distance++;
     }
 }
 
-bool scu_set_contains_impl(const SCUSet* set, const void* elem) {
-    SCU_ASSERT(set != nullptr);
+bool scu_hash_set_contains_impl(const SCUHashSet* hashSet, const void* elem) {
+    SCU_ASSERT(hashSet != nullptr);
     SCU_ASSERT(elem != nullptr);
-    if (set->count == 0) {
+    if (hashSet->count == 0) {
         return false;
     }
-    uint64_t hash = set->hashFunc(elem);
-    int64_t index = scu_ideal_index(hash, set->capacity);
+    uint64_t hash = hashSet->hashFunc(elem);
+    int64_t index = scu_ideal_index(hash, hashSet->capacity);
     int64_t distance = 0;
     while (true) {
-        SCUBucket* bucket = scu_bucket_at(set->buckets, index, set->stride);
+        SCUBucket* bucket = scu_bucket_at(
+            hashSet->buckets,
+            index,
+            hashSet->stride
+        );
         if (!bucket->isOccupied) {
             return false;
         }
         int64_t otherDistance = scu_probe_distance(
             bucket->hash,
             index,
-            set->capacity
+            hashSet->capacity
         );
         if (distance > otherDistance) {
             return false;
         }
-        if ((bucket->hash == hash) && set->equalFunc(bucket->elem, elem)) {
+        if ((bucket->hash == hash) && hashSet->equalFunc(bucket->elem, elem)) {
             return true;
         }
-        index = scu_wrap_index(index + 1, set->capacity);
+        index = scu_wrap_index(index + 1, hashSet->capacity);
         distance++;
     }
 }
 
-bool scu_set_remove_impl(SCUSet* restrict set, const void* restrict elem) {
-    SCU_ASSERT(set != nullptr);
+bool scu_hash_set_remove_impl(
+    SCUHashSet* restrict hashSet,
+    const void* restrict elem
+) {
+    SCU_ASSERT(hashSet != nullptr);
     SCU_ASSERT(elem != nullptr);
-    if (set->count == 0) {
+    if (hashSet->count == 0) {
         return false;
     }
-    uint64_t hash = set->hashFunc(elem);
-    int64_t index = scu_ideal_index(hash, set->capacity);
+    uint64_t hash = hashSet->hashFunc(elem);
+    int64_t index = scu_ideal_index(hash, hashSet->capacity);
     int64_t distance = 0;
     while (true) {
-        SCUBucket* bucket = scu_bucket_at(set->buckets, index, set->stride);
+        SCUBucket* bucket = scu_bucket_at(
+            hashSet->buckets,
+            index,
+            hashSet->stride
+        );
         if (!bucket->isOccupied) {
             return false;
         }
         int64_t otherDistance = scu_probe_distance(
             bucket->hash,
             index,
-            set->capacity
+            hashSet->capacity
         );
         if (distance > otherDistance) {
             return false;
         }
-        if ((bucket->hash == hash) && set->equalFunc(bucket->elem, elem)) {
+        if ((bucket->hash == hash) && hashSet->equalFunc(bucket->elem, elem)) {
             break;
         }
-        index = scu_wrap_index(index + 1, set->capacity);
+        index = scu_wrap_index(index + 1, hashSet->capacity);
         distance++;
     }
-    SCUBucket* bucket = scu_bucket_at(set->buckets, index, set->stride);
+    SCUBucket* bucket = scu_bucket_at(hashSet->buckets, index, hashSet->stride);
     while (true) {
-        int64_t nextIndex = scu_wrap_index(index + 1, set->capacity);
+        int64_t nextIndex = scu_wrap_index(index + 1, hashSet->capacity);
         SCUBucket* nextBucket = scu_bucket_at(
-            set->buckets,
+            hashSet->buckets,
             nextIndex,
-            set->stride
+            hashSet->stride
         );
         if (!nextBucket->isOccupied) {
             break;
@@ -424,111 +442,119 @@ bool scu_set_remove_impl(SCUSet* restrict set, const void* restrict elem) {
         int64_t nextDistance = scu_probe_distance(
             nextBucket->hash,
             nextIndex,
-            set->capacity
+            hashSet->capacity
         );
         if (nextDistance == 0) {
             break;
         }
-        scu_memcpy(bucket, nextBucket, set->stride);
+        scu_memcpy(bucket, nextBucket, hashSet->stride);
         index = nextIndex;
         bucket = nextBucket;
     }
     bucket->isOccupied = false;
-    set->count--;
+    hashSet->count--;
     return true;
 }
 
-void scu_set_clear(SCUSet* set) {
-    SCU_ASSERT(set != nullptr);
-    if (set->count > 0) {
-        for (int64_t i = 0; i < set->capacity; i++) {
-            SCUBucket* bucket = scu_bucket_at(set->buckets, i, set->stride);
+void scu_hash_set_clear(SCUHashSet* hashSet) {
+    SCU_ASSERT(hashSet != nullptr);
+    if (hashSet->count > 0) {
+        for (int64_t i = 0; i < hashSet->capacity; i++) {
+            SCUBucket* bucket = scu_bucket_at(
+                hashSet->buckets,
+                i,
+                hashSet->stride
+            );
             bucket->isOccupied = false;
         }
-        set->count = 0;
+        hashSet->count = 0;
     }
 }
 
-SCUError scu_set_trim_excess(SCUSet* set) {
-    SCU_ASSERT(set != nullptr);
-    if (set->count == 0) {
-        scu_free(set->buckets);
-        set->buckets = nullptr;
-        set->capacity = 0;
+SCUError scu_hash_set_trim_excess(SCUHashSet* hashSet) {
+    SCU_ASSERT(hashSet != nullptr);
+    if (hashSet->count == 0) {
+        scu_free(hashSet->buckets);
+        hashSet->buckets = nullptr;
+        hashSet->capacity = 0;
         return SCU_ERROR_NONE;
     }
-    int64_t minCapacity = ((set->count * SCU_MAX_LOAD_FACTOR_DEN)
+    int64_t minCapacity = ((hashSet->count * SCU_MAX_LOAD_FACTOR_DEN)
         + SCU_MAX_LOAD_FACTOR_NUM - 1) / SCU_MAX_LOAD_FACTOR_NUM;
     int64_t newCapacity = scu_next_power_of_two(minCapacity);
-    if (set->capacity <= newCapacity) {
+    if (hashSet->capacity <= newCapacity) {
         return SCU_ERROR_NONE;
     }
-    SCUBucket* newBuckets = scu_calloc(newCapacity, set->stride);
+    SCUBucket* newBuckets = scu_calloc(newCapacity, hashSet->stride);
     if (newBuckets == nullptr) {
         return SCU_ERROR_OUT_OF_MEMORY;
     }
-    int64_t oldCapacity = set->capacity;
-    SCUBucket* oldBuckets = set->buckets;
-    set->capacity = newCapacity;
-    set->count = 0;
-    set->buckets = newBuckets;
-    scu_set_rehash_buckets(set, oldBuckets, oldCapacity);
+    int64_t oldCapacity = hashSet->capacity;
+    SCUBucket* oldBuckets = hashSet->buckets;
+    hashSet->capacity = newCapacity;
+    hashSet->count = 0;
+    hashSet->buckets = newBuckets;
+    scu_hash_set_rehash_buckets(hashSet, oldBuckets, oldCapacity);
     scu_free(oldBuckets);
     return SCU_ERROR_NONE;
 }
 
-SCUSetIter scu_set_iter(const SCUSet* set) {
-    SCU_ASSERT(set != nullptr);
-    return (SCUSetIter) { .set = (SCUSet*) set, .index = -1 };
+SCUHashSetIter scu_hash_set_iter(const SCUHashSet* hashSet) {
+    SCU_ASSERT(hashSet != nullptr);
+    return (SCUHashSetIter) { .hashSet = (SCUHashSet*) hashSet, .index = -1 };
 }
 
-bool scu_set_iter_move_next(SCUSetIter* iter) {
+bool scu_hash_set_iter_move_next(SCUHashSetIter* iter) {
     SCU_ASSERT(iter != nullptr);
-    SCU_ASSERT(iter->set != nullptr);
-    SCUSet* set = iter->set;
+    SCU_ASSERT(iter->hashSet != nullptr);
+    SCUHashSet* hashSet = iter->hashSet;
     int64_t index = iter->index;
-    SCU_ASSERT((index >= -1) && (index <= set->capacity));
-    if (set->count == 0) {
-        iter->index = set->capacity;
+    SCU_ASSERT((index >= -1) && (index <= hashSet->capacity));
+    if (hashSet->count == 0) {
+        iter->index = hashSet->capacity;
         return false;
     }
     index++;
-    while (index < set->capacity) {
-        SCUBucket* bucket = scu_bucket_at(set->buckets, index, set->stride);
+    while (index < hashSet->capacity) {
+        SCUBucket* bucket = scu_bucket_at(
+            hashSet->buckets,
+            index,
+            hashSet->stride
+        );
         if (bucket->isOccupied) {
             iter->index = index;
             return true;
         }
         index++;
     }
-    iter->index = set->capacity;
+    iter->index = hashSet->capacity;
     return false;
 }
 
-void* scu_set_iter_current(const SCUSetIter* iter) {
+void* scu_hash_set_iter_current(const SCUHashSetIter* iter) {
     SCU_ASSERT(iter != nullptr);
-    SCU_ASSERT(iter->set != nullptr);
-    SCUSet* set = iter->set;
+    SCU_ASSERT(iter->hashSet != nullptr);
+    SCUHashSet* hashSet = iter->hashSet;
     int64_t index = iter->index;
-    SCU_ASSERT((index >= 0) && (index < set->capacity));
-    SCUBucket* bucket = scu_bucket_at(set->buckets, index, set->stride);
+    SCU_ASSERT((index >= 0) && (index < hashSet->capacity));
+    SCUBucket* bucket = scu_bucket_at(hashSet->buckets, index, hashSet->stride);
     SCU_ASSERT(bucket->isOccupied);
     return bucket->elem;
 }
 
-void scu_set_iter_reset(SCUSetIter* iter) {
+void scu_hash_set_iter_reset(SCUHashSetIter* iter) {
     SCU_ASSERT(iter != nullptr);
-    SCU_ASSERT(iter->set != nullptr);
-    SCU_ASSERT((iter->index >= -1) && (iter->index <= iter->set->capacity));
+    SCU_ASSERT(iter->hashSet != nullptr);
+    SCU_ASSERT((iter->index >= -1) && (iter->index <= iter->hashSet->capacity));
     iter->index = -1;
 }
 
-void scu_set_free(SCUSet* set) {
-    if (set != nullptr) {
-        scu_free(set->buckets);
-        set->buckets = nullptr;
-        set->capacity = 0;
-        set->count = 0;
-        scu_free(set);
+void scu_hash_set_free(SCUHashSet* hashSet) {
+    if (hashSet != nullptr) {
+        scu_free(hashSet->buckets);
+        hashSet->buckets = nullptr;
+        hashSet->capacity = 0;
+        hashSet->count = 0;
+        scu_free(hashSet);
     }
 }

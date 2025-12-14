@@ -82,7 +82,7 @@
  * T elems[] = { ... };
  * ...
  * T* elem;
- * SCU_FOREACH(elem, elems) {
+ * SCU_ARRAY_FOREACH(elem, elems) {
  *     // Do something with *elem.
  * }
  * ```
@@ -96,7 +96,7 @@
  * @param[out] elem  A pointer to the current element during each iteration.
  * @param[in]  array The statically allocated array to iterate over.
  */
-#define SCU_FOREACH(elem, array)                                              \
+#define SCU_ARRAY_FOREACH(elem, array)                                        \
     for ((elem) = (array); (elem) < ((array) + SCU_COUNTOF(array)); (elem)++)
 
 #endif
