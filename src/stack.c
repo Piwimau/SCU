@@ -1,0 +1,241 @@
+#include "scu/alloc.h"
+#include "scu/assert.h"
+#include "scu/memory.h"
+#include "scu/stack.h"
+
+struct SCUStack {
+
+    /** @brief The size of each element (in bytes). */
+    int64_t elemSize;
+
+    /**
+     * @brief The maximum number of elements that can be stored before a
+     * reallocation is required.
+     */
+    int64_t capacity;
+
+    /** @brief The current number of elements. */
+    int64_t count;
+
+    /** 
+     * @brief The actual data (i.e., the elements) stored in the stack.
+     * 
+     * @note This is a dynamically allocated array of `count` elements of size
+     * `elemSize`, or a `nullptr` if `capacity` is zero.
+     */
+    unsigned char* data;
+
+};
+
+/** @brief The default capacity of a stack. */
+static constexpr int64_t SCU_DEFAULT_CAPACITY = 8;
+
+/** @brief The growth factor for increasing the capacity of a stack. */
+static constexpr int64_t SCU_GROWTH_FACTOR = 2;
+
+[[nodiscard]]
+SCUStack* scu_stack_new(int64_t elemSize) {
+    return scu_stack_new_with_capacity(elemSize, SCU_DEFAULT_CAPACITY);
+}
+
+[[nodiscard]]
+SCUStack* scu_stack_new_with_capacity(int64_t elemSize, int64_t capacity) {
+    SCU_ASSERT(elemSize > 0);
+    SCU_ASSERT(capacity >= 0);
+    SCUStack* stack = scu_malloc(SCU_SIZEOF(SCUStack));
+    if (stack == nullptr) {
+        return nullptr;
+    }
+    stack->elemSize = elemSize;
+    stack->capacity = capacity;
+    stack->count = 0;
+    stack->data = scu_malloc(elemSize * capacity);
+    if (stack->data == nullptr) {
+        scu_free(stack);
+        return nullptr;
+    }
+    return stack;
+}
+
+int64_t scu_stack_capacity(const SCUStack* stack) {
+    SCU_ASSERT(stack != nullptr);
+    return stack->capacity;
+}
+
+int64_t scu_stack_count(const SCUStack* stack) {
+    SCU_ASSERT(stack != nullptr);
+    return stack->count;
+}
+
+SCUError scu_stack_ensure_capacity(SCUStack* stack, int64_t capacity) {
+    SCU_ASSERT(stack != nullptr);
+    SCU_ASSERT(capacity >= 0);
+    if (stack->capacity < capacity) {
+        int64_t newCapacity = (stack->capacity > 0) ? stack->capacity : 1;
+        while (newCapacity < capacity) {
+            newCapacity *= SCU_GROWTH_FACTOR;
+        }
+        unsigned char* newData = (unsigned char*) scu_realloc(
+            stack->data,
+            stack->elemSize * newCapacity
+        );
+        if (newData == nullptr) {
+            return SCU_ERROR_OUT_OF_MEMORY;
+        }
+        stack->capacity = newCapacity;
+        stack->data = newData;
+    }
+    return SCU_ERROR_NONE;
+}
+
+SCUError scu_stack_push_impl(
+    SCUStack* restrict stack,
+    const void* restrict elem
+) {
+    SCU_ASSERT(stack != nullptr);
+    SCU_ASSERT(elem != nullptr);
+    SCUError error = scu_stack_ensure_capacity(stack, stack->count + 1);
+    if (error != SCU_ERROR_NONE) {
+        return error;
+    }
+    scu_memcpy(
+        stack->data + (stack->elemSize * stack->count),
+        elem,
+        stack->elemSize
+    );
+    stack->count++;
+    return SCU_ERROR_NONE;
+}
+
+void scu_stack_pop_impl(SCUStack* restrict stack, void* restrict elem) {
+    SCU_ASSERT(stack != nullptr);
+    SCU_ASSERT(stack->count > 0);
+    SCU_ASSERT(elem != nullptr);
+    stack->count--;
+    scu_memcpy(
+        elem,
+        stack->data + (stack->elemSize * stack->count),
+        stack->elemSize
+    );
+}
+
+bool scu_stack_try_pop_impl(SCUStack* restrict stack, void* restrict elem) {
+    SCU_ASSERT(stack != nullptr);
+    SCU_ASSERT(elem != nullptr);
+    if (stack->count == 0) {
+        return false;
+    }
+    stack->count--;
+    scu_memcpy(
+        elem,
+        stack->data + (stack->elemSize * stack->count),
+        stack->elemSize
+    );
+    return true;
+}
+
+void scu_stack_peek_impl(const SCUStack* restrict stack, void* restrict elem) {
+    SCU_ASSERT(stack != nullptr);
+    SCU_ASSERT(stack->count > 0);
+    SCU_ASSERT(elem != nullptr);
+    scu_memcpy(
+        elem,
+        stack->data + (stack->elemSize * (stack->count - 1)),
+        stack->elemSize
+    );
+}
+
+bool scu_stack_try_peek_impl(
+    const SCUStack* restrict stack,
+    void* restrict elem
+) {
+    SCU_ASSERT(stack != nullptr);
+    SCU_ASSERT(elem != nullptr);
+    if (stack->count == 0) {
+        return false;
+    }
+    scu_memcpy(
+        elem,
+        stack->data + (stack->elemSize * (stack->count - 1)),
+        stack->elemSize
+    );
+    return true;
+}
+
+void scu_stack_clear(SCUStack* stack) {
+    SCU_ASSERT(stack != nullptr);
+    stack->count = 0;
+}
+
+SCUError scu_stack_trim_excess(SCUStack* stack) {
+    SCU_ASSERT(stack != nullptr);
+    if (stack->capacity > stack->count) {
+        if (stack->count == 0) {
+            scu_free(stack->data);
+            stack->data = nullptr;
+            stack->capacity = 0;
+        }
+        else {
+            unsigned char* newData = (unsigned char*) scu_realloc(
+                stack->data,
+                stack->elemSize * stack->count
+            );
+            if (newData == nullptr) {
+                return SCU_ERROR_OUT_OF_MEMORY;
+            }
+            stack->capacity = stack->count;
+            stack->data = newData;
+        }
+    }
+    return SCU_ERROR_NONE;
+}
+
+SCUStackIter scu_stack_iter(const SCUStack* stack) {
+    SCU_ASSERT(stack != nullptr);
+    return (SCUStackIter) { .stack = (SCUStack*) stack, .index = stack->count };
+}
+
+bool scu_stack_iter_move_next(SCUStackIter* iter) {
+    SCU_ASSERT(iter != nullptr);
+    SCU_ASSERT(iter->stack != nullptr);
+    SCUStack* stack = iter->stack;
+    int64_t index = iter->index;
+    SCU_ASSERT((index >= 0) && (index <= stack->count));
+    if (stack->count == 0) {
+        iter->index = 0;
+        return false;
+    }
+    index--;
+    if (index >= 0) {
+        iter->index = index;
+        return true;
+    }
+    iter->index = 0;
+    return false;
+}
+
+void* scu_stack_iter_current(const SCUStackIter* iter) {
+    SCU_ASSERT(iter != nullptr);
+    SCU_ASSERT(iter->stack != nullptr);
+    SCUStack* stack = iter->stack;
+    int64_t index = iter->index;
+    SCU_ASSERT((index >= 0) && (index < stack->count));
+    return stack->data + (stack->elemSize * index);
+}
+
+void scu_stack_iter_reset(SCUStackIter* iter) {
+    SCU_ASSERT(iter != nullptr);
+    SCU_ASSERT(iter->stack != nullptr);
+    SCU_ASSERT((iter->index >= 0) && (iter->index <= iter->stack->count));
+    iter->index = iter->stack->count;
+}
+
+void scu_stack_free(SCUStack* stack) {
+    if (stack != nullptr) {
+        scu_free(stack->data);
+        stack->data = nullptr;
+        stack->capacity = 0;
+        stack->count = 0;
+        scu_free(stack);
+    }
+}
