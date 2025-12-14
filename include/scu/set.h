@@ -10,7 +10,7 @@
 /** @brief Represents an unordered set of elements. */
 typedef struct SCUSet SCUSet;
 
-struct SCUSetIterator {
+struct SCUSetIter {
 
     /** @brief The set being iterated over. */
     SCUSet* set;
@@ -27,11 +27,11 @@ struct SCUSetIterator {
  * and should not be relied upon. Most importantly, the behavior is undefined if
  * its fields are accessed directly.
  */
-typedef struct SCUSetIterator SCUSetIterator;
+typedef struct SCUSetIter SCUSetIter;
 
 /**
- * @brief Allocates a new set with a specified element size, hash function,
- * equality function, and an unspecified default capacity.
+ * @brief Allocates and initializes a new set with a specified element size,
+ * hash function, equality function, and an unspecified default capacity.
  *
  * @note This function dynamically allocates memory using `scu_malloc()` and
  * `scu_calloc()`.
@@ -52,8 +52,8 @@ SCUSet* scu_set_new(
 );
 
 /**
- * @brief Allocates a new set with a specified element size, hash function,
- * equality function, and initial capacity.
+ * @brief Allocates and initializes a new set with a specified element size,
+ * hash function, equality function, and initial capacity.
  *
  * @note This function dynamically allocates memory using `scu_malloc()` and
  * `scu_calloc()`.
@@ -141,7 +141,7 @@ SCUError scu_set_add_impl(SCUSet* restrict set, const void* restrict elem);
 
 /**
  * @brief Determines whether a specified set contains a specified element.
- * 
+ *
  * @note This function is an implementation detail and not intended to be called
  * directly. Use the `scu_set_contains()` macro instead.
  *
@@ -153,7 +153,7 @@ bool scu_set_contains_impl(const SCUSet* set, const void* elem);
 
 /**
  * @brief Determines whether a specified set contains a specified element.
- * 
+ *
  * @param[in] set  The set to examine.
  * @param[in] elem The element to search for.
  * @return `true` if the element is present in the set, otherwise `false`.
@@ -215,7 +215,7 @@ void scu_set_clear(SCUSet* set);
 /**
  * @brief Trims the excess capacity of a specified set to match its current
  * number of elements.
- * 
+ *
  * @note This function dynamically allocates memory using `scu_calloc()`.
  *
  * @param[in, out] set The set to trim.
@@ -228,9 +228,9 @@ SCUError scu_set_trim_excess(SCUSet* set);
  * @brief Returns an iterator for a specified set.
  *
  * @note The iterator is initially positioned before the first element of the
- * set (if any). This means that `scu_set_iterator_move_next()` must be called
+ * set (if any). This means that `scu_set_iter_move_next()` must be called
  * before accessing the first and subsequent elements with
- * `scu_set_iterator_current()`.
+ * `scu_set_iter_current()`.
  *
  * @warning The behavior is undefined if the set being iterated over is modified
  * (e.g., elements are added or removed) while the iterator is in use.
@@ -238,36 +238,36 @@ SCUError scu_set_trim_excess(SCUSet* set);
  * @param[in] set The set to iterate over.
  * @return An iterator for the specified set.
  */
-SCUSetIterator scu_set_iterator(const SCUSet* set);
+SCUSetIter scu_set_iter(const SCUSet* set);
 
 /**
  * @brief Advances a specified set iterator to the next element.
  *
- * @param[in, out] iterator The iterator to advance.
+ * @param[in, out] iter The iterator to advance.
  * @return `true` if the iterator was successfully advanced to the next element,
  * otherwise `false` (i.e., the set does not contain any more elements).
  */
-bool scu_set_iterator_move_next(SCUSetIterator* iterator);
+bool scu_set_iter_move_next(SCUSetIter* iter);
 
 /**
  * @brief Returns the current element of a specified set iterator.
  *
- * @param[in] iterator The iterator to examine.
+ * @param[in] iter The iterator to examine.
  * @return A pointer to the current element.
  */
-void* scu_set_iterator_current(const SCUSetIterator* iterator);
+void* scu_set_iter_current(const SCUSetIter* iter);
 
 /**
  * @brief Resets a specified set iterator to its initial position.
  *
  * @note The iterator is initially positioned before the first element of the
- * set (if any). This means that `scu_set_iterator_move_next()` must be called
+ * set (if any). This means that `scu_set_iter_move_next()` must be called
  * before accessing the first and subsequent elements with
- * `scu_set_iterator_current()`.
+ * `scu_set_iter_current()`.
  *
- * @param[in, out] iterator The iterator to reset.
+ * @param[in, out] iter The iterator to reset.
  */
-void scu_set_iterator_reset(SCUSetIterator* iterator);
+void scu_set_iter_reset(SCUSetIter* iter);
 
 /**
  * @brief Deallocates a specified set.
@@ -313,12 +313,12 @@ void scu_set_free(SCUSet* set);
  * @param[out] elem A pointer to the current element during each iteration.
  * @param[in]  set  The set to iterate over.
  */
-#define SCU_SET_FOREACH(elem, set)                                             \
-    for (                                                                      \
-        SCUSetIterator SCU_XCONCAT(it, __LINE__) = scu_set_iterator(set);      \
-        scu_set_iterator_move_next(&SCU_XCONCAT(it, __LINE__))                 \
-            && ((elem) = scu_set_iterator_current(&SCU_XCONCAT(it, __LINE__)), \
-                true);                                                         \
+#define SCU_SET_FOREACH(elem, set)                                         \
+    for (                                                                  \
+        SCUSetIter SCU_XCONCAT(it, __LINE__) = scu_set_iter(set);          \
+        scu_set_iter_move_next(&SCU_XCONCAT(it, __LINE__))                 \
+            && ((elem) = scu_set_iter_current(&SCU_XCONCAT(it, __LINE__)), \
+                true);                                                     \
     )
 
 #endif

@@ -60,7 +60,7 @@ void* scu_list_new_with_capacity(int64_t elemSize, int64_t capacity) {
 
 /**
  * @brief Returns a pointer to the header of a list given its data.
- * 
+ *
  * @param[in] data A pointer to the actual data of the list.
  * @return A pointer to the header of the list.
  */
@@ -73,7 +73,7 @@ static inline SCUListHeader* scu_data_to_header(void* data) {
 
 /**
  * @brief Returns a pointer to the header of a list given its data.
- * 
+ *
  * @param[in] data A pointer to the actual data of the list.
  * @return A pointer to the header of the list.
  */
@@ -127,7 +127,7 @@ SCUError scu_list_add_impl(void** restrict list, const void* restrict elem) {
     // Get the header again, as the list may have been reallocated.
     header = scu_data_to_header(*list);
     scu_memcpy(
-        ((unsigned char*) *list) + (header->elemSize * header->count),
+        header->data + (header->elemSize * header->count),
         elem,
         header->elemSize
     );
@@ -151,12 +151,12 @@ SCUError scu_list_insert_at_impl(
     // Get the header again, as the list may have been reallocated.
     header = scu_data_to_header(*list);
     scu_memmove(
-        ((unsigned char*) *list) + (header->elemSize * (index + 1)),
-        ((unsigned char*) *list) + (header->elemSize * index),
+        header->data + (header->elemSize * (index + 1)),
+        header->data + (header->elemSize * index),
         header->elemSize * (header->count - index)
     );
     scu_memcpy(
-        ((unsigned char*) *list) + (header->elemSize * index),
+        header->data + (header->elemSize * index),
         elem,
         header->elemSize
     );
@@ -168,8 +168,8 @@ void scu_list_remove_at(void* list, int64_t index) {
     SCUListHeader* header = scu_data_to_header(list);
     SCU_ASSERT((index >= 0) && (index < header->count));
     scu_memmove(
-        ((unsigned char*) list) + (header->elemSize * index),
-        ((unsigned char*) list) + (header->elemSize * (index + 1)),
+        header->data + (header->elemSize * index),
+        header->data + (header->elemSize * (index + 1)),
         header->elemSize * (header->count - index - 1)
     );
     header->count--;
@@ -200,6 +200,8 @@ SCUError scu_list_trim_excess_impl(void** list) {
 void scu_list_free(void* list) {
     if (list != nullptr) {
         SCUListHeader* header = scu_data_to_header(list);
+        header->capacity = 0;
+        header->count = 0;
         scu_free(header);
     }
 }

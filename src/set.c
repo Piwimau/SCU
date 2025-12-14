@@ -477,57 +477,58 @@ SCUError scu_set_trim_excess(SCUSet* set) {
     return SCU_ERROR_NONE;
 }
 
-SCUSetIterator scu_set_iterator(const SCUSet* set) {
+SCUSetIter scu_set_iter(const SCUSet* set) {
     SCU_ASSERT(set != nullptr);
-    return (SCUSetIterator) { .set = (SCUSet*) set, .index = -1 };
+    return (SCUSetIter) { .set = (SCUSet*) set, .index = -1 };
 }
 
-bool scu_set_iterator_move_next(SCUSetIterator* iterator) {
-    SCU_ASSERT(iterator != nullptr);
-    SCU_ASSERT(iterator->set != nullptr);
-    SCUSet* set = iterator->set;
-    int64_t index = iterator->index;
+bool scu_set_iter_move_next(SCUSetIter* iter) {
+    SCU_ASSERT(iter != nullptr);
+    SCU_ASSERT(iter->set != nullptr);
+    SCUSet* set = iter->set;
+    int64_t index = iter->index;
     SCU_ASSERT((index >= -1) && (index <= set->capacity));
     if (set->count == 0) {
-        iterator->index = set->capacity;
+        iter->index = set->capacity;
         return false;
     }
     index++;
     while (index < set->capacity) {
         SCUBucket* bucket = scu_bucket_at(set->buckets, index, set->stride);
         if (bucket->isOccupied) {
-            iterator->index = index;
+            iter->index = index;
             return true;
         }
         index++;
     }
-    iterator->index = set->capacity;
+    iter->index = set->capacity;
     return false;
 }
 
-void* scu_set_iterator_current(const SCUSetIterator* iterator) {
-    SCU_ASSERT(iterator != nullptr);
-    SCU_ASSERT(iterator->set != nullptr);
-    SCUSet* set = iterator->set;
-    int64_t index = iterator->index;
+void* scu_set_iter_current(const SCUSetIter* iter) {
+    SCU_ASSERT(iter != nullptr);
+    SCU_ASSERT(iter->set != nullptr);
+    SCUSet* set = iter->set;
+    int64_t index = iter->index;
     SCU_ASSERT((index >= 0) && (index < set->capacity));
     SCUBucket* bucket = scu_bucket_at(set->buckets, index, set->stride);
     SCU_ASSERT(bucket->isOccupied);
     return bucket->elem;
 }
 
-void scu_set_iterator_reset(SCUSetIterator* iterator) {
-    SCU_ASSERT(iterator != nullptr);
-    SCU_ASSERT(iterator->set != nullptr);
-    SCU_ASSERT(
-        (iterator->index >= -1) && (iterator->index <= iterator->set->capacity)
-    );
-    iterator->index = -1;
+void scu_set_iter_reset(SCUSetIter* iter) {
+    SCU_ASSERT(iter != nullptr);
+    SCU_ASSERT(iter->set != nullptr);
+    SCU_ASSERT((iter->index >= -1) && (iter->index <= iter->set->capacity));
+    iter->index = -1;
 }
 
 void scu_set_free(SCUSet* set) {
     if (set != nullptr) {
         scu_free(set->buckets);
+        set->buckets = nullptr;
+        set->capacity = 0;
+        set->count = 0;
         scu_free(set);
     }
 }
