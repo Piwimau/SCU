@@ -83,11 +83,7 @@ static inline int64_t scu_wall_ns() {
     if (!QueryPerformanceFrequency(&frequency)) {
         return -1;
     }
-    int64_t secs = counter.QuadPart / frequency.QuadPart;
-    int64_t frac = counter.QuadPart % frequency.QuadPart;
-    int64_t ns = (secs * SCU_NANOS_PER_SEC)
-        + ((frac * SCU_NANOS_PER_SEC) / frequency.QuadPart);
-    return ns;
+    return (counter.QuadPart * SCU_NANOS_PER_SEC) / frequency.QuadPart;
 #else
     SCUTimespec timespec;
     if (clock_gettime(CLOCK_MONOTONIC, &timespec) != 0) {
