@@ -8,7 +8,8 @@
 /** @brief Represents a file stream used to input and output data. */
 typedef struct SCUFile SCUFile;
 
-enum SCUSeekOrigin {
+/** @brief Represents an origin for seeking within a file stream. */
+typedef enum SCUSeekOrigin {
 
     /** @brief Indicates to seek from the beginning of the file stream. */
     SCU_SEEK_ORIGIN_SET,
@@ -21,10 +22,7 @@ enum SCUSeekOrigin {
     /** @brief Indicates to seek from the end of the file stream. */
     SCU_SEEK_ORIGIN_END
 
-};
-
-/** @brief Represents an origin for seeking within a file stream. */
-typedef enum SCUSeekOrigin SCUSeekOrigin;
+} SCUSeekOrigin;
 
 /**
  * @brief Returns a pointer to a file stream associated with the standard input

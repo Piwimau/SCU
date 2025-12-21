@@ -8,16 +8,6 @@
 /** @brief Represents a last-in-first-out (LIFO) collection of elements. */
 typedef struct SCUStack SCUStack;
 
-struct SCUStackIter {
-
-    /** @brief The stack being iterated over. */
-    SCUStack* stack;
-
-    /** @brief The current index within the stack. */
-    int64_t index;
-
-};
-
 /**
  * @brief Represents an iterator for a stack.
  *
@@ -25,7 +15,15 @@ struct SCUStackIter {
  * and should not be relied upon. Most importantly, the behavior is undefined if
  * its fields are accessed directly.
  */
-typedef struct SCUStackIter SCUStackIter;
+typedef struct SCUStackIter {
+
+    /** @brief The stack being iterated over. */
+    SCUStack* stack;
+
+    /** @brief The current index within the stack. */
+    int64_t index;
+
+} SCUStackIter;
 
 /**
  * @brief Allocates and initializes a new stack with a specified element size

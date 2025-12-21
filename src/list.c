@@ -3,7 +3,8 @@
 #include "scu/list.h"
 #include "scu/memory.h"
 
-struct SCUListHeader {
+/** @brief Represents a header stored before the actual data of the list. */
+typedef struct SCUListHeader {
 
     /** @brief The size of each element (in bytes). */
     int64_t elemSize;
@@ -26,10 +27,7 @@ struct SCUListHeader {
      */
     alignas(max_align_t) unsigned char data[];
 
-};
-
-/** @brief Represents a header stored before the actual data of the list. */
-typedef struct SCUListHeader SCUListHeader;
+} SCUListHeader;
 
 /** @brief The default capacity of a list. */
 static constexpr int64_t SCU_DEFAULT_CAPACITY = 8;

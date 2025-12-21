@@ -10,16 +10,6 @@
 /** @brief Represents an unordered hash set of elements. */
 typedef struct SCUHashSet SCUHashSet;
 
-struct SCUHashSetIter {
-
-    /** @brief The hash set being iterated over. */
-    SCUHashSet* hashSet;
-
-    /** @brief The current index within the hash set. */
-    int64_t index;
-
-};
-
 /**
  * @brief Represents an iterator for a hash set.
  *
@@ -27,7 +17,15 @@ struct SCUHashSetIter {
  * and should not be relied upon. Most importantly, the behavior is undefined if
  * its fields are accessed directly.
  */
-typedef struct SCUHashSetIter SCUHashSetIter;
+typedef struct SCUHashSetIter {
+
+    /** @brief The hash set being iterated over. */
+    SCUHashSet* hashSet;
+
+    /** @brief The current index within the hash set. */
+    int64_t index;
+
+} SCUHashSetIter;
 
 /**
  * @brief Allocates and initializes a new hash set with a specified element
