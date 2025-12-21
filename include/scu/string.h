@@ -56,7 +56,7 @@ int64_t scu_strnlen(const char* s, int64_t count);
  * order, zero if they compare equal, or a positive value if `left` appears
  * after `right`.
  */
-int32_t scu_strcmp(const char* left, const char* right);
+int scu_strcmp(const char* left, const char* right);
 
 /**
  * @brief Determines whether two null-terminated byte strings compare equal.
@@ -95,7 +95,7 @@ int32_t scu_strcmp(const char* left, const char* right);
  * order, zero if they compare equal or if `count` is zero, or a positive value
  * if `left` appears after `right`.
  */
-int32_t scu_strncmp(const char* left, const char* right, int64_t count);
+int scu_strncmp(const char* left, const char* right, int64_t count);
 
 /**
  * @brief Returns the index of the first occurrence of a byte in a

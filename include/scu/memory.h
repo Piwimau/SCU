@@ -60,7 +60,7 @@ void* scu_memrchr(const void* block, unsigned char c, int64_t count);
  * order, zero if they compare equal or `count` is zero, or a positive value if
  * `left` appears after `right`.
  */
-int32_t scu_memcmp(const void* left, const void* right, int64_t count);
+int scu_memcmp(const void* left, const void* right, int64_t count);
 
 /**
  * @brief Fills a block of memory with a specified byte.

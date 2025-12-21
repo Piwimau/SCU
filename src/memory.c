@@ -29,7 +29,7 @@ void* scu_memrchr(const void* block, unsigned char c, int64_t count) {
     return last;
 }
 
-int32_t scu_memcmp(const void* left, const void* right, int64_t count) {
+int scu_memcmp(const void* left, const void* right, int64_t count) {
     SCU_ASSERT(count >= 0);
     if (count == 0) {
         return 0;

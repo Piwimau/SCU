@@ -17,14 +17,14 @@ int64_t scu_strnlen(const char* s, int64_t count) {
     return (p == nullptr) ? count : (p - s);
 }
 
-int32_t scu_strcmp(const char* left, const char* right) {
+int scu_strcmp(const char* left, const char* right) {
     SCU_ASSERT(left != nullptr);
     SCU_ASSERT(right != nullptr);
     int r = strcmp(left, right);
     return (r > 0) - (r < 0);
 }
 
-int32_t scu_strncmp(const char* left, const char* right, int64_t count) {
+int scu_strncmp(const char* left, const char* right, int64_t count) {
     SCU_ASSERT(count >= 0);
     if (count == 0) {
         return 0;
