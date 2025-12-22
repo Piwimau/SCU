@@ -1,5 +1,5 @@
-#ifndef SCU_STOPWATCH_H
-#define SCU_STOPWATCH_H
+#ifndef SCU_TIME_H
+#define SCU_TIME_H
 
 #include <stdint.h>
 #include "scu/error.h"

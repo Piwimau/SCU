@@ -15,8 +15,8 @@
 #include "scu/math.h"
 #include "scu/memory.h"
 #include "scu/stack.h"
-#include "scu/stopwatch.h"
 #include "scu/string.h"
+#include "scu/time.h"
 
 /** @brief The major version number of SCU. */
 #define SCU_VERSION_MAJOR 0

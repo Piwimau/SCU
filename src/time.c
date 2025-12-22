@@ -7,7 +7,7 @@
 #include "scu/alloc.h"
 #include "scu/assert.h"
 #include "scu/common.h"
-#include "scu/stopwatch.h"
+#include "scu/time.h"
 
 struct SCUStopwatch {
 
