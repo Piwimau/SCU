@@ -1,4 +1,5 @@
 #include "scu/alloc.h"
+#include "scu/array.h"
 #include "scu/assert.h"
 #include "scu/list.h"
 #include "scu/memory.h"
@@ -193,6 +194,12 @@ SCUError scu_list_trim_excess_impl(void** list) {
         *list = newHeader->data;
     }
     return SCU_ERROR_NONE;
+}
+
+void scu_list_sort(void* list, SCUCompareFunc* compareFunc) {
+    SCU_ASSERT(compareFunc != nullptr);
+    SCUListHeader* header = scu_data_to_header(list);
+    scu_array_sort(header->data, header->count, header->elemSize, compareFunc);
 }
 
 void scu_list_free(void* list) {

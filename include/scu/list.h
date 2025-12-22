@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "scu/common.h"
+#include "scu/compare.h"
 #include "scu/error.h"
 
 /**
@@ -321,6 +322,24 @@ SCUError scu_list_trim_excess_impl(void** list);
  * `SCU_ERROR_NONE` on success.
  */
 #define scu_list_trim_excess(list) scu_list_trim_excess_impl((void**) &(list))
+
+/**
+ * @brief Sorts a specified list using a provided comparison function.
+ *
+ * @note No guarantees are made regarding the complexity and stability of the
+ * underlying sorting algorithm. Most importantly, if two elements are
+ * considered equivalent by the provided comparison function, their relative
+ * order in the sorted list may not be the same as in the original list.
+ *
+ * @warning The behavior is undefined if `compareFunc` modifies the elements
+ * passed to it, or if `compareFunc` returns inconsistent results when called
+ * more than once with the same arguments.
+ *
+ * @param[in, out] list        The list to sort.
+ * @param[in]      compareFunc A comparison function used to determine the order
+ *                             of the elements.
+ */
+void scu_list_sort(void* list, SCUCompareFunc* compareFunc);
 
 /**
  * @brief Deallocates a specified list.
