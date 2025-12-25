@@ -8,6 +8,7 @@
 #include "scu/compare.h"
 #include "scu/equal.h"
 #include "scu/error.h"
+#include "scu/hash-map.h"
 #include "scu/hash-set.h"
 #include "scu/hash.h"
 #include "scu/io.h"
