@@ -57,4 +57,14 @@
  */
 #define SCU_SIZEOF(expr) ((int64_t) sizeof(expr))
 
+/**
+ * @brief Returns the alignment requirement of an expression (in bytes) as an
+ * `int64_t`.
+ *
+ * @param[in] expr The expression to evaluate the alignment requirement of.
+ * @return The alignment requirement of the expression (in bytes) as an
+ * `int64_t`.
+ */
+#define SCU_ALIGNOF(expr) ((int64_t) alignof(expr))
+
 #endif
