@@ -17,9 +17,9 @@ struct SCUStack {
     /** @brief The current number of elements. */
     int64_t count;
 
-    /** 
+    /**
      * @brief The actual data (i.e., the elements) stored in the stack.
-     * 
+     *
      * @note This is a dynamically allocated array of `count` elements of size
      * `elemSize`, or a `nullptr` if `capacity` is zero.
      */

@@ -372,7 +372,7 @@ void scu_list_free(void* list);
  * ...
  * T* elem;
  * SCU_LIST_FOREACH(elem, list) {
- *    // Do something with *elem.
+ *     // Do something with *elem.
  * }
  * ```
  *

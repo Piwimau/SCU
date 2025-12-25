@@ -118,8 +118,8 @@ SCUError scu_hash_set_ensure_capacity(SCUHashSet* hashSet, int64_t capacity);
  * @param[in, out] hashSet The hash set to add the element to.
  * @param[in]      elem    The element to add.
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
- * `SCU_ERROR_ELEM_PRESENT` if the element is already present in the hash set,
- * or `SCU_ERROR_NONE` on success.
+ * `SCU_ERROR_ALREADY_PRESENT` if the element is already present in the hash
+ * set, or `SCU_ERROR_NONE` on success.
  */
 SCUError scu_hash_set_add_impl(
     SCUHashSet* restrict hashSet,
@@ -135,8 +135,8 @@ SCUError scu_hash_set_add_impl(
  * @param[in, out] hashSet The hash set to add the element to.
  * @param[in]      elem    The element to add.
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
- * `SCU_ERROR_ELEM_PRESENT` if the element is already present in the hash set,
- * or `SCU_ERROR_NONE` on success.
+ * `SCU_ERROR_ALREADY_PRESENT` if the element is already present in the hash
+ * set, or `SCU_ERROR_NONE` on success.
  */
 #define scu_hash_set_add(hashSet, elem) scu_hash_set_add_impl(hashSet, &(elem))
 
@@ -310,7 +310,7 @@ void scu_hash_set_free(SCUHashSet* hashSet);
  * ...
  * T* elem;
  * SCU_HASH_SET_FOREACH(elem, elems) {
- *    // Do something with *elem.
+ *     // Do something with *elem.
  * }
  * ```
  *

@@ -29,8 +29,8 @@ struct SCUHashSet {
     /** @brief The size of each element (in bytes). */
     int64_t elemSize;
 
-    /** @brief The stride between consecutive buckets (in bytes). */
-    int64_t stride;
+    /** @brief The effective size of each bucket (in bytes). */
+    int64_t bucketSize;
 
     /**
      * @brief The maximum number of elements that could theoretically be stored.
@@ -95,7 +95,7 @@ SCUHashSet* scu_hash_set_new(
  * value.
  */
 static inline int64_t scu_next_power_of_two(int64_t n) {
-    SCU_ASSERT((n >= 0) && (n <= (1LL << 62)));
+    SCU_ASSERT((n >= 0) && (n <= (INT64_C(1) << 62)));
     if (n <= 1) {
         return 1;
     }
@@ -127,13 +127,13 @@ SCUHashSet* scu_hash_set_new_with_capacity(
         return nullptr;
     }
     hashSet->elemSize = elemSize;
-    hashSet->stride = SCU_SIZEOF(SCUBucket) + elemSize;
+    hashSet->bucketSize = SCU_SIZEOF(SCUBucket) + elemSize;
     hashSet->count = 0;
     hashSet->hashFunc = hashFunc;
     hashSet->equalFunc = equalFunc;
     if (capacity > 0) {
         hashSet->capacity = scu_next_power_of_two(capacity);
-        hashSet->buckets = scu_calloc(hashSet->capacity, hashSet->stride);
+        hashSet->buckets = scu_calloc(hashSet->capacity, hashSet->bucketSize);
         if (hashSet->buckets == nullptr) {
             scu_free(hashSet);
             return nullptr;
@@ -159,20 +159,20 @@ int64_t scu_hash_set_count(const SCUHashSet* hashSet) {
 /**
  * @brief Returns a pointer to a bucket at a specified index.
  *
- * @param[in] buckets A pointer to an array of buckets.
- * @param[in] index   The index of the bucket to retrieve.
- * @param[in] stride  The stride between consecutive buckets (in bytes).
+ * @param[in] buckets    A pointer to an array of buckets.
+ * @param[in] index      The index of the bucket to retrieve.
+ * @param[in] bucketSize The effective size of each bucket (in bytes).
  * @return A pointer to the bucket at the specified index.
  */
 static inline SCUBucket* scu_bucket_at(
     SCUBucket* buckets,
     int64_t index,
-    int64_t stride
+    int64_t bucketSize
 ) {
     SCU_ASSERT(buckets != nullptr);
     SCU_ASSERT(index >= 0);
-    SCU_ASSERT(stride > SCU_SIZEOF(SCUBucket));
-    return (SCUBucket*) (((unsigned char*) buckets) + (index * stride));
+    SCU_ASSERT(bucketSize > SCU_SIZEOF(SCUBucket));
+    return (SCUBucket*) (((unsigned char*) buckets) + (index * bucketSize));
 }
 
 /**
@@ -229,10 +229,10 @@ static inline int64_t scu_probe_distance(
  * capacity to hold all elements of the old buckets. Additionally, the contents
  * of `oldBuckets` may be modified during the rehashing process for optimization
  * purposes. After this function returns, the state of `oldBuckets` is
- * explicitly undefined.
+ * undefined.
  *
  * @param[in, out] hashSet     The hash set to rehash into.
- * @param[in, out] oldBuckets  The buckets to rehash.
+ * @param[in, out] oldBuckets  The old buckets to rehash.
  * @param[in]      oldCapacity The old capacity (in number of buckets).
  */
 static inline void scu_hash_set_rehash_buckets(
@@ -244,7 +244,11 @@ static inline void scu_hash_set_rehash_buckets(
     SCU_ASSERT(oldBuckets != nullptr);
     SCU_ASSERT(oldCapacity > 0);
     for (int64_t i = 0; i < oldCapacity; i++) {
-        SCUBucket* oldBucket = scu_bucket_at(oldBuckets, i, hashSet->stride);
+        SCUBucket* oldBucket = scu_bucket_at(
+            oldBuckets,
+            i,
+            hashSet->bucketSize
+        );
         if (oldBucket->isOccupied) {
             int64_t index = scu_ideal_index(oldBucket->hash, hashSet->capacity);
             int64_t distance = 0;
@@ -252,10 +256,10 @@ static inline void scu_hash_set_rehash_buckets(
                 SCUBucket* newBucket = scu_bucket_at(
                     hashSet->buckets,
                     index,
-                    hashSet->stride
+                    hashSet->bucketSize
                 );
                 if (!newBucket->isOccupied) {
-                    scu_memcpy(newBucket, oldBucket, hashSet->stride);
+                    scu_memcpy(newBucket, oldBucket, hashSet->bucketSize);
                     hashSet->count++;
                     break;
                 }
@@ -265,7 +269,7 @@ static inline void scu_hash_set_rehash_buckets(
                     hashSet->capacity
                 );
                 if (distance > otherDistance) {
-                    scu_memswap(oldBucket, newBucket, hashSet->stride);
+                    scu_memswap(oldBucket, newBucket, hashSet->bucketSize);
                     distance = otherDistance;
                 }
                 index = scu_wrap_index(index + 1, hashSet->capacity);
@@ -284,7 +288,7 @@ SCUError scu_hash_set_ensure_capacity(SCUHashSet* hashSet, int64_t capacity) {
         return SCU_ERROR_NONE;
     }
     int64_t newCapacity = scu_next_power_of_two(minCapacity);
-    SCUBucket* newBuckets = scu_calloc(newCapacity, hashSet->stride);
+    SCUBucket* newBuckets = scu_calloc(newCapacity, hashSet->bucketSize);
     if (newBuckets == nullptr) {
         return SCU_ERROR_OUT_OF_MEMORY;
     }
@@ -317,7 +321,7 @@ SCUError scu_hash_set_add_impl(
             return error;
         }
     }
-    SCUBucket* tempBucket = scu_malloc(hashSet->stride);
+    SCUBucket* tempBucket = scu_malloc(hashSet->bucketSize);
     if (tempBucket == nullptr) {
         return SCU_ERROR_OUT_OF_MEMORY;
     }
@@ -330,10 +334,10 @@ SCUError scu_hash_set_add_impl(
         SCUBucket* bucket = scu_bucket_at(
             hashSet->buckets,
             index,
-            hashSet->stride
+            hashSet->bucketSize
         );
         if (!bucket->isOccupied) {
-            scu_memcpy(bucket, tempBucket, hashSet->stride);
+            scu_memcpy(bucket, tempBucket, hashSet->bucketSize);
             hashSet->count++;
             scu_free(tempBucket);
             return SCU_ERROR_NONE;
@@ -341,7 +345,7 @@ SCUError scu_hash_set_add_impl(
         if ((bucket->hash == tempBucket->hash)
                 && hashSet->equalFunc(bucket->elem, tempBucket->elem)) {
             scu_free(tempBucket);
-            return SCU_ERROR_ELEM_PRESENT;
+            return SCU_ERROR_ALREADY_PRESENT;
         }
         int64_t otherDistance = scu_probe_distance(
             bucket->hash,
@@ -349,7 +353,7 @@ SCUError scu_hash_set_add_impl(
             hashSet->capacity
         );
         if (distance > otherDistance) {
-            scu_memswap(bucket, tempBucket, hashSet->stride);
+            scu_memswap(bucket, tempBucket, hashSet->bucketSize);
             distance = otherDistance;
         }
         index = scu_wrap_index(index + 1, hashSet->capacity);
@@ -370,7 +374,7 @@ bool scu_hash_set_contains_impl(const SCUHashSet* hashSet, const void* elem) {
         SCUBucket* bucket = scu_bucket_at(
             hashSet->buckets,
             index,
-            hashSet->stride
+            hashSet->bucketSize
         );
         if (!bucket->isOccupied) {
             return false;
@@ -407,7 +411,7 @@ bool scu_hash_set_remove_impl(
         SCUBucket* bucket = scu_bucket_at(
             hashSet->buckets,
             index,
-            hashSet->stride
+            hashSet->bucketSize
         );
         if (!bucket->isOccupied) {
             return false;
@@ -426,13 +430,17 @@ bool scu_hash_set_remove_impl(
         index = scu_wrap_index(index + 1, hashSet->capacity);
         distance++;
     }
-    SCUBucket* bucket = scu_bucket_at(hashSet->buckets, index, hashSet->stride);
+    SCUBucket* bucket = scu_bucket_at(
+        hashSet->buckets,
+        index,
+        hashSet->bucketSize
+    );
     while (true) {
         int64_t nextIndex = scu_wrap_index(index + 1, hashSet->capacity);
         SCUBucket* nextBucket = scu_bucket_at(
             hashSet->buckets,
             nextIndex,
-            hashSet->stride
+            hashSet->bucketSize
         );
         if (!nextBucket->isOccupied) {
             break;
@@ -445,7 +453,7 @@ bool scu_hash_set_remove_impl(
         if (nextDistance == 0) {
             break;
         }
-        scu_memcpy(bucket, nextBucket, hashSet->stride);
+        scu_memcpy(bucket, nextBucket, hashSet->bucketSize);
         index = nextIndex;
         bucket = nextBucket;
     }
@@ -461,7 +469,7 @@ void scu_hash_set_clear(SCUHashSet* hashSet) {
             SCUBucket* bucket = scu_bucket_at(
                 hashSet->buckets,
                 i,
-                hashSet->stride
+                hashSet->bucketSize
             );
             bucket->isOccupied = false;
         }
@@ -483,7 +491,7 @@ SCUError scu_hash_set_trim_excess(SCUHashSet* hashSet) {
     if (hashSet->capacity <= newCapacity) {
         return SCU_ERROR_NONE;
     }
-    SCUBucket* newBuckets = scu_calloc(newCapacity, hashSet->stride);
+    SCUBucket* newBuckets = scu_calloc(newCapacity, hashSet->bucketSize);
     if (newBuckets == nullptr) {
         return SCU_ERROR_OUT_OF_MEMORY;
     }
@@ -517,7 +525,7 @@ bool scu_hash_set_iter_move_next(SCUHashSetIter* iter) {
         SCUBucket* bucket = scu_bucket_at(
             hashSet->buckets,
             index,
-            hashSet->stride
+            hashSet->bucketSize
         );
         if (bucket->isOccupied) {
             iter->index = index;
@@ -535,7 +543,11 @@ void* scu_hash_set_iter_current(const SCUHashSetIter* iter) {
     SCUHashSet* hashSet = iter->hashSet;
     int64_t index = iter->index;
     SCU_ASSERT((index >= 0) && (index < hashSet->capacity));
-    SCUBucket* bucket = scu_bucket_at(hashSet->buckets, index, hashSet->stride);
+    SCUBucket* bucket = scu_bucket_at(
+        hashSet->buckets,
+        index,
+        hashSet->bucketSize
+    );
     SCU_ASSERT(bucket->isOccupied);
     return bucket->elem;
 }

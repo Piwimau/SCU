@@ -328,7 +328,7 @@ void scu_stack_free(SCUStack* stack);
  * ...
  * T* elem;
  * SCU_STACK_FOREACH(elem, stack) {
- *    // Do something with *elem.
+ *     // Do something with *elem.
  * }
  * ```
  *
