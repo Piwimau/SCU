@@ -75,7 +75,7 @@ SCUError scu_stack_ensure_capacity(SCUStack* stack, int64_t capacity) {
         while (newCapacity < capacity) {
             newCapacity *= SCU_GROWTH_FACTOR;
         }
-        unsigned char* newData = (unsigned char*) scu_realloc(
+        unsigned char* newData = scu_realloc(
             stack->data,
             stack->elemSize * newCapacity
         );
@@ -176,7 +176,7 @@ SCUError scu_stack_trim_excess(SCUStack* stack) {
             stack->capacity = 0;
         }
         else {
-            unsigned char* newData = (unsigned char*) scu_realloc(
+            unsigned char* newData = scu_realloc(
                 stack->data,
                 stack->elemSize * stack->count
             );
