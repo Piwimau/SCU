@@ -99,4 +99,18 @@ uint64_t scu_hash_int64(const void* value);
  */
 uint64_t scu_hash_uint64(const void* value);
 
+/**
+ * @brief Returns a hash for a specified null-terminated byte string.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to a pointer
+ * to a null-terminated byte string. Note that `value` must not be a direct
+ * pointer to the string itself, but a pointer to a pointer (i.e., `value` is
+ * interpreted as `const char* const*`).
+ *
+ * @param[in] value A pointer to a pointer to the null-terminated byte string to
+ *                  hash.
+ * @return A hash for the specified null-terminated byte string.
+ */
+uint64_t scu_hash_str(const void* value);
+
 #endif

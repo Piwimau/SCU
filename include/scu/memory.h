@@ -43,8 +43,8 @@ void* scu_memrchr(const void* block, unsigned char c, int64_t count);
  * @note If `count` is zero, both `left` and `right` are ignored (each may even
  * be a `nullptr`), and the function returns zero.
  *
- * @warning The behavior is undefined if either `left` or `right` is not a
- * pointer to a block of memory of at least `count` contiguous bytes.
+ * @warning The behavior is undefined if `left` or `right` is not a pointer to a
+ * block of memory of at least `count` contiguous bytes.
  *
  * This function compares the byte representation of the two blocks of memory,
  * not the values of the objects they may represent. It should not be used to
@@ -93,9 +93,9 @@ void* scu_memset(void* dest, unsigned char c, int64_t count);
  * If `dest` and `src` may overlap, use `scu_memmove()` instead, which handles
  * overlapping blocks of memory correctly (but may be less efficient).
  *
- * @warning The behavior is undefined if either `dest` or `src` is not a pointer
- * to a block of memory of at least `count` contiguous bytes, or if `dest` and
- * `src` overlap.
+ * @warning The behavior is undefined if `dest` or `src` is not a pointer to a
+ * block of memory of at least `count` contiguous bytes, or if `dest` and `src`
+ * overlap.
  *
  * @param[out] dest  The block of memory to copy to.
  * @param[in]  src   The block of memory to copy from.
@@ -115,9 +115,9 @@ void* scu_memcpy(void* restrict dest, const void* restrict src, int64_t count);
  * If `dest` and `src` may overlap, use `scu_memmove()` instead, which handles
  * overlapping blocks of memory correctly (but may be less efficient).
  *
- * @warning The behavior is undefined if either `dest` or `src` is not a pointer
- * to a block of memory of at least `count` contiguous bytes, or if `dest` and
- * `src` overlap.
+ * @warning The behavior is undefined if `dest` or `src` is not a pointer to a
+ * block of memory of at least `count` contiguous bytes, or if `dest` and `src`
+ * overlap.
  *
  * @param[out] dest  The block of memory to copy to.
  * @param[in]  src   The block of memory to copy from.
@@ -145,9 +145,9 @@ void* scu_memccpy(
  * If `dest` and `src` may overlap, use `scu_memmove()` instead, which handles
  * overlapping blocks of memory correctly (but may be less efficient).
  *
- * @warning The behavior is undefined if either `dest` or `src` is not a pointer
- * to a block of memory of at least `count` contiguous bytes, or if `dest` and
- * `src` overlap.
+ * @warning The behavior is undefined if `dest` or `src` is not a pointer to a
+ * block of memory of at least `count` contiguous bytes, or if `dest` and `src`
+ * overlap.
  *
  * @param[out] dest  The block of memory to copy to.
  * @param[in]  src   The block of memory to copy from.
@@ -168,8 +168,8 @@ void* scu_mempcpy(void* restrict dest, const void* restrict src, int64_t count);
  * If `dest` and `src` are known to be non-overlapping, use `scu_memcpy()`
  * instead, which is likely to be more efficient.
  *
- * @warning The behavior is undefined if either `dest` or `src` is not a pointer
- * to a block of memory of at least `count` contiguous bytes.
+ * @warning The behavior is undefined if `dest` or `src` is not a pointer to a
+ * block of memory of at least `count` contiguous bytes.
  *
  * @param[out] dest  The block of memory to copy to.
  * @param[in]  src   The block of memory to copy from.
@@ -185,9 +185,9 @@ void* scu_memmove(void* dest, const void* src, int64_t count);
  * returns. Both `left` and `right` are ignored in this case (and may be a
  * `nullptr` each).
  *
- * @warning The behavior is undefined if either `left` or `right` is not a
- * pointer to a block of memory of at least `count` contiguous bytes, or if
- * `left` and `right` overlap.
+ * @warning The behavior is undefined if `left` or `right` is not a pointer to a
+ * block of memory of at least `count` contiguous bytes, or if `left` and
+ * `right` overlap.
  *
  * @param[in, out] left  The first block of memory.
  * @param[in, out] right The second block of memory.

@@ -359,7 +359,7 @@ SCUError scu_hash_map_add_impl(
 ) {
     SCUError error = scu_hash_map_try_add_impl(hashMap, key, value);
     if (error == SCU_ERROR_ALREADY_PRESENT) {
-        SCU_FATAL("The specified key is already present.");
+        SCU_FATAL("The specified key is already present.\n");
     }
     return error;
 }
@@ -443,7 +443,7 @@ SCUError scu_hash_map_try_add_impl(
 void* scu_hash_map_get_impl(const SCUHashMap* hashMap, const void* key) {
     void* value;
     if (!scu_hash_map_try_get_impl(hashMap, key, &value)) {
-        SCU_FATAL("The specified key is not present.");
+        SCU_FATAL("The specified key is not present.\n");
     }
     return value;
 }
@@ -497,7 +497,7 @@ void scu_hash_map_set_impl(
     const void* restrict value
 ) {
     if (!scu_hash_map_try_set_impl(hashMap, key, value)) {
-        SCU_FATAL("The specified key is not present.");
+        SCU_FATAL("The specified key is not present.\n");
     }
 }
 

@@ -1,3 +1,4 @@
+#include <string.h>
 #include "scu/assert.h"
 #include "scu/equal.h"
 
@@ -47,4 +48,12 @@ bool scu_equal_uint64(const void* a, const void* b) {
     SCU_ASSERT(a != nullptr);
     SCU_ASSERT(b != nullptr);
     return *(const uint64_t*) a == *(const uint64_t*) b;
+}
+
+bool scu_equal_str(const void* a, const void* b) {
+    SCU_ASSERT(a != nullptr);
+    SCU_ASSERT(b != nullptr);
+    const char* l = *(const char* const*) a;
+    const char* r = *(const char* const*) b;
+    return strcmp(l, r) == 0;
 }
