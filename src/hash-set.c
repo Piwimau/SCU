@@ -305,7 +305,7 @@ SCUError scu_hash_set_ensure_capacity(SCUHashSet* hashSet, int64_t capacity) {
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_hash_set_add_impl(
+SCUError scu_hash_set_add(
     SCUHashSet* restrict hashSet,
     const void* restrict elem
 ) {
@@ -361,7 +361,7 @@ SCUError scu_hash_set_add_impl(
     }
 }
 
-bool scu_hash_set_contains_impl(const SCUHashSet* hashSet, const void* elem) {
+bool scu_hash_set_contains(const SCUHashSet* hashSet, const void* elem) {
     SCU_ASSERT(hashSet != nullptr);
     SCU_ASSERT(elem != nullptr);
     if (hashSet->count == 0) {
@@ -395,7 +395,7 @@ bool scu_hash_set_contains_impl(const SCUHashSet* hashSet, const void* elem) {
     }
 }
 
-bool scu_hash_set_remove_impl(
+bool scu_hash_set_remove(
     SCUHashSet* restrict hashSet,
     const void* restrict elem
 ) {

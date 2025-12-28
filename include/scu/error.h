@@ -52,13 +52,10 @@ typedef enum SCUError {
     /** @brief Indicates that an error occurred while renaming a file. */
     SCU_ERROR_RENAMING_FILE,
 
-    /** @brief Indicates that an error occurred while using a stopwatch. */
-    SCU_ERROR_STOPWATCH_FAILED,
-
     /** @brief Indicates that something is already present. */
     SCU_ERROR_ALREADY_PRESENT,
 
-    /** @brief Indicates that an input was not in the expected format. */
+    /** @brief Indicates that something did not have the expected format. */
     SCU_ERROR_INVALID_FORMAT
 
 } SCUError;
@@ -95,9 +92,9 @@ void scu_fatal(
  * terminates the program abnormally.
  *
  * This macro accepts a `printf()`-style format string and a variable number of
- * arguments for providing additional information. It wraps the `scu_fatal()`
- * function, such that it automatically includes the file, line and function in
- * which the error occurred.
+ * arguments for providing additional information. It wraps `scu_fatal()`, such
+ * that it automatically includes the file, line and function in which the error
+ * occurred.
  *
  * ```c
  * size_t length = 1024;
@@ -107,8 +104,7 @@ void scu_fatal(
  * }
  * ```
  *
- * @warning This function terminates the program abnormally and does not return
- * (as indicated by the `[[noreturn]]` attribute).
+ * @warning This macro terminates the program abnormally.
  *
  * @param[in] fmt A `printf()`-style format string containing the error message.
  * @param[in] ... A variable number of arguments to be formatted according to

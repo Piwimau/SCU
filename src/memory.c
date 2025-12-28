@@ -36,8 +36,8 @@ int scu_memcmp(const void* left, const void* right, int64_t count) {
     }
     SCU_ASSERT(left != nullptr);
     SCU_ASSERT(right != nullptr);
-    int r = memcmp(left, right, (size_t) count);
-    return (r > 0) - (r < 0);
+    int cmp = memcmp(left, right, (size_t) count);
+    return (cmp < 0) ? -1 : (cmp > 0) ? 1 : 0;
 }
 
 void* scu_memset(void* dest, unsigned char c, int64_t count) {

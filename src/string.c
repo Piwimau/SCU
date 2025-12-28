@@ -14,14 +14,14 @@ int64_t scu_strlen(const char* s) {
 
 int64_t scu_strnlen(const char* s, int64_t count) {
     const char* p = scu_memchr(s, '\0', count);
-    return (p == nullptr) ? count : (p - s);
+    return (p == nullptr) ? count : p - s;
 }
 
 int scu_strcmp(const char* left, const char* right) {
     SCU_ASSERT(left != nullptr);
     SCU_ASSERT(right != nullptr);
-    int r = strcmp(left, right);
-    return (r > 0) - (r < 0);
+    int cmp = strcmp(left, right);
+    return (cmp < 0) ? -1 : (cmp > 0) ? 1 : 0;
 }
 
 int scu_strncmp(const char* left, const char* right, int64_t count) {
@@ -31,8 +31,8 @@ int scu_strncmp(const char* left, const char* right, int64_t count) {
     }
     SCU_ASSERT(left != nullptr);
     SCU_ASSERT(right != nullptr);
-    int r = strncmp(left, right, (size_t) count);
-    return (r > 0) - (r < 0);
+    int cmp = strncmp(left, right, (size_t) count);
+    return (cmp < 0) ? -1 : (cmp > 0) ? 1 : 0;
 }
 
 int64_t scu_str_index_of_byte(const char* s, char c) {
@@ -41,14 +41,14 @@ int64_t scu_str_index_of_byte(const char* s, char c) {
         return -1;
     }
     const char* p = strchr(s, c);
-    return (p == nullptr) ? -1 : (p - s);
+    return (p == nullptr) ? -1 : p - s;
 }
 
 int64_t scu_str_index_of_str(const char* s, const char* other) {
     SCU_ASSERT(s != nullptr);
     SCU_ASSERT(other != nullptr);
     const char* p = strstr(s, other);
-    return (p == nullptr) ? -1 : (p - s);
+    return (p == nullptr) ? -1 : p - s;
 }
 
 int64_t scu_str_last_index_of_byte(const char* s, char c) {
@@ -57,7 +57,7 @@ int64_t scu_str_last_index_of_byte(const char* s, char c) {
         return -1;
     }
     const char* p = strrchr(s, c);
-    return (p == nullptr) ? -1 : (p - s);
+    return (p == nullptr) ? -1 : p - s;
 }
 
 int64_t scu_str_last_index_of_str(const char* s, const char* other) {
@@ -69,10 +69,9 @@ int64_t scu_str_last_index_of_str(const char* s, const char* other) {
     const char* last = nullptr;
     const char* p = s;
     while ((p = strstr(p, other)) != nullptr) {
-        last = p;
-        p++;
+        last = p++;
     }
-    return (last == nullptr) ? -1 : (last - s);
+    return (last == nullptr) ? -1 : last - s;
 }
 
 int64_t scu_str_index_of_any(const char* s, const char* anyOf) {
@@ -82,7 +81,7 @@ int64_t scu_str_index_of_any(const char* s, const char* anyOf) {
         return -1;
     }
     const char* p = strpbrk(s, anyOf);
-    return (p == nullptr) ? -1 : (p - s);
+    return (p == nullptr) ? -1 : p - s;
 }
 
 int64_t scu_str_last_index_of_any(const char* s, const char* anyOf) {
@@ -94,10 +93,9 @@ int64_t scu_str_last_index_of_any(const char* s, const char* anyOf) {
     const char* last = nullptr;
     const char* p = s;
     while ((p = strpbrk(p, anyOf)) != nullptr) {
-        last = p;
-        p++;
+        last = p++;
     }
-    return (last == nullptr) ? -1 : (last - s);
+    return (last == nullptr) ? -1 : last - s;
 }
 
 int64_t scu_str_index_in_range(
@@ -106,12 +104,12 @@ int64_t scu_str_index_in_range(
     char highInclusive
 ) {
     SCU_ASSERT(s != nullptr);
+    const unsigned char* p = (const unsigned char*) s;
     unsigned char low = (unsigned char) lowInclusive;
     unsigned char high = (unsigned char) highInclusive;
     SCU_ASSERT(high >= low);
-    for (int64_t i = 0; s[i] != '\0'; i++) {
-        unsigned char c = (unsigned char) s[i];
-        if ((c >= low) && (c <= high)) {
+    for (int64_t i = 0; p[i] != '\0'; i++) {
+        if ((p[i] >= low) && (p[i] <= high)) {
             return i;
         }
     }
@@ -124,13 +122,13 @@ int64_t scu_str_last_index_in_range(
     char highInclusive
 ) {
     SCU_ASSERT(s != nullptr);
+    const unsigned char* p = (const unsigned char*) s;
     unsigned char low = (unsigned char) lowInclusive;
     unsigned char high = (unsigned char) highInclusive;
     SCU_ASSERT(high >= low);
     int64_t last = -1;
-    for (int64_t i = 0; s[i] != '\0'; i++) {
-        unsigned char c = (unsigned char) s[i];
-        if ((c >= low) && (c <= high)) {
+    for (int64_t i = 0; p[i] != '\0'; i++) {
+        if ((p[i] >= low) && (p[i] <= high)) {
             last = i;
         }
     }

@@ -13,9 +13,9 @@ typedef struct SCUHashSet SCUHashSet;
 /**
  * @brief Represents an iterator for a hash set.
  *
- * @note The internal representation of the iterator is an implementation detail
- * and should not be relied upon. Most importantly, the behavior is undefined if
- * its fields are accessed directly.
+ * @warning The internal representation of the iterator is an implementation
+ * detail and should not be relied upon. Most importantly, the behavior is
+ * undefined if its fields are accessed directly.
  */
 typedef struct SCUHashSetIter {
 
@@ -109,10 +109,7 @@ SCUError scu_hash_set_ensure_capacity(SCUHashSet* hashSet, int64_t capacity);
 /**
  * @brief Adds a new element to a specified hash set.
  *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_set_add()` macro instead.
- *
- * This function dynamically allocates memory using `scu_malloc()` and
+ * @note This function dynamically allocates memory using `scu_malloc()` and
  * `scu_calloc()`.
  *
  * @param[in, out] hashSet The hash set to add the element to.
@@ -121,55 +118,25 @@ SCUError scu_hash_set_ensure_capacity(SCUHashSet* hashSet, int64_t capacity);
  * `SCU_ERROR_ALREADY_PRESENT` if the element is already present in the hash
  * set, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_hash_set_add_impl(
+SCUError scu_hash_set_add(
     SCUHashSet* restrict hashSet,
     const void* restrict elem
 );
 
 /**
- * @brief Adds a new element to a specified hash set.
- *
- * @note This macro dynamically allocates memory using `scu_malloc()` and
- * `scu_calloc()`.
- *
- * @param[in, out] hashSet The hash set to add the element to.
- * @param[in]      elem    The element to add.
- * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
- * `SCU_ERROR_ALREADY_PRESENT` if the element is already present in the hash
- * set, or `SCU_ERROR_NONE` on success.
- */
-#define scu_hash_set_add(hashSet, elem) scu_hash_set_add_impl(hashSet, &(elem))
-
-/**
- * @brief Determines whether a specified hash set contains a specified element.
- *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_set_contains()` macro instead.
- *
- * @param[in] hashSet The hash set to examine.
- * @param[in] elem    The element to search for.
- * @return `true` if the element is present in the hash set, otherwise `false`.
- */
-bool scu_hash_set_contains_impl(const SCUHashSet* hashSet, const void* elem);
-
-/**
  * @brief Determines whether a specified hash set contains a specified element.
  *
  * @param[in] hashSet The hash set to examine.
  * @param[in] elem    The element to search for.
  * @return `true` if the element is present in the hash set, otherwise `false`.
  */
-#define scu_hash_set_contains(hashSet, elem)     \
-    scu_hash_set_contains_impl(hashSet, &(elem))
+bool scu_hash_set_contains(const SCUHashSet* hashSet, const void* elem);
 
 /**
  * @brief Removes a specified element from a specified hash set.
  *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_set_remove()` macro instead.
- *
- * Consider using `scu_hash_set_trim_excess()` if you wish to reduce the memory
- * usage of the hash set after removing elements.
+ * @note Consider using `scu_hash_set_trim_excess()` if you wish to reduce the
+ * memory usage of the hash set after removing elements.
  *
  * @warning This function does not deallocate the removed element, it only
  * removes it from the hash set. The caller is responsible for deallocating the
@@ -181,29 +148,10 @@ bool scu_hash_set_contains_impl(const SCUHashSet* hashSet, const void* elem);
  * @return `true` if the element was present and removed from the hash set,
  * otherwise `false`.
  */
-bool scu_hash_set_remove_impl(
+bool scu_hash_set_remove(
     SCUHashSet* restrict hashSet,
     const void* restrict elem
 );
-
-/**
- * @brief Removes a specified element from a specified hash set.
- *
- * @note Consider using `scu_hash_set_trim_excess()` if you wish to reduce the
- * memory usage of the hash set after removing elements.
- *
- * @warning This macro does not deallocate the removed element, it only removes
- * it from the hash set. The caller is responsible for deallocating the removed
- * element if it is a pointer to a dynamically allocated object and no other
- * references to it exist.
- *
- * @param[in, out] hashSet The hash set to remove the element from.
- * @param[in]      elem    The element to remove.
- * @return `true` if the element was present and removed from the hash set,
- * otherwise `false`.
- */
-#define scu_hash_set_remove(hashSet, elem)     \
-    scu_hash_set_remove_impl(hashSet, &(elem))
 
 /**
  * @brief Removes all elements from a specified hash set.

@@ -88,10 +88,7 @@ SCUError scu_stack_ensure_capacity(SCUStack* stack, int64_t capacity) {
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_stack_push_impl(
-    SCUStack* restrict stack,
-    const void* restrict elem
-) {
+SCUError scu_stack_push(SCUStack* restrict stack, const void* restrict elem) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(elem != nullptr);
     SCUError error = scu_stack_ensure_capacity(stack, stack->count + 1);
@@ -107,7 +104,7 @@ SCUError scu_stack_push_impl(
     return SCU_ERROR_NONE;
 }
 
-void scu_stack_pop_impl(SCUStack* restrict stack, void* restrict elem) {
+void scu_stack_pop(SCUStack* restrict stack, void* restrict elem) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(stack->count > 0);
     SCU_ASSERT(elem != nullptr);
@@ -119,7 +116,7 @@ void scu_stack_pop_impl(SCUStack* restrict stack, void* restrict elem) {
     );
 }
 
-bool scu_stack_try_pop_impl(SCUStack* restrict stack, void* restrict elem) {
+bool scu_stack_try_pop(SCUStack* restrict stack, void* restrict elem) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(elem != nullptr);
     if (stack->count == 0) {
@@ -134,31 +131,24 @@ bool scu_stack_try_pop_impl(SCUStack* restrict stack, void* restrict elem) {
     return true;
 }
 
-void scu_stack_peek_impl(const SCUStack* restrict stack, void* restrict elem) {
+void scu_stack_peek_impl(const SCUStack* restrict stack, void** restrict elem) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(stack->count > 0);
     SCU_ASSERT(elem != nullptr);
-    scu_memcpy(
-        elem,
-        stack->data + (stack->elemSize * (stack->count - 1)),
-        stack->elemSize
-    );
+    *elem = stack->data + (stack->elemSize * (stack->count - 1));
 }
 
 bool scu_stack_try_peek_impl(
     const SCUStack* restrict stack,
-    void* restrict elem
+    void** restrict elem
 ) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(elem != nullptr);
     if (stack->count == 0) {
+        *elem = nullptr;
         return false;
     }
-    scu_memcpy(
-        elem,
-        stack->data + (stack->elemSize * (stack->count - 1)),
-        stack->elemSize
-    );
+    *elem = stack->data + (stack->elemSize * (stack->count - 1));
     return true;
 }
 

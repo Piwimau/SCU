@@ -13,9 +13,9 @@ typedef struct SCUHashMap SCUHashMap;
 /**
  * @brief Represents an iterator for a hash map.
  *
- * @note The internal representation of the iterator is an implementation detail
- * and should not be relied upon. Most importantly, the behavior is undefined if
- * its fields are accessed directly.
+ * @warning The internal representation of the iterator is an implementation
+ * detail and should not be relied upon. Most importantly, the behavior is
+ * undefined if its fields are accessed directly.
  */
 typedef struct SCUHashMapIter {
 
@@ -130,31 +130,7 @@ SCUError scu_hash_map_ensure_capacity(SCUHashMap* hashMap, int64_t capacity);
 /**
  * @brief Adds a new key-value pair to a specified hash map.
  *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_map_add()` macro instead.
- *
- * This function dynamically allocates memory using `scu_malloc()` and
- * `scu_calloc()`.
- *
- * @warning The behavior is undefined if the key is already present in the hash
- * map. Use `scu_hash_map_try_add_impl()` to handle this case gracefully.
- *
- * @param[in, out] hashMap The hash map to add the key-value pair to.
- * @param[in]      key     The key to add.
- * @param[in]      value   The value to associate with the key.
- * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
- * `SCU_ERROR_NONE` on success.
- */
-SCUError scu_hash_map_add_impl(
-    SCUHashMap* restrict hashMap,
-    const void* restrict key,
-    const void* restrict value
-);
-
-/**
- * @brief Adds a new key-value pair to a specified hash map.
- *
- * @note This macro dynamically allocates memory using `scu_malloc()` and
+ * @note This function dynamically allocates memory using `scu_malloc()` and
  * `scu_calloc()`.
  *
  * @warning The behavior is undefined if the key is already present in the hash
@@ -166,26 +142,7 @@ SCUError scu_hash_map_add_impl(
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-#define scu_hash_map_add(hashMap, key, value)        \
-    scu_hash_map_add_impl(hashMap, &(key), &(value))
-
-/**
- * @brief Tries to add a new key-value pair to a specified hash map.
- *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_map_try_add()` macro instead.
- *
- * This function dynamically allocates memory using `scu_malloc()` and
- * `scu_calloc()`.
- *
- * @param[in, out] hashMap The hash map to add the key-value pair to.
- * @param[in]      key     The key to add.
- * @param[in]      value   The value to associate with the key.
- * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
- * `SCU_ERROR_ALREADY_PRESENT` if the key is already present in the hash map, or
- * `SCU_ERROR_NONE` on success.
- */
-SCUError scu_hash_map_try_add_impl(
+SCUError scu_hash_map_add(
     SCUHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value
@@ -194,7 +151,7 @@ SCUError scu_hash_map_try_add_impl(
 /**
  * @brief Tries to add a new key-value pair to a specified hash map.
  *
- * @note This macro dynamically allocates memory using `scu_malloc()` and
+ * @note This function dynamically allocates memory using `scu_malloc()` and
  * `scu_calloc()`.
  *
  * @param[in, out] hashMap The hash map to add the key-value pair to.
@@ -204,23 +161,11 @@ SCUError scu_hash_map_try_add_impl(
  * `SCU_ERROR_ALREADY_PRESENT` if the key is already present in the hash map, or
  * `SCU_ERROR_NONE` on success.
  */
-#define scu_hash_map_try_add(hashMap, key, value)        \
-    scu_hash_map_try_add_impl(hashMap, &(key), &(value))
-
-/**
- * @brief Gets the value associated with a key in a specified hash map.
- *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_map_get()` macro instead.
- *
- * @warning The behavior is undefined if the key is not present in the hash map.
- * Use `scu_hash_map_try_get_impl()` to handle this case gracefully.
- *
- * @param[in] hashMap The hash map to examine.
- * @param[in] key     The key to look up.
- * @return A pointer to the value associated with the specified key.
- */
-void* scu_hash_map_get_impl(const SCUHashMap* hashMap, const void* key);
+SCUError scu_hash_map_try_add(
+    SCUHashMap* restrict hashMap,
+    const void* restrict key,
+    const void* restrict value
+);
 
 /**
  * @brief Gets the value associated with a key in a specified hash map.
@@ -232,7 +177,7 @@ void* scu_hash_map_get_impl(const SCUHashMap* hashMap, const void* key);
  * @param[in] key     The key to look up.
  * @return A pointer to the value associated with the specified key.
  */
-#define scu_hash_map_get(hashMap, key) scu_hash_map_get_impl(hashMap, &(key))
+void* scu_hash_map_get(const SCUHashMap* hashMap, const void* key);
 
 /**
  * @brief Tries to get the value associated with a key in a specified hash map.
@@ -261,27 +206,8 @@ bool scu_hash_map_try_get_impl(
  *                     on success, otherwise a `nullptr`.
  * @return `true` if the key was present in the hash map, otherwise `false`.
  */
-#define scu_hash_map_try_get(hashMap, key, value)                 \
-    scu_hash_map_try_get_impl(hashMap, &(key), (void**) &(value))
-
-/**
- * @brief Associates a key with a new value in a specified hash map.
- *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_map_set()` macro instead.
- *
- * @warning The behavior is undefined if the key is not present in the hash map.
- * Use `scu_hash_map_try_set_impl()` to handle this case gracefully.
- *
- * @param[in, out] hashMap The hash map to set the value in.
- * @param[in]      key     The key to associate with the new value.
- * @param[in]      value   The new value to associate with the key.
- */
-void scu_hash_map_set_impl(
-    SCUHashMap* restrict hashMap,
-    const void* restrict key,
-    const void* restrict value
-);
+#define scu_hash_map_try_get(hashMap, key, value)             \
+    scu_hash_map_try_get_impl(hashMap, key, (void**) (value))
 
 /**
  * @brief Associates a key with a new value in a specified hash map.
@@ -293,22 +219,7 @@ void scu_hash_map_set_impl(
  * @param[in]      key     The key to associate with the new value.
  * @param[in]      value   The new value to associate with the key.
  */
-#define scu_hash_map_set(hashMap, key, value)        \
-    scu_hash_map_set_impl(hashMap, &(key), &(value))
-
-/**
- * @brief Tries to associate a key with a new value in a specified hash map.
- *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_map_try_set()` macro instead.
- *
- * @param[in, out] hashMap The hash map to set the value in.
- * @param[in]      key     The key to associate with the new value.
- * @param[in]      value   The new value to associate with the key.
- * @return `true` if the key was present in the hash map and the value was set,
- * otherwise `false`.
- */
-bool scu_hash_map_try_set_impl(
+void scu_hash_map_set(
     SCUHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value
@@ -323,65 +234,36 @@ bool scu_hash_map_try_set_impl(
  * @return `true` if the key was present in the hash map and the value was set,
  * otherwise `false`.
  */
-#define scu_hash_map_try_set(hashMap, key, value)        \
-    scu_hash_map_try_set_impl(hashMap, &(key), &(value))
-
-/**
- * @brief Determines whether a key is present in a specified hash map.
- *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_map_contains_key()` macro instead.
- *
- * @param[in] hashMap The hash map to examine.
- * @param[in] key     The key to search for.
- * @return `true` if the key is present in the hash map, otherwise `false`.
- */
-bool scu_hash_map_contains_key_impl(const SCUHashMap* hashMap, const void* key);
-
-/**
- * @brief Determines whether a key is present in a specified hash map.
- *
- * @param[in] hashMap The hash map to examine.
- * @param[in] key     The key to search for.
- * @return `true` if the key is present in the hash map, otherwise `false`.
- */
-#define scu_hash_map_contains_key(hashMap, key)     \
-    scu_hash_map_contains_key_impl(hashMap, &(key))
-
-/**
- * @brief Determines whether a value is present in a specified hash map.
- *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_map_contains_value()` macro instead.
- *
- * @param[in] hashMap The hash map to examine.
- * @param[in] value   The value to search for.
- * @return `true` if the value is present in the hash map, otherwise `false`.
- */
-bool scu_hash_map_contains_value_impl(
-    const SCUHashMap* hashMap,
-    const void* value
+bool scu_hash_map_try_set(
+    SCUHashMap* restrict hashMap,
+    const void* restrict key,
+    const void* restrict value
 );
 
 /**
+ * @brief Determines whether a key is present in a specified hash map.
+ *
+ * @param[in] hashMap The hash map to examine.
+ * @param[in] key     The key to search for.
+ * @return `true` if the key is present in the hash map, otherwise `false`.
+ */
+bool scu_hash_map_contains_key(const SCUHashMap* hashMap, const void* key);
+
+/**
  * @brief Determines whether a value is present in a specified hash map.
  *
  * @param[in] hashMap The hash map to examine.
  * @param[in] value   The value to search for.
  * @return `true` if the value is present in the hash map, otherwise `false`.
  */
-#define scu_hash_map_contains_value(hashMap, value)     \
-    scu_hash_map_contains_value_impl(hashMap, &(value))
+bool scu_hash_map_contains_value(const SCUHashMap* hashMap, const void* value);
 
 /**
  * @brief Removes a key-value pair with a specified key from a specified hash
  * map.
  *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_hash_map_remove()` macro instead.
- *
- * Consider using `scu_hash_map_trim_excess()` if you wish to reduce the memory
- * usage of the hash map after removing key-value pairs.
+ * @note Consider using `scu_hash_map_trim_excess()` if you wish to reduce the
+ * memory usage of the hash map after removing key-value pairs.
  *
  * @warning This function does not deallocate the key or value, it only removes
  * the key-value pair from the hash map. The caller is responsible for
@@ -393,30 +275,10 @@ bool scu_hash_map_contains_value_impl(
  * @return `true` if the key-value pair with the specified key was present and
  * removed, otherwise `false`.
  */
-bool scu_hash_map_remove_impl(
+bool scu_hash_map_remove(
     SCUHashMap* restrict hashMap,
     const void* restrict key
 );
-
-/**
- * @brief Removes a key-value pair with a specified key from a specified hash
- * map.
- *
- * @note Consider using `scu_hash_map_trim_excess()` if you wish to reduce the
- * memory usage of the hash map after removing key-value pairs.
- *
- * @warning This macro does not deallocate the key or value, it only removes
- * the key-value pair from the hash map. The caller is responsible for
- * deallocating the removed key and value if they are pointers to dynamically
- * allocated objects and no other references to them exist.
- *
- * @param[in, out] hashMap The hash map to remove the key-value pair from.
- * @param[in]      key     The key of the key-value pair to remove.
- * @return `true` if the key-value pair with the specified key was present and
- * removed, otherwise `false`.
- */
-#define scu_hash_map_remove(hashMap, key)     \
-    scu_hash_map_remove_impl(hashMap, &(key))
 
 /**
  * @brief Removes all key-value pairs from a specified hash map.

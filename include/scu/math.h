@@ -2,7 +2,7 @@
 #define SCU_MATH_H
 
 /**
- * @brief Returns the minimum of two values.
+ * @brief Returns the minimum of two specified values.
  *
  * @param[in] a The first value.
  * @param[in] b The second value.
@@ -11,7 +11,7 @@
 #define SCU_MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 /**
- * @brief Returns the maximum of two values.
+ * @brief Returns the maximum of two specified values.
  *
  * @param[in] a The first value.
  * @param[in] b The second value.

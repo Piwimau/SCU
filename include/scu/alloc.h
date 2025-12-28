@@ -122,16 +122,16 @@ typedef struct SCUAllocator {
  * SCU stores a pointer to a global allocator that is used by the `scu_malloc()`
  * and `scu_calloc()` functions (and possibly the `scu_realloc()` and
  * `scu_free()` functions as well, depending on whether a custom allocator is
- * later set using `scu_set_allocator()`). The allocator must remain valid while
- * these functions are used. SCU does not attempt to modify or free any
- * allocator.
+ * later set using `scu_set_global_allocator()`). The allocator must remain
+ * valid while these functions are used. SCU does not attempt to modify or free
+ * any allocator.
  *
  * The default global allocator provided by SCU relies on the C standard library
  * functions `malloc()`, `calloc()`, `realloc()` and `free()`. Its context is a
  * `nullptr`, as it is not required.
  *
- * A custom allocator may be set using `scu_set_allocator()`, which will be used
- * in subsequent calls to `scu_malloc()` and `scu_calloc()`. Note that
+ * A custom allocator may be set using `scu_set_global_allocator()`, which will
+ * be used in subsequent calls to `scu_malloc()` and `scu_calloc()`. Note that
  * `scu_realloc()` and `scu_free()` use the original allocator a block of memory
  * was allocated with, to which a pointer is stored in a small header before the
  * actual block. It is therefore safe to change the allocator at runtime.
@@ -148,7 +148,7 @@ typedef struct SCUAllocator {
  *
  * @return The global allocator.
  */
-const SCUAllocator* scu_get_allocator();
+const SCUAllocator* scu_get_global_allocator();
 
 /**
  * @brief Sets the global allocator.
@@ -182,7 +182,7 @@ const SCUAllocator* scu_get_allocator();
  *                      global allocator relying on the C standard library will
  *                      be restored.
  */
-void scu_set_allocator(const SCUAllocator* allocator);
+void scu_set_global_allocator(const SCUAllocator* allocator);
 
 /**
  * @brief Allocates an uninitialized block of memory of at least `size`
@@ -190,10 +190,11 @@ void scu_set_allocator(const SCUAllocator* allocator);
  *
  * This function uses the global allocator, which is either a default one that
  * relies on the C standard library functions `malloc()`, `calloc()`,
- * `realloc()` and `free()`, or a custom one set using `scu_set_allocator()`.
- * Its behavior therefore depends on the internal implementation of the
- * allocator. Generally speaking, it is expected to behave like `malloc(size)`.
- * See the documentation of `SCUMallocFunc` for more information.
+ * `realloc()` and `free()`, or a custom one set using
+ * `scu_set_global_allocator()`. Its behavior therefore depends on the internal
+ * implementation of the allocator. Generally speaking, it is expected to behave
+ * like `malloc(size)`. See the documentation of `SCUMallocFunc` for more
+ * information.
  *
  * @note This function is only thread-safe if the underlying allocator is.
  *
@@ -213,10 +214,11 @@ void* scu_malloc(int64_t size);
  *
  * This function uses the global allocator, which is either a default one that
  * relies on the C standard library functions `malloc()`, `calloc()`,
- * `realloc()` and `free()`, or a custom one set using `scu_set_allocator()`.
- * Its behavior therefore depends on the internal implementation of the
- * allocator. Generally speaking, it is expected to behave like `calloc(count,
- * size)`. See the documentation of `SCUCallocFunc` for more information.
+ * `realloc()` and `free()`, or a custom one set using
+ * `scu_set_global_allocator()`. Its behavior therefore depends on the internal
+ * implementation of the allocator. Generally speaking, it is expected to behave
+ * like `calloc(count, size)`. See the documentation of `SCUCallocFunc` for more
+ * information.
  *
  * @note This function is only thread-safe if the underlying allocator is.
  *
@@ -237,7 +239,7 @@ void* scu_calloc(int64_t count, int64_t size);
  * If `block` is `nullptr`, this function uses the global allocator, which is
  * either a default one that relies on the C standard library functions
  * `malloc()`, `calloc()`, `realloc()` and `free()`, or a custom one set using
- * `scu_set_allocator()`. Its behavior therefore depends on the internal
+ * `scu_set_global_allocator()`. Its behavior therefore depends on the internal
  * implementation of the allocator. Generally speaking, it is expected to behave
  * like `malloc(newSize)`. See the documentation of `SCUReallocFunc` for more
  * information.

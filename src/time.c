@@ -4,29 +4,8 @@
 #else
     #include <time.h>
 #endif
-#include "scu/alloc.h"
 #include "scu/assert.h"
-#include "scu/common.h"
 #include "scu/time.h"
-
-struct SCUStopwatch {
-
-    /** @brief The starting wall time in nanoseconds. */
-    int64_t startWallNs;
-
-    /** @brief The starting CPU time in nanoseconds. */
-    int64_t startCpuNs;
-
-    /** @brief The accumulated wall time in nanoseconds. */
-    int64_t accWallNs;
-
-    /** @brief The accumulated CPU time in nanoseconds. */
-    int64_t accCpuNs;
-
-    /** @brief The current state of the stopwatch. */
-    SCUStopwatchState state;
-
-};
 
 /** @brief The number of nanoseconds per second. */
 static constexpr int64_t SCU_NANOS_PER_SEC = 1'000'000'000;
@@ -37,10 +16,10 @@ static constexpr int64_t SCU_NANOS_PER_SEC = 1'000'000'000;
 static constexpr int64_t SCU_NANOS_PER_TICK = 100;
 
 /**
- * @brief Converts a `FILETIME` to nanoseconds.
+ * @brief Converts a specified `FILETIME` value to nanoseconds.
  *
- * @param[in] filetime The `FILETIME` to convert.
- * @return The equivalent time in nanoseconds.
+ * @param[in] filetime The `FILETIME` value to convert.
+ * @return The converted `FILETIME` value in nanoseconds.
  */
 static inline int64_t scu_filetime_to_ns(const FILETIME* filetime) {
     SCU_ASSERT(filetime != nullptr);
@@ -56,10 +35,10 @@ static inline int64_t scu_filetime_to_ns(const FILETIME* filetime) {
 typedef struct timespec SCUTimespec;
 
 /**
- * @brief Converts an `SCUTimespec` to nanoseconds.
+ * @brief Converts a specified `SCUTimespec` value to nanoseconds.
  *
- * @param[in] timespec The `SCUTimespec` to convert.
- * @return The equivalent time in nanoseconds.
+ * @param[in] timespec The `SCUTimespec` value to convert.
+ * @return The converted `SCUTimespec` value in nanoseconds.
  */
 static inline int64_t scu_timespec_to_ns(const SCUTimespec* timespec) {
     SCU_ASSERT(timespec != nullptr);
@@ -71,7 +50,7 @@ static inline int64_t scu_timespec_to_ns(const SCUTimespec* timespec) {
 /**
  * @brief Returns the current wall time in nanoseconds.
  *
- * @return The current wall time in nanoseconds, or -1 on failure.
+ * @return The current wall time in nanoseconds, or `-1` on failure.
  */
 static inline int64_t scu_wall_ns() {
 #ifdef _WIN32
@@ -96,7 +75,7 @@ static inline int64_t scu_wall_ns() {
 /**
  * @brief Returns the current CPU time in nanoseconds.
  *
- * @return The current CPU time in nanoseconds, or -1 on failure.
+ * @return The current CPU time in nanoseconds, or `-1` on failure.
  */
 static inline int64_t scu_cpu_ns() {
 #ifdef _WIN32
@@ -121,67 +100,58 @@ static inline int64_t scu_cpu_ns() {
 #endif
 }
 
-[[nodiscard]]
-SCUStopwatch* scu_stopwatch_new() {
-    SCUStopwatch* stopwatch = scu_malloc(SCU_SIZEOF(SCUStopwatch));
-    if (stopwatch != nullptr) {
-        *stopwatch = (SCUStopwatch) { };
-    }
-    return stopwatch;
-}
-
-SCUError scu_stopwatch_start(SCUStopwatch* stopwatch) {
+bool scu_stopwatch_start(SCUStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
-    if (stopwatch->state != SCU_STOPWATCH_STATE_RUNNING) {
+    if (!stopwatch->isRunning) {
         int64_t wallNs = scu_wall_ns();
         if (wallNs == -1) {
-            return SCU_ERROR_STOPWATCH_FAILED;
+            return false;
         }
         int64_t cpuNs = scu_cpu_ns();
         if (cpuNs == -1) {
-            return SCU_ERROR_STOPWATCH_FAILED;
+            return false;
         }
         stopwatch->startWallNs = wallNs;
         stopwatch->startCpuNs = cpuNs;
-        stopwatch->state = SCU_STOPWATCH_STATE_RUNNING;
+        stopwatch->isRunning = true;
     }
-    return SCU_ERROR_NONE;
+    return true;
 }
 
-SCUError scu_stopwatch_restart(SCUStopwatch* stopwatch) {
+bool scu_stopwatch_restart(SCUStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
     int64_t wallNs = scu_wall_ns();
     if (wallNs == -1) {
-        return SCU_ERROR_STOPWATCH_FAILED;
+        return false;
     }
     int64_t cpuNs = scu_cpu_ns();
     if (cpuNs == -1) {
-        return SCU_ERROR_STOPWATCH_FAILED;
+        return false;
     }
     stopwatch->startWallNs = wallNs;
     stopwatch->startCpuNs = cpuNs;
     stopwatch->accWallNs = 0;
     stopwatch->accCpuNs = 0;
-    stopwatch->state = SCU_STOPWATCH_STATE_RUNNING;
-    return SCU_ERROR_NONE;
+    stopwatch->isRunning = true;
+    return true;
 }
 
-SCUError scu_stopwatch_stop(SCUStopwatch* stopwatch) {
+bool scu_stopwatch_stop(SCUStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
-    if (stopwatch->state == SCU_STOPWATCH_STATE_RUNNING) {
+    if (stopwatch->isRunning) {
         int64_t wallNs = scu_wall_ns();
         if (wallNs == -1) {
-            return SCU_ERROR_STOPWATCH_FAILED;
+            return false;
         }
         int64_t cpuNs = scu_cpu_ns();
         if (cpuNs == -1) {
-            return SCU_ERROR_STOPWATCH_FAILED;
+            return false;
         }
         stopwatch->accWallNs += wallNs - stopwatch->startWallNs;
         stopwatch->accCpuNs += cpuNs - stopwatch->startCpuNs;
-        stopwatch->state = SCU_STOPWATCH_STATE_STOPPED;
+        stopwatch->isRunning = false;
     }
-    return SCU_ERROR_NONE;
+    return true;
 }
 
 void scu_stopwatch_reset(SCUStopwatch* stopwatch) {
@@ -189,35 +159,34 @@ void scu_stopwatch_reset(SCUStopwatch* stopwatch) {
     *stopwatch = (SCUStopwatch) { };
 }
 
-SCUStopwatchState scu_stopwatch_state(const SCUStopwatch* stopwatch) {
+bool scu_stopwatch_is_running(const SCUStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
-    return stopwatch->state;
+    return stopwatch->isRunning;
 }
 
-int64_t scu_stopwatch_wall_ns(const SCUStopwatch* stopwatch) {
+bool scu_stopwatch_elapsed(const SCUStopwatch* stopwatch, SCUTiming* timing) {
     SCU_ASSERT(stopwatch != nullptr);
-    if (stopwatch->state == SCU_STOPWATCH_STATE_RUNNING) {
+    SCU_ASSERT(timing != nullptr);
+    if (stopwatch->isRunning) {
         int64_t wallNs = scu_wall_ns();
         if (wallNs == -1) {
-            return -1;
+            timing->wallNs = -1;
+            timing->cpuNs = -1;
+            return false;
         }
-        return stopwatch->accWallNs + (wallNs - stopwatch->startWallNs);
-    }
-    return stopwatch->accWallNs;
-}
-
-int64_t scu_stopwatch_cpu_ns(const SCUStopwatch* stopwatch) {
-    SCU_ASSERT(stopwatch != nullptr);
-    if (stopwatch->state == SCU_STOPWATCH_STATE_RUNNING) {
         int64_t cpuNs = scu_cpu_ns();
         if (cpuNs == -1) {
-            return -1;
+            timing->wallNs = -1;
+            timing->cpuNs = -1;
+            return false;
         }
-        return stopwatch->accCpuNs + (cpuNs - stopwatch->startCpuNs);
+        timing->wallNs = stopwatch->accWallNs
+            + (wallNs - stopwatch->startWallNs);
+        timing->cpuNs = stopwatch->accCpuNs + (cpuNs - stopwatch->startCpuNs);
     }
-    return stopwatch->accCpuNs;
-}
-
-void scu_stopwatch_free(SCUStopwatch* stopwatch) {
-    scu_free(stopwatch);
+    else {
+        timing->wallNs = stopwatch->accWallNs;
+        timing->cpuNs = stopwatch->accCpuNs;
+    }
+    return true;
 }

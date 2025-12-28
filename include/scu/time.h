@@ -2,21 +2,32 @@
 #define SCU_TIME_H
 
 #include <stdint.h>
-#include "scu/error.h"
 
-/** @brief Represents a stopwatch able to measure wall and CPU time. */
-typedef struct SCUStopwatch SCUStopwatch;
+/**
+ * @brief Represents a stopwatch for measuring wall and CPU time.
+ *
+ * @warning The internal representation of the stopwatch is an implementation
+ * detail and should not be relied upon. Most importantly, the behavior is
+ * undefined if its fields are accessed directly.
+ */
+typedef struct SCUStopwatch {
 
-/** @brief Represents the state of an `SCUStopwatch`. */
-typedef enum SCUStopwatchState {
+    /** @brief The last starting wall time in nanoseconds. */
+    int64_t startWallNs;
 
-    /** @brief Indicates that a stopwatch is stopped and not measuring time. */
-    SCU_STOPWATCH_STATE_STOPPED,
+    /** @brief The last starting CPU time in nanoseconds. */
+    int64_t startCpuNs;
 
-    /** @brief Indicates that a stopwatch is running and measuring time. */
-    SCU_STOPWATCH_STATE_RUNNING
+    /** @brief The accumulated wall time in nanoseconds. */
+    int64_t accWallNs;
 
-} SCUStopwatchState;
+    /** @brief The accumulated CPU time in nanoseconds. */
+    int64_t accCpuNs;
+
+    /** @brief Whether the stopwatch is currently running. */
+    bool isRunning;
+
+} SCUStopwatch;
 
 /** @brief Represents a timing. */
 typedef struct SCUTiming {
@@ -30,141 +41,99 @@ typedef struct SCUTiming {
 } SCUTiming;
 
 /**
- * @brief Allocates and initializes a new `SCUStopwatch`.
+ * @brief Starts a specified stopwatch.
  *
- * @note The stopwatch is initialized in a stopped state with an accumulated
- * wall and CPU time of zero. Use `scu_stopwatch_start()` or
- * `scu_stopwatch_restart()` to start measuring time.
- *
- * This function dynamically allocates memory using `scu_malloc()`.
- *
- * @warning The caller is responsible for deallocating the stopwatch with
- * `scu_stopwatch_free()` when it is no longer needed.
- *
- * @return A pointer to a new `SCUStopwatch`, or `nullptr` on failure.
- */
-[[nodiscard]]
-SCUStopwatch* scu_stopwatch_new();
-
-/**
- * @brief Starts an `SCUStopwatch`.
- *
- * @note If `stopwatch` is already running, this function does nothing.
- * Otherwise, it starts measuring time from zero (if `stopwatch` was never
+ * @note If the stopwatch is already running, this function does nothing.
+ * Otherwise, it starts measuring time from zero (if the stopwatch was never
  * started before or was previously reset) or resumes measuring time from the
- * accumulated wall and CPU time (if `stopwatch` was previously stopped).
+ * accumulated wall and CPU time (if the stopwatch was previously stopped).
  *
  * This function does not reset the accumulated wall and CPU time.
  *
  * @param[in, out] stopwatch The stopwatch to start.
- * @return `SCU_ERROR_STOPWATCH_FAILED` if an error occurred while starting
- * `stopwatch`, or `SCU_ERROR_NONE` on success.
+ * @return `true` if the stopwatch was started successfully, otherwise `false`.
  */
-SCUError scu_stopwatch_start(SCUStopwatch* stopwatch);
+bool scu_stopwatch_start(SCUStopwatch* stopwatch);
 
 /**
- * @brief Restarts an `SCUStopwatch`.
+ * @brief Restarts a specified stopwatch.
  *
- * @note If `stopwatch` is already running or was previously stopped, this
+ * @note If the stopwatch is already running or was previously stopped, this
  * function resets the accumulated wall and CPU time to zero and starts
- * measuring time. Otherwise, if `stopwatch` was never started before or was
+ * measuring time. Otherwise, if the stopwatch was never started before or was
  * previously reset, this function simply behaves like `scu_stopwatch_start()`.
  *
  * This function resets the accumulated wall and CPU time. It is equivalent to
- * calling `scu_stopwatch_reset()` followed by `scu_stopwatch_start()`.
+ * calling `scu_stopwatch_reset()`, followed by `scu_stopwatch_start()`.
  *
  * @param[in, out] stopwatch The stopwatch to restart.
- * @return `SCU_ERROR_STOPWATCH_FAILED` if an error occurred while restarting
- * `stopwatch`, or `SCU_ERROR_NONE` on success.
+ * @return `true` if the stopwatch was restarted successfully, otherwise
+ * `false`.
  */
-SCUError scu_stopwatch_restart(SCUStopwatch* stopwatch);
+bool scu_stopwatch_restart(SCUStopwatch* stopwatch);
 
 /**
- * @brief Stops an `SCUStopwatch`.
+ * @brief Stops a specified stopwatch.
  *
- * @note If `stopwatch` was never started before or was previously stopped or
+ * @note If the stopwatch was never started before or was previously stopped or
  * reset, this function does nothing. Otherwise, it stops measuring time and
  * retains the accumulated wall and CPU time.
  *
  * This function does not reset the accumulated wall and CPU time.
  *
  * @param[in, out] stopwatch The stopwatch to stop.
- * @return `SCU_ERROR_STOPWATCH_FAILED` if an error occurred while stopping
- * `stopwatch`, or `SCU_ERROR_NONE` on success.
+ * @return `true` if the stopwatch was stopped successfully, otherwise `false`.
  */
-SCUError scu_stopwatch_stop(SCUStopwatch* stopwatch);
+bool scu_stopwatch_stop(SCUStopwatch* stopwatch);
 
 /**
- * @brief Resets an `SCUStopwatch`.
+ * @brief Resets a specified stopwatch.
  *
- * @note If `stopwatch` was never started before or was previously reset, this
- * function does nothing. Otherwise, it stops measuring time (if `stopwatch` is
- * running) and resets the accumulated wall and CPU time to zero.
+ * @note If the stopwatch was never started before or was previously reset, this
+ * function does nothing. Otherwise, it stops measuring time (if the stopwatch
+ * is running) and resets the accumulated wall and CPU time to zero.
  *
  * This function resets the accumulated wall and CPU time. It does not start
- * `stopwatch` again.
+ * the stopwatch again.
  *
  * @param[in, out] stopwatch The stopwatch to reset.
  */
 void scu_stopwatch_reset(SCUStopwatch* stopwatch);
 
 /**
- * @brief Returns the current state of an `SCUStopwatch`.
- *
- * @param[in] stopwatch The stopwatch to query.
- * @return `SCU_STOPWATCH_STATE_RUNNING` if `stopwatch` is currently running,
- * otherwise `SCU_STOPWATCH_STATE_STOPPED`.
+ * @brief Determines whether a specified stopwatch is currently running.
+ * 
+ * @param[in] stopwatch The stopwatch to examine.
+ * @return `true` if the stopwatch is currently running, otherwise `false`.
  */
-SCUStopwatchState scu_stopwatch_state(const SCUStopwatch* stopwatch);
+bool scu_stopwatch_is_running(const SCUStopwatch* stopwatch);
 
 /**
- * @brief Returns the accumulated wall time in nanoseconds.
+ * @brief Tries to retrieve the elapsed wall and CPU time from a specified
+ * stopwatch.
  *
- * @note If `stopwatch` was never started before or was previously reset, this
- * function returns zero. Otherwise, it returns the total wall time measured by
- * `stopwatch` in nanoseconds up to the point when it was last stopped (if
- * `stopwatch` is stopped) or up to the current point in time (if `stopwatch` is
+ * @note If the stopwatch was never started before or was previously reset, this
+ * function sets both `timing->wallNs` and `timing->cpuNs` to zero and returns
+ * `true`. Otherwise, it assigns the accumulated wall and CPU time measured by
+ * the stopwatch in nanoseconds up to the point when it was last stopped (if the
+ * stopwatch is stopped) or up to the current point in time (if the stopwatch is
  * running).
  *
- * @param[in] stopwatch The stopwatch to query.
- * @return The accumulated wall time in nanoseconds, or -1 on failure.
+ * @param[in]  stopwatch The stopwatch to examine.
+ * @param[out] timing    A timing for the elapsed wall and CPU time on success,
+ *                       or a timing with both fields set to `-1` on failure.
+ * @return `true` if the elapsed times were retrieved successfully, otherwise
+ * `false`.
  */
-int64_t scu_stopwatch_wall_ns(const SCUStopwatch* stopwatch);
-
-/**
- * @brief Returns the accumulated CPU time in nanoseconds.
- *
- * @note If `stopwatch` was never started before or was previously reset, this
- * function returns zero. Otherwise, it returns the total CPU time measured by
- * `stopwatch` in nanoseconds up to the point when it was last stopped (if
- * `stopwatch` is stopped) or up to the current point in time (if `stopwatch` is
- * running).
- *
- * @param[in] stopwatch The stopwatch to query.
- * @return The accumulated CPU time in nanoseconds, or -1 on failure.
- */
-int64_t scu_stopwatch_cpu_ns(const SCUStopwatch* stopwatch);
-
-/**
- * @brief Deallocates an `SCUStopwatch`.
- *
- * @note If `stopwatch` is a `nullptr`, this function does nothing.
- *
- * @warning The behavior is undefined if `stopwatch` is used after it has been
- * deallocated.
- *
- * @param[in] stopwatch The stopwatch to deallocate.
- */
-void scu_stopwatch_free(SCUStopwatch* stopwatch);
+bool scu_stopwatch_elapsed(const SCUStopwatch* stopwatch, SCUTiming* timing);
 
 /**
  * @brief Measures the wall and CPU time required to execute a block of code.
  *
  * This macro simplifies the process of measuring the wall and CPU time required
- * to execute a block of code. It allocates a new `SCUStopwatch`, starts it,
- * executes the block of code, stops the stopwatch, retrieves the measured
- * times, and deallocates the stopwatch. If any error occurs during this
- * process, the macro sets the wall and CPU time in `timing` to -1.
+ * to execute a block of code. It creates a new stopwatch, starts it, executes
+ * the block of code, stops the stopwatch, and retrieves the elapsed times,
+ * which are assigned to `timing->wallNs` and `timing->cpuNs` respectively.
  *
  * The following example demonstrates the basic usage of this macro:
  *
@@ -174,42 +143,32 @@ void scu_stopwatch_free(SCUStopwatch* stopwatch);
  *     // Some code to be timed...
  * }
  * if ((timing.wallNs == -1) || (timing.cpuNs == -1)) {
- *     // Handle error...
+ *     // Handle the error...
  * }
  * else {
  *     // Use timing.wallNs and timing.cpuNs...
  * }
  * ```
  *
- * @param[out] timing A pointer to an `SCUTiming` where the measured wall and
- * CPU time are stored.
+ * @note If the stopwatch cannot be started, the block of code is not executed.
+ * In this case, both `timing->wallNs` and `timing->cpuNs` are set to `-1`. This
+ * is also the case if retrieving the elapsed times fails after executing the
+ * block of code and stopping the stopwatch.
+ *
+ * @param[out] timing A timing for the elapsed wall and CPU time on success,
+ *                    or a timing with both fields set to `-1` on failure.
  */
-#define SCU_TIME(timing)                                                \
-    for (bool scuOnce = true; scuOnce;)                                 \
-        for (                                                           \
-            SCUStopwatch* scuStopwatch = scu_stopwatch_new();           \
-            scuOnce;                                                    \
-            scuOnce = false,                                            \
-            scu_stopwatch_free(scuStopwatch),                           \
-            scuStopwatch = nullptr                                      \
-        )                                                               \
-            for (                                                       \
-                SCUError scuError = (scuStopwatch != nullptr)           \
-                    ? scu_stopwatch_start(scuStopwatch)                 \
-                    : SCU_ERROR_OUT_OF_MEMORY;                          \
-                scuOnce;                                                \
-                scuOnce = false,                                        \
-                scu_stopwatch_stop(scuStopwatch),                       \
-                (timing)->wallNs = scu_stopwatch_wall_ns(scuStopwatch), \
-                (timing)->cpuNs = scu_stopwatch_cpu_ns(scuStopwatch),   \
-                scu_stopwatch_free(scuStopwatch),                       \
-                scuStopwatch = nullptr                                  \
-            )                                                           \
-                if (scuError != SCU_ERROR_NONE) {                       \
-                    (timing)->wallNs = -1;                              \
-                    (timing)->cpuNs = -1;                               \
-                    break;                                              \
-                }                                                       \
-                else
+#define SCU_TIME(timing)                                                     \
+    for (bool scuOnce = true; scuOnce; scuOnce = false)                      \
+        for (SCUStopwatch scuStopwatch = { }; scuOnce; scuOnce = false)      \
+            for (                                                            \
+                ;                                                            \
+                scuOnce && (scu_stopwatch_start(&scuStopwatch)               \
+                    ? true                                                   \
+                    : ((timing)->wallNs = -1, (timing)->cpuNs = -1, false)); \
+                scuOnce = false,                                             \
+                scu_stopwatch_stop(&scuStopwatch),                           \
+                scu_stopwatch_elapsed(&scuStopwatch, timing)                 \
+            )
 
 #endif

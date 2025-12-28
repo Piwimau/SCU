@@ -352,12 +352,12 @@ SCUError scu_hash_map_ensure_capacity(SCUHashMap* hashMap, int64_t capacity) {
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_hash_map_add_impl(
+SCUError scu_hash_map_add(
     SCUHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value
 ) {
-    SCUError error = scu_hash_map_try_add_impl(hashMap, key, value);
+    SCUError error = scu_hash_map_try_add(hashMap, key, value);
     if (error == SCU_ERROR_ALREADY_PRESENT) {
         SCU_FATAL("The specified key is already present.\n");
     }
@@ -377,7 +377,7 @@ static inline void* scu_bucket_value(SCUBucket* bucket, int64_t valueOffset) {
     return ((unsigned char*) bucket) + valueOffset;
 }
 
-SCUError scu_hash_map_try_add_impl(
+SCUError scu_hash_map_try_add(
     SCUHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value
@@ -440,7 +440,7 @@ SCUError scu_hash_map_try_add_impl(
     }
 }
 
-void* scu_hash_map_get_impl(const SCUHashMap* hashMap, const void* key) {
+void* scu_hash_map_get(const SCUHashMap* hashMap, const void* key) {
     void* value;
     if (!scu_hash_map_try_get_impl(hashMap, key, &value)) {
         SCU_FATAL("The specified key is not present.\n");
@@ -491,17 +491,17 @@ bool scu_hash_map_try_get_impl(
     }
 }
 
-void scu_hash_map_set_impl(
+void scu_hash_map_set(
     SCUHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value
 ) {
-    if (!scu_hash_map_try_set_impl(hashMap, key, value)) {
+    if (!scu_hash_map_try_set(hashMap, key, value)) {
         SCU_FATAL("The specified key is not present.\n");
     }
 }
 
-bool scu_hash_map_try_set_impl(
+bool scu_hash_map_try_set(
     SCUHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value
@@ -545,10 +545,7 @@ bool scu_hash_map_try_set_impl(
     }
 }
 
-bool scu_hash_map_contains_key_impl(
-    const SCUHashMap* hashMap,
-    const void* key
-) {
+bool scu_hash_map_contains_key(const SCUHashMap* hashMap, const void* key) {
     SCU_ASSERT(hashMap != nullptr);
     SCU_ASSERT(key != nullptr);
     if (hashMap->count == 0) {
@@ -582,10 +579,7 @@ bool scu_hash_map_contains_key_impl(
     }
 }
 
-bool scu_hash_map_contains_value_impl(
-    const SCUHashMap* hashMap,
-    const void* value
-) {
+bool scu_hash_map_contains_value(const SCUHashMap* hashMap, const void* value) {
     SCU_ASSERT(hashMap != nullptr);
     SCU_ASSERT(value != nullptr);
     if (hashMap->count == 0) {
@@ -607,7 +601,7 @@ bool scu_hash_map_contains_value_impl(
     return false;
 }
 
-bool scu_hash_map_remove_impl(
+bool scu_hash_map_remove(
     SCUHashMap* restrict hashMap,
     const void* restrict key
 ) {

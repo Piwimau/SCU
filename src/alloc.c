@@ -11,7 +11,7 @@
  * The header stores a pointer to the original allocator the block of memory was
  * allocated with, such that `scu_realloc()` and `scu_free()` use the correct
  * allocator even if a different global allocator is later set using
- * `scu_set_allocator()`.
+ * `scu_set_global_allocator()`.
  */
 typedef struct SCUAllocHeader {
 
@@ -103,11 +103,11 @@ static const SCUAllocator SCU_DEFAULT_ALLOCATOR = {
 /** @brief The global allocator (initially set to the default one). */
 static const SCUAllocator* _Atomic scuGlobalAllocator = &SCU_DEFAULT_ALLOCATOR;
 
-const SCUAllocator* scu_get_allocator() {
+const SCUAllocator* scu_get_global_allocator() {
     return atomic_load_explicit(&scuGlobalAllocator, memory_order_acquire);
 }
 
-void scu_set_allocator(const SCUAllocator* allocator) {
+void scu_set_global_allocator(const SCUAllocator* allocator) {
     atomic_store_explicit(
         &scuGlobalAllocator,
         (allocator != nullptr) ? allocator : &SCU_DEFAULT_ALLOCATOR,
@@ -118,7 +118,7 @@ void scu_set_allocator(const SCUAllocator* allocator) {
 [[nodiscard]]
 void* scu_malloc(int64_t size) {
     SCU_ASSERT(size >= 0);
-    const SCUAllocator* allocator = scu_get_allocator();
+    const SCUAllocator* allocator = scu_get_global_allocator();
     SCUAllocHeader* header = allocator->malloc(
         allocator->context,
         SCU_SIZEOF(SCUAllocHeader) + size
@@ -134,7 +134,7 @@ void* scu_malloc(int64_t size) {
 void* scu_calloc(int64_t count, int64_t size) {
     SCU_ASSERT(count >= 0);
     SCU_ASSERT(size >= 0);
-    const SCUAllocator* allocator = scu_get_allocator();
+    const SCUAllocator* allocator = scu_get_global_allocator();
     SCUAllocHeader* header = allocator->calloc(
         allocator->context,
         1,

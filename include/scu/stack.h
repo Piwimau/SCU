@@ -11,9 +11,9 @@ typedef struct SCUStack SCUStack;
 /**
  * @brief Represents an iterator for a stack.
  *
- * @note The internal representation of the iterator is an implementation detail
- * and should not be relied upon. Most importantly, the behavior is undefined if
- * its fields are accessed directly.
+ * @warning The internal representation of the iterator is an implementation
+ * detail and should not be relied upon. Most importantly, the behavior is
+ * undefined if its fields are accessed directly.
  */
 typedef struct SCUStackIter {
 
@@ -92,45 +92,14 @@ SCUError scu_stack_ensure_capacity(SCUStack* stack, int64_t capacity);
 /**
  * @brief Pushes a new element onto the top of a specified stack.
  *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_stack_push()` macro instead.
- *
- * This function dynamically allocates memory using `scu_realloc()`.
+ * @note This function dynamically allocates memory using `scu_realloc()`.
  *
  * @param[in, out] stack The stack to push the element onto.
  * @param[in]      elem  The element to push onto the stack.
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_stack_push_impl(
-    SCUStack* restrict stack,
-    const void* restrict elem
-);
-
-/**
- * @brief Pushes a new element onto the top of a specified stack.
- *
- * @note This macro dynamically allocates memory using `scu_realloc()`.
- *
- * @param[in, out] stack The stack to push the element onto.
- * @param[in]      elem  The element to push onto the stack.
- * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
- * `SCU_ERROR_NONE` on success.
- */
-#define scu_stack_push(stack, elem) scu_stack_push_impl(stack, &(elem))
-
-/**
- * @brief Removes the top element from a specified stack.
- *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_stack_pop()` macro instead.
- *
- * @warning The behavior is undefined if the stack is empty.
- *
- * @param[in, out] stack The stack to remove the top element from.
- * @param[out]     elem  The removed top element.
- */
-void scu_stack_pop_impl(SCUStack* restrict stack, void* restrict elem);
+SCUError scu_stack_push(SCUStack* restrict stack, const void* restrict elem);
 
 /**
  * @brief Removes the top element from a specified stack.
@@ -140,21 +109,7 @@ void scu_stack_pop_impl(SCUStack* restrict stack, void* restrict elem);
  * @param[in, out] stack The stack to remove the top element from.
  * @param[out]     elem  The removed top element.
  */
-#define scu_stack_pop(stack, elem) scu_stack_pop_impl(stack, &(elem))
-
-/**
- * @brief Tries to remove the top element from a specified stack.
- *
- * @note This function is an implementation detail and not intended to be called
- * directly. Use the `scu_stack_try_pop()` macro instead.
- *
- * @param[in, out] stack The stack to remove the top element from.
- * @param[out]     elem  The removed top element if the stack was not empty,
- *                       otherwise unmodified.
- * @return `true` if the top element was successfully removed, otherwise
- * `false`.
- */
-bool scu_stack_try_pop_impl(SCUStack* restrict stack, void* restrict elem);
+void scu_stack_pop(SCUStack* restrict stack, void* restrict elem);
 
 /**
  * @brief Tries to remove the top element from a specified stack.
@@ -165,7 +120,7 @@ bool scu_stack_try_pop_impl(SCUStack* restrict stack, void* restrict elem);
  * @return `true` if the top element was successfully removed, otherwise
  * `false`.
  */
-#define scu_stack_try_pop(stack, elem) scu_stack_try_pop_impl(stack, &(elem))
+bool scu_stack_try_pop(SCUStack* restrict stack, void* restrict elem);
 
 /**
  * @brief Retrieves the top element of a specified stack without removing it.
@@ -176,9 +131,9 @@ bool scu_stack_try_pop_impl(SCUStack* restrict stack, void* restrict elem);
  * @warning The behavior is undefined if the stack is empty.
  *
  * @param[in]  stack The stack to examine.
- * @param[out] elem  The top element of the stack.
+ * @param[out] elem  A pointer to the top element of the stack.
  */
-void scu_stack_peek_impl(const SCUStack* restrict stack, void* restrict elem);
+void scu_stack_peek_impl(const SCUStack* restrict stack, void** restrict elem);
 
 /**
  * @brief Retrieves the top element of a specified stack without removing it.
@@ -186,9 +141,9 @@ void scu_stack_peek_impl(const SCUStack* restrict stack, void* restrict elem);
  * @warning The behavior is undefined if the stack is empty.
  *
  * @param[in]  stack The stack to examine.
- * @param[out] elem  The top element of the stack.
+ * @param[out] elem  A pointer to the top element of the stack.
  */
-#define scu_stack_peek(stack, elem) scu_stack_peek_impl(stack, &(elem))
+#define scu_stack_peek(stack, elem) scu_stack_peek_impl(stack, (void**) (elem))
 
 /**
  * @brief Tries to retrieve the top element of a specified stack without
@@ -198,14 +153,14 @@ void scu_stack_peek_impl(const SCUStack* restrict stack, void* restrict elem);
  * directly. Use the `scu_stack_try_peek()` macro instead.
  *
  * @param[in]  stack The stack to examine.
- * @param[out] elem  The top element of the stack if the stack was not empty,
- *                   otherwise unmodified.
+ * @param[out] elem  A pointer to the top element of the stack on success,
+ *                   otherwise a `nullptr`.
  * @return `true` if the top element was successfully retrieved, otherwise
  * `false`.
  */
 bool scu_stack_try_peek_impl(
     const SCUStack* restrict stack,
-    void* restrict elem
+    void** restrict elem
 );
 
 /**
@@ -213,12 +168,13 @@ bool scu_stack_try_peek_impl(
  * removing it.
  *
  * @param[in]  stack The stack to examine.
- * @param[out] elem  The top element of the stack if the stack was not empty,
- *                   otherwise unmodified.
+ * @param[out] elem  A pointer to the top element of the stack on success,
+ *                   otherwise a `nullptr`.
  * @return `true` if the top element was successfully retrieved, otherwise
  * `false`.
  */
-#define scu_stack_try_peek(stack, elem) scu_stack_try_peek_impl(stack, &(elem))
+#define scu_stack_try_peek(stack, elem)             \
+    scu_stack_try_peek_impl(stack, (void**) (elem))
 
 /**
  * @brief Removes all elements from a specified stack.

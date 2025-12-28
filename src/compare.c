@@ -135,8 +135,8 @@ int scu_compare_str(const void* a, const void* b) {
     SCU_ASSERT(b != nullptr);
     const char* l = *(const char* const*) a;
     const char* r = *(const char* const*) b;
-    int result = strcmp(l, r);
-    return (result < 0) ? -1 : (result > 0) ? 1 : 0;
+    int cmp = strcmp(l, r);
+    return (cmp < 0) ? -1 : (cmp > 0) ? 1 : 0;
 }
 
 int scu_compare_str_rev(const void* a, const void* b) {
@@ -144,6 +144,6 @@ int scu_compare_str_rev(const void* a, const void* b) {
     SCU_ASSERT(b != nullptr);
     const char* l = *(const char* const*) a;
     const char* r = *(const char* const*) b;
-    int result = strcmp(l, r);
-    return (result > 0) ? -1 : (result < 0) ? 1 : 0;
+    int cmp = strcmp(l, r);
+    return (cmp > 0) ? -1 : (cmp < 0) ? 1 : 0;
 }

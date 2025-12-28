@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 /**
- * @brief Find the first occurrence of a specified byte in a block of memory.
+ * @brief Finds the first occurrence of a specified byte in a block of memory.
  *
  * @note If `count` is zero, `block` is ignored (it may even be a `nullptr`),
  * and the function returns `nullptr`.
@@ -21,7 +21,7 @@
 void* scu_memchr(const void* block, unsigned char c, int64_t count);
 
 /**
- * @brief Find the last occurrence of a specified byte in a block of memory.
+ * @brief Finds the last occurrence of a specified byte in a block of memory.
  *
  * @note If `count` is zero, `block` is ignored (it may even be a `nullptr`),
  * and the function returns `nullptr`.

@@ -7,14 +7,15 @@
  * @brief Declares a compile-time assertion.
  *
  * This macro can be used to check a condition at compile-time. If the condition
- * does not hold, the code will fail to compile and a diagnostic message will be
+ * is not met, the code will fail to compile and a diagnostic message will be
  * generated.
  *
  * ```c
  * SCU_STATIC_ASSERT((sizeof(int) * CHAR_WIDTH) == 32);
  * ```
  *
- * A message providing additional information may optionally be passed.
+ * Optionally, a message may be passed as the second argument for providing
+ * additional information when the assertion fails.
  *
  * ```c
  * SCU_STATIC_ASSERT(
@@ -27,20 +28,15 @@
  * in `assert.h`). This macro is simply provided for reasons of completeness and
  * consistency with the `SCU_ASSERT()` macro.
  *
- * @param[in] expr The expression to test.
- * @param[in] ...  An optional message providing additional information if the
- *                 assertion fails.
+ * @param[in] expr The expression to evaluate at compile-time.
+ * @param[in] ...  An optional message for providing additional information if
+ *                 the assertion fails.
  */
 #define SCU_STATIC_ASSERT(expr, ...)              \
     static_assert(expr __VA_OPT__(,) __VA_ARGS__)
 
 /**
  * @brief Handles a runtime assertion failure.
- *
- * This function is used to print a diagnostic message to the standard error
- * stream if a runtime assertion fails. An optional `printf()`-style format
- * string and a variable number of arguments may be passed to provide additional
- * information.
  *
  * @note This function is an implementation detail and not meant to be called
  * directly. Use the `SCU_ASSERT()` macro instead.
@@ -84,7 +80,7 @@ void scu_assert_fail(
      * @brief Declares a runtime assertion.
      *
      * This macro can be used to check a condition at runtime. If the condition
-     * does not hold, a diagnostic message will be printed to the standard error
+     * is not met, a diagnostic message will be printed to the standard error
      * stream and the program will be terminated abnormally.
      *
      * A `printf()`-style format string and a variable number of arguments may
@@ -93,10 +89,17 @@ void scu_assert_fail(
      * ```c
      * void example(int* values, int length) {
      *     SCU_ASSERT(values != nullptr);
-     *     SCU_ASSERT(length >= 0, "Length must be positive (was %d).", length);
+     *     SCU_ASSERT(
+     *         length >= 0,
+     *         "The length must be positive (was %d).",
+     *         length
+     *     );
      *     ...
      * }
      * ```
+     *
+     * @note Runtime assertions are disabled when the standard `NDEBUG` macro is
+     * defined before this header is (directly or transitively) included.
      *
      * @param[in] expr The expression to test.
      * @param[in] ...  A variable number of arguments for providing additional

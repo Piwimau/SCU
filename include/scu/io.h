@@ -745,7 +745,7 @@ SCUError scu_readall(char* restrict* restrict buffer, int64_t* restrict size);
  * @return The number of arguments read, which may be less than the number of
  * expected arguments if the end-of-file condition is reached or an error occurs
  * while reading from the specified file stream. If an error occurs before any
- * argument is read, -1 is returned.
+ * argument is read, `-1` is returned.
  */
 int64_t scu_vfscanf(
     SCUFile* restrict file,
@@ -768,7 +768,7 @@ int64_t scu_vfscanf(
  * @return The number of arguments read, which may be less than the number of
  * expected arguments if the end-of-file condition is reached or an error occurs
  * while reading from the specified file stream. If an error occurs before any
- * argument is read, -1 is returned.
+ * argument is read, `-1` is returned.
  */
 int64_t scu_fscanf(SCUFile* restrict file, const char* restrict format, ...);
 
@@ -792,7 +792,7 @@ int64_t scu_fscanf(SCUFile* restrict file, const char* restrict format, ...);
  * @return The number of arguments read, which may be less than the number of
  * expected arguments if the end-of-file condition is reached or an error occurs
  * while reading from the standard input stream. If an error occurs before any
- * argument is read, -1 is returned.
+ * argument is read, `-1` is returned.
  */
 int64_t scu_vscanf(const char* restrict format, va_list args);
 
@@ -813,7 +813,7 @@ int64_t scu_vscanf(const char* restrict format, va_list args);
  * @return The number of arguments read, which may be less than the number of
  * expected arguments if the end-of-file condition is reached or an error occurs
  * while reading from the standard input stream. If an error occurs before any
- * argument is read, -1 is returned.
+ * argument is read, `-1` is returned.
  */
 int64_t scu_scanf(const char* restrict format, ...);
 
@@ -834,7 +834,7 @@ int64_t scu_scanf(const char* restrict format, ...);
  *                    where the read values should be stored.
  * @return The number of arguments read, which may be less than the number of
  * expected arguments if the end of the byte string is reached or an error
- * occurs. If an error occurs before any argument is read, -1 is returned.
+ * occurs. If an error occurs before any argument is read, `-1` is returned.
  */
 int64_t scu_vsscanf(
     const char* restrict buffer,
@@ -856,7 +856,7 @@ int64_t scu_vsscanf(
  *                    where the read values should be stored.
  * @return The number of arguments read, which may be less than the number of
  * expected arguments if the end of the byte string is reached or an error
- * occurs. If an error occurs before any argument is read, -1 is returned.
+ * occurs. If an error occurs before any argument is read, `-1` is returned.
  */
 int64_t scu_sscanf(
     const char* restrict buffer,
@@ -879,7 +879,7 @@ int64_t scu_sscanf(
  *                        to format the output.
  * @param[in]      args   A variable argument list containing the values to be
  *                        written.
- * @return The number of bytes written to the specified file stream, or -1 on
+ * @return The number of bytes written to the specified file stream, or `-1` on
  * failure.
  */
 int64_t scu_vfprintf(
@@ -900,7 +900,7 @@ int64_t scu_vfprintf(
  *                        to format the output.
  * @param[in]      ...    A variable argument list containing the values to be
  *                        written.
- * @return The number of bytes written to the specified file stream, or -1 on
+ * @return The number of bytes written to the specified file stream, or `-1` on
  * failure.
  */
 int64_t scu_fprintf(SCUFile* restrict file, const char* restrict format, ...);
@@ -922,7 +922,7 @@ int64_t scu_fprintf(SCUFile* restrict file, const char* restrict format, ...);
  *                   format the output.
  * @param[in] args   A variable argument list containing the values to be
  *                   written.
- * @return The number of bytes written to the standard output stream, or -1 on
+ * @return The number of bytes written to the standard output stream, or `-1` on
  * failure.
  */
 int64_t scu_vprintf(const char* restrict format, va_list args);
@@ -941,7 +941,7 @@ int64_t scu_vprintf(const char* restrict format, va_list args);
  *                   format the output.
  * @param[in] ...    A variable argument list containing the values to be
  *                   written.
- * @return The number of bytes written to the standard output stream, or -1 on
+ * @return The number of bytes written to the standard output stream, or `-1` on
  * failure.
  */
 int64_t scu_printf(const char* restrict format, ...);
@@ -974,7 +974,7 @@ int64_t scu_printf(const char* restrict format, ...);
  *                    written.
  * @return The number of bytes written (excluding the terminating null byte), or
  * the number of bytes that would have been written if `size` had been
- * sufficiently large. If an error occurs while writing to the buffer, -1 is
+ * sufficiently large. If an error occurs while writing to the buffer, `-1` is
  * returned.
  */
 int64_t scu_vsnprintf(
@@ -1009,7 +1009,7 @@ int64_t scu_vsnprintf(
  *                    written.
  * @return The number of bytes written (excluding the terminating null byte), or
  * the number of bytes that would have been written if `size` had been
- * sufficiently large. If an error occurs while writing to the buffer, -1 is
+ * sufficiently large. If an error occurs while writing to the buffer, `-1` is
  * returned.
  */
 int64_t scu_snprintf(
@@ -1191,7 +1191,7 @@ SCUError scu_rasnprintf(
  * unspecified and only meaningful as an input to `scu_fseek()`.
  *
  * @param[in] file The file stream to check.
- * @return The file position indicator of the specified file stream, or -1 on
+ * @return The file position indicator of the specified file stream, or `-1` on
  * failure.
  */
 int64_t scu_ftell(SCUFile* file);

@@ -59,22 +59,6 @@ int64_t scu_strnlen(const char* s, int64_t count);
 int scu_strcmp(const char* left, const char* right);
 
 /**
- * @brief Determines whether two null-terminated byte strings compare equal.
- *
- * @note This is a macro that resolves to a call to `scu_strcmp()` and is mainly
- * provided for convenience and to improve code readability. See the respective
- * documentation of `scu_strcmp()` for details on the comparison semantics.
- *
- * @warning The behavior is undefined if `left` or `right` is not a pointer to a
- * null-terminated byte string.
- *
- * @param[in] left  The first null-terminated byte string.
- * @param[in] right The second null-terminated byte string.
- * @return `true` if `left` and `right` compare equal, otherwise `false`.
- */
-#define scu_str_equals(left, right) (scu_strcmp(left, right) == 0)
-
-/**
  * @brief Compares a span of two null-terminated byte strings lexicographically.
  *
  * @note This function compares the strings solely based on their byte
@@ -108,8 +92,8 @@ int scu_strncmp(const char* left, const char* right, int64_t count);
  *
  * @param[in] s The null-terminated byte string to examine.
  * @param[in] c The byte to search for.
- * @return The zero-based index of the first occurrence of `c` in `s`, or -1 if
- * `c` is not found.
+ * @return The zero-based index of the first occurrence of `c` in `s`, or `-1`
+ * if `c` is not found.
  */
 int64_t scu_str_index_of_byte(const char* s, char c);
 
@@ -132,8 +116,8 @@ int64_t scu_str_index_of_byte(const char* s, char c);
  *
  * @param[in] s     The null-terminated byte string to examine.
  * @param[in] other The null-terminated byte string to search for.
- * @return The zero-based index of the first occurrence of `other` in `s`, or -1
- * if `other` is not found.
+ * @return The zero-based index of the first occurrence of `other` in `s`, or
+ * `-1` if `other` is not found.
  */
 int64_t scu_str_index_of_str(const char* s, const char* other);
 
@@ -152,8 +136,8 @@ int64_t scu_str_index_of_str(const char* s, const char* other);
  *
  * @param[in] s     The null-terminated byte string to examine.
  * @param[in] other The byte or null-terminated byte string to search for.
- * @return The zero-based index of the first occurrence of `other` in `s`, or -1
- * if `other` is not found.
+ * @return The zero-based index of the first occurrence of `other` in `s`, or
+ * `-1` if `other` is not found.
  */
 #define scu_str_index_of(s, other)   \
     _Generic(                        \
@@ -174,7 +158,7 @@ int64_t scu_str_index_of_str(const char* s, const char* other);
  *
  * @param[in] s The null-terminated byte string to examine.
  * @param[in] c The byte to search for.
- * @return The zero-based index of the last occurrence of `c` in `s`, or -1 if
+ * @return The zero-based index of the last occurrence of `c` in `s`, or `-1` if
  * `c` is not found.
  */
 int64_t scu_str_last_index_of_byte(const char* s, char c);
@@ -199,8 +183,8 @@ int64_t scu_str_last_index_of_byte(const char* s, char c);
  *
  * @param[in] s     The null-terminated byte string to examine.
  * @param[in] other The null-terminated byte string to search for.
- * @return The zero-based index of the last occurrence of `other` in `s`, or -1
- * if `other` is not found.
+ * @return The zero-based index of the last occurrence of `other` in `s`, or
+ * `-1` if `other` is not found.
  */
 int64_t scu_str_last_index_of_str(const char* s, const char* other);
 
@@ -219,8 +203,8 @@ int64_t scu_str_last_index_of_str(const char* s, const char* other);
  *
  * @param[in] s     The null-terminated byte string to examine.
  * @param[in] other The byte or null-terminated byte string to search for.
- * @return The zero-based index of the last occurrence of `other` in `s`, or -1
- * if `other` is not found.
+ * @return The zero-based index of the last occurrence of `other` in `s`, or
+ * `-1` if `other` is not found.
  */
 #define scu_str_last_index_of(s, other)   \
     _Generic(                             \
@@ -236,7 +220,7 @@ int64_t scu_str_last_index_of_str(const char* s, const char* other);
  *
  * @note The terminating null bytes are not compared.
  *
- * If `anyOf` points to an empty byte string, -1 is returned (as there are no
+ * If `anyOf` points to an empty byte string, `-1` is returned (as there are no
  * bytes to find).
  *
  * @warning The behavior is undefined if `s` or `anyOf` is not a pointer to a
@@ -246,7 +230,7 @@ int64_t scu_str_last_index_of_str(const char* s, const char* other);
  * @param[in] anyOf The null-terminated byte string containing the bytes to
  *                  search for.
  * @return The zero-based index of the first occurrence of any byte from `anyOf`
- * in `s`, or -1 if no such byte is found.
+ * in `s`, or `-1` if no such byte is found.
  */
 int64_t scu_str_index_of_any(const char* s, const char* anyOf);
 
@@ -256,7 +240,7 @@ int64_t scu_str_index_of_any(const char* s, const char* anyOf);
  *
  * @note The terminating null bytes are not compared.
  *
- * If `anyOf` points to an empty byte string, -1 is returned (as there are no
+ * If `anyOf` points to an empty byte string, `-1` is returned (as there are no
  * bytes to find).
  *
  * @warning The behavior is undefined if `s` or `anyOf` is not a pointer to a
@@ -266,7 +250,7 @@ int64_t scu_str_index_of_any(const char* s, const char* anyOf);
  * @param[in] anyOf The null-terminated byte string containing the bytes to
  *                  search for.
  * @return The zero-based index of the last occurrence of any byte from `anyOf`
- * in `s`, or -1 if no such byte is found.
+ * in `s`, or `-1` if no such byte is found.
  */
 int64_t scu_str_last_index_of_any(const char* s, const char* anyOf);
 
@@ -284,7 +268,7 @@ int64_t scu_str_last_index_of_any(const char* s, const char* anyOf);
  * @param[in] highInclusive The upper bound of the inclusive byte range, which
  *                          must be greater than or equal to `lowInclusive`.
  * @return The zero-based index of the first occurrence of any byte within the
- * inclusive range in `s`, or -1 if no such byte is found.
+ * inclusive range in `s`, or `-1` if no such byte is found.
  */
 int64_t scu_str_index_in_range(
     const char* s,
@@ -306,7 +290,7 @@ int64_t scu_str_index_in_range(
  * @param[in] highInclusive The upper bound of the inclusive byte range, which
  *                          must be greater than or equal to `lowInclusive`.
  * @return The zero-based index of the last occurrence of any byte within the
- * inclusive range in `s`, or -1 if no such byte is found.
+ * inclusive range in `s`, or `-1` if no such byte is found.
  */
 int64_t scu_str_last_index_in_range(
     const char* s,
@@ -450,7 +434,7 @@ bool scu_str_ends_with_str(const char* s, const char* suffix);
  * The caller is responsible for freeing the memory using `scu_free()` when it
  * is no longer needed.
  *
- * @param[in] src The null-terminated byte string to clone.
+ * @param[in] src The null-terminated byte string to duplicate.
  * @return A pointer to the dynamically allocated copy of the null-terminated
  * byte string, or `nullptr` on failure.
  */
@@ -479,7 +463,7 @@ char* scu_strdup(const char* src);
  * The caller is responsible for freeing the memory using `scu_free()` when it
  * is no longer needed.
  *
- * @param[in] src   The null-terminated byte string to clone a span of.
+ * @param[in] src   The null-terminated byte string to duplicate a span of.
  * @param[in] count The maximum number of bytes to copy from `src`.
  * @return A pointer to the dynamically allocated copy of the span of the
  * null-terminated byte string, or `nullptr` on failure.

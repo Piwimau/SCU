@@ -94,23 +94,23 @@ SCUError scu_list_ensure_capacity_impl(void** list, int64_t capacity);
  * This macro ensures that the specified list has at least the specified
  * capacity. If the current capacity is less than the desired capacity, the list
  * is reallocated using `scu_realloc()` and the pointer to the new block of
- * memory is assigned to `list`.
+ * memory is assigned to `*list`.
  *
  * @note This macro dynamically allocates memory using `scu_realloc()`. The
- * pointer assigned to `list` is suitably aligned for any type with fundamental
+ * pointer assigned to `*list` is suitably aligned for any type with fundamental
  * alignment requirements.
  *
  * @warning The caller is responsible for updating any existing pointers to the
- * list using the pointer assigned to `list`, as previous pointers may have been
- * invalidated due to reallocation.
+ * list using the pointer assigned to `*list`, as previous pointers may have
+ * been invalidated due to reallocation.
  *
  * @param[in, out] list     The list to ensure the capacity of.
  * @param[in]      capacity The desired capacity (in number of elements).
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-#define scu_list_ensure_capacity(list, capacity)              \
-    scu_list_ensure_capacity_impl((void**) &(list), capacity)
+#define scu_list_ensure_capacity(list, capacity)             \
+    scu_list_ensure_capacity_impl((void**) (list), capacity)
 
 /**
  * @brief Adds a new element to the end of a specified list.
@@ -145,23 +145,23 @@ SCUError scu_list_add_impl(void** restrict list, const void* restrict elem);
  * This macro adds a new element to the end of the specified list. If the
  * capacity of the list is insufficient to accommodate the new element, the list
  * is reallocated using `scu_realloc()` and the pointer to the new block of
- * memory is assigned to `list`. The new element is initialized by copying the
+ * memory is assigned to `*list`. The new element is initialized by copying the
  * data from `elem` into the next available slot in the list.
  *
  * @note This macro dynamically allocates memory using `scu_realloc()`. The
- * pointer assigned to `list` is suitably aligned for any type with fundamental
+ * pointer assigned to `*list` is suitably aligned for any type with fundamental
  * alignment requirements.
  *
  * @warning The caller is responsible for updating any existing pointers to the
- * list using the pointer assigned to `list`, as previous pointers may have been
- * invalidated due to reallocation.
+ * list using the pointer assigned to `*list`, as previous pointers may have
+ * been invalidated due to reallocation.
  *
  * @param[in, out] list The list to add the element to.
  * @param[in]      elem The element to add.
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-#define scu_list_add(list, elem) scu_list_add_impl((void**) &(list), &(elem))
+#define scu_list_add(list, elem) scu_list_add_impl((void**) (list), elem)
 
 /**
  * @brief Inserts a new element at a specified index into a specified list.
@@ -207,22 +207,22 @@ SCUError scu_list_insert_at_impl(
  * This macro inserts a new element at the specified index into the specified
  * list. If the capacity of the list is insufficient to accommodate the new
  * element, the list is reallocated using `scu_realloc()` and the pointer to
- * the new block of memory is assigned to `list`. Any elements at and after the
+ * the new block of memory is assigned to `*list`. Any elements at and after the
  * specified index are shifted one position to the right to make room for the
  * new element, which is initialized by copying the data from `elem` into the
  * now unoccupied slot.
  *
- * Note that `index` may be equal to `scu_list_count(list)`, in which case the
+ * Note that `index` may be equal to `scu_list_count(*list)`, in which case the
  * new element is added to the end of the list. In this case, the behavior is
- * equivalent to `scu_list_add(list, elem)`.
+ * equivalent to `scu_list_add(*list, elem)`.
  *
  * @note This macro dynamically allocates memory using `scu_realloc()`. The
- * pointer assigned to `list` is suitably aligned for any type with fundamental
+ * pointer assigned to `*list` is suitably aligned for any type with fundamental
  * alignment requirements.
  *
  * @warning The caller is responsible for updating any existing pointers to the
- * list using the pointer assigned to `list`, as previous pointers may have been
- * invalidated due to reallocation.
+ * list using the pointer assigned to `*list`, as previous pointers may have
+ * been invalidated due to reallocation.
  *
  * @param[in, out] list  The list to insert the element into.
  * @param[in]      index The index at which to insert the new element.
@@ -230,8 +230,8 @@ SCUError scu_list_insert_at_impl(
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-#define scu_list_insert_at(list, index, elem)                 \
-    scu_list_insert_at_impl((void**) &(list), index, &(elem))
+#define scu_list_insert_at(list, index, elem)             \
+    scu_list_insert_at_impl((void**) (list), index, elem)
 
 /**
  * @brief Removes an element at a specified index from a specified list.
@@ -307,21 +307,21 @@ SCUError scu_list_trim_excess_impl(void** list);
  * number of elements. If the capacity is already equal to the number of
  * elements, no reallocation occurs and the pointer to the list remains valid.
  * Otherwise, the list is reallocated using `scu_realloc()` and the pointer to
- * the new block of memory is assigned to `list`.
+ * the new block of memory is assigned to `*list`.
  *
  * @note This macro dynamically allocates memory using `scu_realloc()`. The
- * pointer assigned to `list` is suitably aligned for any type with fundamental
+ * pointer assigned to `*list` is suitably aligned for any type with fundamental
  * alignment requirements.
  *
  * @warning The caller is responsible for updating any existing pointers to the
- * list using the pointer assigned to `list`, as previous pointers may have been
- * invalidated due to reallocation.
+ * list using the pointer assigned to `*list`, as previous pointers may have
+ * been invalidated due to reallocation.
  *
  * @param[in, out] list The list to trim.
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-#define scu_list_trim_excess(list) scu_list_trim_excess_impl((void**) &(list))
+#define scu_list_trim_excess(list) scu_list_trim_excess_impl((void**) (list))
 
 /**
  * @brief Sorts a specified list using a provided comparison function.
