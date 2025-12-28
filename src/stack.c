@@ -49,12 +49,41 @@ SCUStack* scu_stack_new_with_capacity(int64_t elemSize, int64_t capacity) {
     stack->elemSize = elemSize;
     stack->capacity = capacity;
     stack->count = 0;
-    stack->data = scu_malloc(elemSize * capacity);
-    if (stack->data == nullptr) {
-        scu_free(stack);
-        return nullptr;
+    if (capacity > 0) {
+        stack->data = scu_malloc(elemSize * capacity);
+        if (stack->data == nullptr) {
+            scu_free(stack);
+            return nullptr;
+        }
+    }
+    else {
+        stack->data = nullptr;
     }
     return stack;
+}
+
+[[nodiscard]]
+SCUStack* scu_stack_clone(const SCUStack* stack) {
+    SCU_ASSERT(stack != nullptr);
+    SCUStack* clone = scu_malloc(SCU_SIZEOF(SCUStack));
+    if (clone == nullptr) {
+        return nullptr;
+    }
+    clone->elemSize = stack->elemSize;
+    clone->capacity = stack->capacity;
+    clone->count = stack->count;
+    if (stack->capacity > 0) {
+        clone->data = scu_malloc(stack->elemSize * stack->capacity);
+        if (clone->data == nullptr) {
+            scu_free(clone);
+            return nullptr;
+        }
+        scu_memcpy(clone->data, stack->data, stack->elemSize * stack->count);
+    }
+    else {
+        clone->data = nullptr;
+    }
+    return clone;
 }
 
 int64_t scu_stack_capacity(const SCUStack* stack) {

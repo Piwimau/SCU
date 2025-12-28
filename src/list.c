@@ -83,6 +83,22 @@ static inline const SCUListHeader* scu_data_to_header_const(const void* data) {
     );
 }
 
+[[nodiscard]]
+void* scu_list_clone(const void* list) {
+    const SCUListHeader* header = scu_data_to_header_const(list);
+    SCUListHeader* newHeader = scu_malloc(
+        SCU_SIZEOF(SCUListHeader) + (header->elemSize * header->capacity)
+    );
+    if (newHeader == nullptr) {
+        return nullptr;
+    }
+    newHeader->elemSize = header->elemSize;
+    newHeader->capacity = header->capacity;
+    newHeader->count = header->count;
+    scu_memcpy(newHeader->data, header->data, header->elemSize * header->count);
+    return newHeader->data;
+}
+
 int64_t scu_list_capacity(const void* list) {
     const SCUListHeader* header = scu_data_to_header_const(list);
     return header->capacity;

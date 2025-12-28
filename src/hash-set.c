@@ -146,6 +146,37 @@ SCUHashSet* scu_hash_set_new_with_capacity(
     return hashSet;
 }
 
+[[nodiscard]]
+SCUHashSet* scu_hash_set_clone(const SCUHashSet* hashSet) {
+    SCU_ASSERT(hashSet != nullptr);
+    SCUHashSet* clone = scu_malloc(SCU_SIZEOF(SCUHashSet));
+    if (clone == nullptr) {
+        return nullptr;
+    }
+    clone->elemSize = hashSet->elemSize;
+    clone->bucketSize = hashSet->bucketSize;
+    clone->capacity = hashSet->capacity;
+    clone->count = hashSet->count;
+    clone->hashFunc = hashSet->hashFunc;
+    clone->equalFunc = hashSet->equalFunc;
+    if (hashSet->capacity > 0) {
+        clone->buckets = scu_malloc(hashSet->bucketSize * hashSet->capacity);
+        if (clone->buckets == nullptr) {
+            scu_free(clone);
+            return nullptr;
+        }
+        scu_memcpy(
+            clone->buckets,
+            hashSet->buckets,
+            hashSet->bucketSize * hashSet->capacity
+        );
+    }
+    else {
+        clone->buckets = nullptr;
+    }
+    return clone;
+}
+
 int64_t scu_hash_set_capacity(const SCUHashSet* hashSet) {
     SCU_ASSERT(hashSet != nullptr);
     return hashSet->capacity;

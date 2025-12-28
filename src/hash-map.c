@@ -192,6 +192,40 @@ SCUHashMap* scu_hash_map_new_with_capacity(
     return hashMap;
 }
 
+[[nodiscard]]
+SCUHashMap* scu_hash_map_clone(const SCUHashMap* hashMap) {
+    SCU_ASSERT(hashMap != nullptr);
+    SCUHashMap* clone = scu_malloc(SCU_SIZEOF(SCUHashMap));
+    if (clone == nullptr) {
+        return nullptr;
+    }
+    clone->keySize = hashMap->keySize;
+    clone->valueSize = hashMap->valueSize;
+    clone->valueOffset = hashMap->valueOffset;
+    clone->bucketSize = hashMap->bucketSize;
+    clone->capacity = hashMap->capacity;
+    clone->count = hashMap->count;
+    clone->keyHashFunc = hashMap->keyHashFunc;
+    clone->keyEqualFunc = hashMap->keyEqualFunc;
+    clone->valueEqualFunc = hashMap->valueEqualFunc;
+    if (hashMap->capacity > 0) {
+        clone->buckets = scu_malloc(hashMap->bucketSize * hashMap->capacity);
+        if (clone->buckets == nullptr) {
+            scu_free(clone);
+            return nullptr;
+        }
+        scu_memcpy(
+            clone->buckets,
+            hashMap->buckets,
+            hashMap->bucketSize * hashMap->capacity
+        );
+    }
+    else {
+        clone->buckets = nullptr;
+    }
+    return clone;
+}
+
 int64_t scu_hash_map_capacity(const SCUHashMap* hashMap) {
     SCU_ASSERT(hashMap != nullptr);
     return hashMap->capacity;

@@ -74,6 +74,20 @@ SCUHashSet* scu_hash_set_new_with_capacity(
 );
 
 /**
+ * @brief Creates a shallow copy of a specified hash set.
+ *
+ * @note This function dynamically allocates memory using `scu_malloc()`.
+ *
+ * @warning The caller is responsible for deallocating the cloned hash set with
+ * `scu_hash_set_free()` when it is no longer needed.
+ *
+ * @param[in] hashSet The hash set to clone.
+ * @return A pointer to the cloned hash set, or `nullptr` on failure.
+ */
+[[nodiscard]]
+SCUHashSet* scu_hash_set_clone(const SCUHashSet* hashSet);
+
+/**
  * @brief Returns the capacity of a specified hash set, i.e., the maximum number
  * of elements that can be stored before a reallocation is required.
  *

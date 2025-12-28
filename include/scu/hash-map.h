@@ -95,6 +95,20 @@ SCUHashMap* scu_hash_map_new_with_capacity(
 );
 
 /**
+ * @brief Creates a shallow copy of a specified hash map.
+ *
+ * @note This function dynamically allocates memory using `scu_malloc()`.
+ *
+ * @warning The caller is responsible for deallocating the cloned hash map with
+ * `scu_hash_map_free()` when it is no longer needed.
+ *
+ * @param[in] hashMap The hash map to clone.
+ * @return A pointer to the cloned hash map, or `nullptr` on failure.
+ */
+[[nodiscard]]
+SCUHashMap* scu_hash_map_clone(const SCUHashMap* hashMap);
+
+/**
  * @brief Returns the capacity of a specified hash map, i.e., the maximum number
  * of key-value pairs that can be stored before a reallocation is required.
  *

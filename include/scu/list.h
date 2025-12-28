@@ -42,6 +42,27 @@ void* scu_list_new(int64_t elemSize);
 void* scu_list_new_with_capacity(int64_t elemSize, int64_t capacity);
 
 /**
+ * @brief Creates a shallow copy of a specified list.
+ *
+ * This function creates a shallow copy of the specified list by allocating a
+ * new list and copying all elements from the original list to the new list.
+ * Modifications to the elements in the cloned list will not affect the original
+ * list (and vice versa).
+ *
+ * @note This function dynamically allocates memory using `scu_malloc()`. The
+ * pointer returned is suitably aligned for any type with fundamental alignment
+ * requirements.
+ *
+ * @warning The caller is responsible for deallocating the cloned list with
+ * `scu_list_free()` when it is no longer needed.
+ *
+ * @param[in] list The list to clone.
+ * @return A pointer to the cloned list, or `nullptr` on failure.
+ */
+[[nodiscard]]
+void* scu_list_clone(const void* list);
+
+/**
  * @brief Returns the capacity of a specified list, i.e., the maximum number of
  * elements that can be stored before a reallocation is required.
  *

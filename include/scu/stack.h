@@ -57,6 +57,20 @@ SCUStack* scu_stack_new(int64_t elemSize);
 SCUStack* scu_stack_new_with_capacity(int64_t elemSize, int64_t capacity);
 
 /**
+ * @brief Creates a shallow copy of a specified stack.
+ *
+ * @note This function dynamically allocates memory using `scu_malloc()`.
+ *
+ * @warning The caller is responsible for deallocating the cloned stack with
+ * `scu_stack_free()` when it is no longer needed.
+ *
+ * @param[in] stack The stack to clone.
+ * @return A pointer to the cloned stack, or `nullptr` on failure.
+ */
+[[nodiscard]]
+SCUStack* scu_stack_clone(const SCUStack* stack);
+
+/**
  * @brief Returns the capacity of a specified stack, i.e., the maximum number of
  * elements that can be stored before a reallocation is required.
  *
