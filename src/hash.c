@@ -79,3 +79,8 @@ uint64_t scu_hash_str(const void* value) {
     }
     return hash;
 }
+
+uint64_t scu_hash_combine(uint64_t seed, uint64_t hash) {
+    return seed ^ (hash + UINT64_C(0x9E3779B97F4A7C15) + (seed << 6)
+        + (seed >> 2));
+}

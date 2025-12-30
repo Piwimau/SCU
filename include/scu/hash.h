@@ -113,4 +113,36 @@ uint64_t scu_hash_uint64(const void* value);
  */
 uint64_t scu_hash_str(const void* value);
 
+/**
+ * @brief Combines a hash with a specified accumulator hash.
+ *
+ * @note This function is mainly useful for creating hash functions for complex
+ * or aggregate data types (such as structs or arrays) by combining the hashes
+ * of their individual members or elements into a single hash.
+ *
+ * For the initial call, zero can be passed as the seed, as shown in the
+ * following example:
+ *
+ * ```c
+ * typedef struct Position {
+ *     int32_t x;
+ *     int32_t y;
+ * } Position;
+ *
+ * uint64_t position_hash(const void* value) {
+ *     SCU_ASSERT(value != nullptr);
+ *     const Position* p = (const Position*) value;
+ *     uint64_t hash = 0;
+ *     hash = scu_hash_combine(hash, scu_hash_int32(&p->x));
+ *     hash = scu_hash_combine(hash, scu_hash_int32(&p->y));
+ *     return hash;
+ * }
+ * ```
+ *
+ * @param[in] seed The accumulator hash.
+ * @param[in] hash The hash to mix into the accumulator.
+ * @return The combined hash.
+ */
+uint64_t scu_hash_combine(uint64_t seed, uint64_t hash);
+
 #endif
