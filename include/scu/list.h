@@ -352,15 +352,15 @@ SCUError scu_list_trim_excess_impl(void** list);
  * considered equivalent by the provided comparison function, their relative
  * order in the sorted list may not be the same as in the original list.
  *
- * @warning The behavior is undefined if `compareFunc` modifies the elements
- * passed to it, or if `compareFunc` returns inconsistent results when called
- * more than once with the same arguments.
+ * @warning The behavior is undefined if `cmpFunc` modifies the elements passed
+ * to it, or if `cmpFunc` returns inconsistent results when called more than
+ * once with the same arguments.
  *
- * @param[in, out] list        The list to sort.
- * @param[in]      compareFunc A comparison function used to determine the order
- *                             of the elements.
+ * @param[in, out] list    The list to sort.
+ * @param[in]      cmpFunc A comparison function used to determine the order of
+ *                         the elements.
  */
-void scu_list_sort(void* list, SCUCompareFunc* compareFunc);
+void scu_list_sort(void* list, SCUCompareFunc* cmpFunc);
 
 /**
  * @brief Deallocates a specified list.

@@ -212,10 +212,10 @@ SCUError scu_list_trim_excess_impl(void** list) {
     return SCU_ERROR_NONE;
 }
 
-void scu_list_sort(void* list, SCUCompareFunc* compareFunc) {
-    SCU_ASSERT(compareFunc != nullptr);
+void scu_list_sort(void* list, SCUCompareFunc* cmpFunc) {
+    SCU_ASSERT(cmpFunc != nullptr);
     SCUListHeader* header = scu_data_to_header(list);
-    scu_array_sort(header->data, header->count, header->elemSize, compareFunc);
+    scu_array_sort(header->data, header->count, header->elemSize, cmpFunc);
 }
 
 void scu_list_free(void* list) {

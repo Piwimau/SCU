@@ -58,21 +58,21 @@
  * order in the sorted array may not be the same as in the original array.
  *
  * @warning The behavior is undefined if `array` does not point to a block of
- * memory of at least `count * elemSize` bytes, if `compareFunc` modifies the
- * elements passed to it, or if `compareFunc` returns inconsistent results when
+ * memory of at least `count * elemSize` bytes, if `cmpFunc` modifies the
+ * elements passed to it, or if `cmpFunc` returns inconsistent results when
  * called more than once with the same arguments.
  *
- * @param[in, out] array       The array to sort.
- * @param[in]      count       The number of elements in the array.
- * @param[in]      elemSize    The size of each element (in bytes).
- * @param[in]      compareFunc A comparison function used to determine the order
- *                             of the elements.
+ * @param[in, out] array    The array to sort.
+ * @param[in]      count    The number of elements in the array.
+ * @param[in]      elemSize The size of each element (in bytes).
+ * @param[in]      cmpFunc  A comparison function used to determine the order of
+ *                          the elements.
  */
 void scu_array_sort(
     void* array,
     int64_t count,
     int64_t elemSize,
-    SCUCompareFunc* compareFunc
+    SCUCompareFunc* cmpFunc
 );
 
 #endif

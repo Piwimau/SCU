@@ -6,14 +6,14 @@ void scu_array_sort(
     void* array,
     int64_t count,
     int64_t elemSize,
-    SCUCompareFunc* compareFunc
+    SCUCompareFunc* cmpFunc
 ) {
     SCU_ASSERT(count >= 0);
     SCU_ASSERT(elemSize > 0);
-    SCU_ASSERT(compareFunc != nullptr);
+    SCU_ASSERT(cmpFunc != nullptr);
     if (count == 0) {
         return;
     }
     SCU_ASSERT(array != nullptr);
-    qsort(array, (size_t) count, (size_t) elemSize, compareFunc);
+    qsort(array, (size_t) count, (size_t) elemSize, cmpFunc);
 }
