@@ -18,15 +18,12 @@ void* scu_memrchr(const void* block, unsigned char c, int64_t count) {
     }
     SCU_ASSERT(block != nullptr);
     const unsigned char* p = (const unsigned char*) block;
-    void* last = nullptr;
-    void* match = nullptr;
-    while ((count > 0) && ((match = memchr(p, c, (size_t) count)) != nullptr)) {
-        last = match;
-        int64_t offset = (unsigned char*) match - p + 1;
-        p += offset;
-        count -= offset;
+    for (int64_t i = count - 1; i >= 0; i--) {
+        if (p[i] == c) {
+            return (void*) (p + i);
+        }
     }
-    return last;
+    return nullptr;
 }
 
 int scu_memcmp(const void* left, const void* right, int64_t count) {

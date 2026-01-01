@@ -63,15 +63,20 @@ int64_t scu_str_last_index_of_byte(const char* s, char c) {
 int64_t scu_str_last_index_of_str(const char* s, const char* other) {
     SCU_ASSERT(s != nullptr);
     SCU_ASSERT(other != nullptr);
-    if (other[0] == '\0') {
-        return (int64_t) strlen(s);
+    int64_t length = scu_strlen(s);
+    int64_t otherLength = scu_strlen(other);
+    if (otherLength == 0) {
+        return length;
     }
-    const char* last = nullptr;
-    const char* p = s;
-    while ((p = strstr(p, other)) != nullptr) {
-        last = p++;
+    if (otherLength > length) {
+        return -1;
     }
-    return (last == nullptr) ? -1 : last - s;
+    for (int64_t i = length - otherLength; i >= 0; i--) {
+        if (scu_strncmp(s + i, other, otherLength) == 0) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 int64_t scu_str_index_of_any(const char* s, const char* anyOf) {
@@ -90,12 +95,12 @@ int64_t scu_str_last_index_of_any(const char* s, const char* anyOf) {
     if (anyOf[0] == '\0') {
         return -1;
     }
-    const char* last = nullptr;
-    const char* p = s;
-    while ((p = strpbrk(p, anyOf)) != nullptr) {
-        last = p++;
+    for (int64_t i = scu_strlen(s) - 1; i >= 0; i--) {
+        if (strchr(anyOf, s[i]) != nullptr) {
+            return i;
+        }
     }
-    return (last == nullptr) ? -1 : last - s;
+    return -1;
 }
 
 int64_t scu_str_index_in_range(
@@ -126,13 +131,12 @@ int64_t scu_str_last_index_in_range(
     unsigned char low = (unsigned char) lowInclusive;
     unsigned char high = (unsigned char) highInclusive;
     SCU_ASSERT(high >= low);
-    int64_t last = -1;
-    for (int64_t i = 0; p[i] != '\0'; i++) {
+    for (int64_t i = scu_strlen(s) - 1; i >= 0; i--) {
         if ((p[i] >= low) && (p[i] <= high)) {
-            last = i;
+            return i;
         }
     }
-    return last;
+    return -1;
 }
 
 bool scu_str_starts_with_byte(const char* s, char c) {
@@ -167,7 +171,7 @@ bool scu_str_ends_with_str(const char* s, const char* suffix) {
     if (suffixLength > length) {
         return false;
     }
-    return scu_strncmp(s + (length - suffixLength), suffix, suffixLength) == 0;
+    return scu_strncmp(s + length - suffixLength, suffix, suffixLength) == 0;
 }
 
 [[nodiscard]]
