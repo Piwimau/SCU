@@ -1,9 +1,8 @@
 #ifndef SCU_STACK_H
 #define SCU_STACK_H
 
-#include <stdint.h>
-#include "scu/common.h"
 #include "scu/error.h"
+#include "scu/types.h"
 
 /** @brief Represents a last-in-first-out (LIFO) collection of elements. */
 typedef struct SCUStack SCUStack;
@@ -21,7 +20,7 @@ typedef struct SCUStackIter {
     SCUStack* stack;
 
     /** @brief The current index within the stack. */
-    int64_t index;
+    SCUisize index;
 
 } SCUStackIter;
 
@@ -38,7 +37,7 @@ typedef struct SCUStackIter {
  * @return A pointer to the new stack, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUStack* scu_stack_new(int64_t elemSize);
+SCUStack* scu_stack_new(SCUisize elemSize);
 
 /**
  * @brief Allocates and initializes a new stack with a specified element size
@@ -54,7 +53,7 @@ SCUStack* scu_stack_new(int64_t elemSize);
  * @return A pointer to the new stack, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUStack* scu_stack_new_with_capacity(int64_t elemSize, int64_t capacity);
+SCUStack* scu_stack_new_with_capacity(SCUisize elemSize, SCUisize capacity);
 
 /**
  * @brief Creates a shallow copy of a specified stack.
@@ -81,7 +80,7 @@ SCUStack* scu_stack_clone(const SCUStack* stack);
  * @param[in] stack The stack to examine.
  * @return The capacity of the specified stack.
  */
-int64_t scu_stack_capacity(const SCUStack* stack);
+SCUisize scu_stack_capacity(const SCUStack* stack);
 
 /**
  * @brief Returns the number of elements in a specified stack.
@@ -89,7 +88,7 @@ int64_t scu_stack_capacity(const SCUStack* stack);
  * @param[in] stack The stack to examine.
  * @return The number of elements in the specified stack.
  */
-int64_t scu_stack_count(const SCUStack* stack);
+SCUisize scu_stack_count(const SCUStack* stack);
 
 /**
  * @brief Ensures that a specified stack has at least a specified capacity.
@@ -101,7 +100,7 @@ int64_t scu_stack_count(const SCUStack* stack);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_stack_ensure_capacity(SCUStack* stack, int64_t capacity);
+SCUError scu_stack_ensure_capacity(SCUStack* stack, SCUisize capacity);
 
 /**
  * @brief Pushes a new element onto the top of a specified stack.

@@ -11,100 +11,232 @@
 typedef bool SCUEqualFunc(const void* a, const void* b);
 
 /**
- * @brief Determines whether two specified `int8_t` values are equal.
+ * @brief Determines whether two specified `SCUbyte` values are equal.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int8_t`.
+ * `SCUbyte`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
  * @return `true` if `*a` and `*b` are equal, otherwise `false`.
  */
-bool scu_equal_int8(const void* a, const void* b);
+bool scu_equal_byte(const void* a, const void* b);
 
 /**
- * @brief Determines whether two specified `uint8_t` values are equal.
- *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint8_t`.
- *
- * @param[in] a A pointer to the first value.
- * @param[in] b A pointer to the second value.
- * @return `true` if `*a` and `*b` are equal, otherwise `false`.
- */
-bool scu_equal_uint8(const void* a, const void* b);
-
-/**
- * @brief Determines whether two specified `int16_t` values are equal.
+ * @brief Determines whether two specified `SCUi8` values are equal.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int16_t`.
+ * `SCUi8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
  * @return `true` if `*a` and `*b` are equal, otherwise `false`.
  */
-bool scu_equal_int16(const void* a, const void* b);
+bool scu_equal_i8(const void* a, const void* b);
 
 /**
- * @brief Determines whether two specified `uint16_t` values are equal.
- *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint16_t`.
- *
- * @param[in] a A pointer to the first value.
- * @param[in] b A pointer to the second value.
- * @return `true` if `*a` and `*b` are equal, otherwise `false`.
- */
-bool scu_equal_uint16(const void* a, const void* b);
-
-/**
- * @brief Determines whether two specified `int32_t` values are equal.
+ * @brief Determines whether two specified `SCUu8` values are equal.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int32_t`.
+ * `SCUu8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
  * @return `true` if `*a` and `*b` are equal, otherwise `false`.
  */
-bool scu_equal_int32(const void* a, const void* b);
+bool scu_equal_u8(const void* a, const void* b);
 
 /**
- * @brief Determines whether two specified `uint32_t` values are equal.
- *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint32_t`.
- *
- * @param[in] a A pointer to the first value.
- * @param[in] b A pointer to the second value.
- * @return `true` if `*a` and `*b` are equal, otherwise `false`.
- */
-bool scu_equal_uint32(const void* a, const void* b);
-
-/**
- * @brief Determines whether two specified `int64_t` values are equal.
+ * @brief Determines whether two specified `SCUi16` values are equal.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int64_t`.
+ * `SCUi16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
  * @return `true` if `*a` and `*b` are equal, otherwise `false`.
  */
-bool scu_equal_int64(const void* a, const void* b);
+bool scu_equal_i16(const void* a, const void* b);
 
 /**
- * @brief Determines whether two specified `uint64_t` values are equal.
+ * @brief Determines whether two specified `SCUu16` values are equal.
  *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint64_t`.
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUu16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
  * @return `true` if `*a` and `*b` are equal, otherwise `false`.
  */
-bool scu_equal_uint64(const void* a, const void* b);
+bool scu_equal_u16(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUi32` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUi32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_i32(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUu32` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUu32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_u32(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUi64` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUi64`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_i64(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUu64` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUu64`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_u64(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUiptr` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUiptr`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_iptr(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUuptr` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUuptr`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_uptr(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUisize` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUisize`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_isize(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUusize` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUusize`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_usize(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUf32` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUf32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_f32(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUf64` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUf64`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_f64(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `char` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to a
+ * `char`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_char(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUchar8` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUchar8`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_char8(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUchar16` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUchar16`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_char16(const void* a, const void* b);
+
+/**
+ * @brief Determines whether two specified `SCUchar32` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUchar32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_char32(const void* a, const void* b);
 
 /**
  * @brief Determines whether two specified null-terminated byte strings are

@@ -1,7 +1,7 @@
 #ifndef SCU_MEMORY_H
 #define SCU_MEMORY_H
 
-#include <stdint.h>
+#include "scu/types.h"
 
 /**
  * @brief Finds the first occurrence of a specified byte in a block of memory.
@@ -18,7 +18,7 @@
  * @return A pointer to the first occurrence of `c` in `block`, or `nullptr` if
  * no such byte is found.
  */
-void* scu_memchr(const void* block, unsigned char c, int64_t count);
+void* scu_memchr(const void* block, SCUbyte c, SCUisize count);
 
 /**
  * @brief Finds the last occurrence of a specified byte in a block of memory.
@@ -35,7 +35,7 @@ void* scu_memchr(const void* block, unsigned char c, int64_t count);
  * @return A pointer to the last occurrence of `c` in `block`, or `nullptr` if
  * no such byte is found.
  */
-void* scu_memrchr(const void* block, unsigned char c, int64_t count);
+void* scu_memrchr(const void* block, SCUbyte c, SCUisize count);
 
 /**
  * @brief Compares two blocks of memory lexicographically.
@@ -60,7 +60,7 @@ void* scu_memrchr(const void* block, unsigned char c, int64_t count);
  * order, zero if they compare equal or `count` is zero, or a positive value if
  * `left` appears after `right`.
  */
-int scu_memcmp(const void* left, const void* right, int64_t count);
+int scu_memcmp(const void* left, const void* right, SCUisize count);
 
 /**
  * @brief Fills a block of memory with a specified byte.
@@ -81,7 +81,7 @@ int scu_memcmp(const void* left, const void* right, int64_t count);
  * @param[in]  count The number of bytes to fill.
  * @return A copy of `dest`.
  */
-void* scu_memset(void* dest, unsigned char c, int64_t count);
+void* scu_memset(void* dest, SCUbyte c, SCUisize count);
 
 /**
  * @brief Copies a non-overlapping block of memory from one location to another.
@@ -102,7 +102,7 @@ void* scu_memset(void* dest, unsigned char c, int64_t count);
  * @param[in]  count The number of bytes to copy.
  * @return A copy of `dest`.
  */
-void* scu_memcpy(void* restrict dest, const void* restrict src, int64_t count);
+void* scu_memcpy(void* restrict dest, const void* restrict src, SCUisize count);
 
 /**
  * @brief Copies a non-overlapping block of memory from one location to another,
@@ -130,8 +130,8 @@ void* scu_memcpy(void* restrict dest, const void* restrict src, int64_t count);
 void* scu_memccpy(
     void* restrict dest,
     const void* restrict src,
-    unsigned char c,
-    int64_t count
+    SCUbyte c,
+    SCUisize count
 );
 
 /**
@@ -155,7 +155,11 @@ void* scu_memccpy(
  * @return A pointer to the byte after the last byte written in the destination
  * block of memory (i.e., `dest + count`).
  */
-void* scu_mempcpy(void* restrict dest, const void* restrict src, int64_t count);
+void* scu_mempcpy(
+    void* restrict dest,
+    const void* restrict src,
+    SCUisize count
+);
 
 /**
  * @brief Copies a possibly overlapping block of memory from one location to
@@ -176,7 +180,7 @@ void* scu_mempcpy(void* restrict dest, const void* restrict src, int64_t count);
  * @param[in]  count The number of bytes to copy.
  * @return A copy of `dest`.
  */
-void* scu_memmove(void* dest, const void* src, int64_t count);
+void* scu_memmove(void* dest, const void* src, SCUisize count);
 
 /**
  * @brief Swaps the contents of two non-overlapping blocks of memory.
@@ -193,6 +197,6 @@ void* scu_memmove(void* dest, const void* src, int64_t count);
  * @param[in, out] right The second block of memory.
  * @param[in]      count The number of bytes to swap.
  */
-void scu_memswap(void* restrict left, void* restrict right, int64_t count);
+void scu_memswap(void* restrict left, void* restrict right, SCUisize count);
 
 #endif

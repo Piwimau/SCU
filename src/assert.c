@@ -1,4 +1,3 @@
-#include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,14 +7,14 @@
 void scu_assert_fail(
     const char* restrict expr,
     const char* restrict file,
-    int64_t line,
+    int line,
     const char* restrict func,
     const char* restrict fmt,
     ...
 ) {
     fprintf(
         stderr,
-        "SCU: Assertion '%s' failed at %s:%" PRId64 " in %s().\n",
+        "SCU: Assertion '%s' failed at %s:%d in %s().\n",
         expr,
         file,
         line,

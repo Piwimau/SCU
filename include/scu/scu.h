@@ -18,6 +18,7 @@
 #include "scu/stack.h"
 #include "scu/string.h"
 #include "scu/time.h"
+#include "scu/types.h"
 
 /** @brief The major version number of SCU. */
 #define SCU_VERSION_MAJOR 0

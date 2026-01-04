@@ -1,7 +1,7 @@
 #ifndef SCU_ALLOC_H
 #define SCU_ALLOC_H
 
-#include <stdint.h>
+#include "scu/types.h"
 
 /**
  * @brief An allocator's malloc-like operation.
@@ -17,7 +17,7 @@
  * @return A pointer to an uninitialized block of memory of at least `size`
  * contiguous bytes, or `nullptr` on failure.
  */
-typedef void* SCUMallocFunc(void* context, int64_t size);
+typedef void* SCUMallocFunc(void* context, SCUisize size);
 
 /**
  * @brief An allocator's calloc-like operation.
@@ -34,7 +34,7 @@ typedef void* SCUMallocFunc(void* context, int64_t size);
  * @return A pointer to a zero-initialized block of memory of at least `count *
  * size` contiguous bytes, or `nullptr` on failure.
  */
-typedef void* SCUCallocFunc(void* context, int64_t count, int64_t size);
+typedef void* SCUCallocFunc(void* context, SCUisize count, SCUisize size);
 
 /**
  * @brief An allocator's realloc-like operation.
@@ -59,7 +59,7 @@ typedef void* SCUCallocFunc(void* context, int64_t count, int64_t size);
  * @return A pointer to the reallocated (and possibly moved) block of memory of
  * at least `newSize` bytes, or `nullptr` on failure.
  */
-typedef void* SCUReallocFunc(void* context, void* block, int64_t newSize);
+typedef void* SCUReallocFunc(void* context, void* block, SCUisize newSize);
 
 /**
  * @brief An allocator's free-like operation.
@@ -206,7 +206,7 @@ void scu_set_global_allocator(const SCUAllocator* allocator);
  * contiguous bytes, or `nullptr` on failure.
  */
 [[nodiscard]]
-void* scu_malloc(int64_t size);
+void* scu_malloc(SCUisize size);
 
 /**
  * @brief Allocates a zero-initialized block of memory of at least `count *
@@ -231,7 +231,7 @@ void* scu_malloc(int64_t size);
  * size` contiguous bytes, or `nullptr` on failure.
  */
 [[nodiscard]]
-void* scu_calloc(int64_t count, int64_t size);
+void* scu_calloc(SCUisize count, SCUisize size);
 
 /**
  * @brief Reallocates a block of memory to at least `newSize` contiguous bytes.
@@ -261,7 +261,7 @@ void* scu_calloc(int64_t count, int64_t size);
  * at least `newSize` contiguous bytes, or `nullptr` on failure.
  */
 [[nodiscard]]
-void* scu_realloc(void* block, int64_t newSize);
+void* scu_realloc(void* block, SCUisize newSize);
 
 /**
  * @brief Deallocates a block of memory previously allocated by a call to

@@ -1,21 +1,24 @@
+#define SCU_SHORT_ALIASES
+
 #include "scu/alloc.h"
 #include "scu/assert.h"
+#include "scu/common.h"
 #include "scu/memory.h"
 #include "scu/stack.h"
 
 struct SCUStack {
 
     /** @brief The size of each element (in bytes). */
-    int64_t elemSize;
+    isize elemSize;
 
     /**
      * @brief The maximum number of elements that can be stored before a
      * reallocation is required.
      */
-    int64_t capacity;
+    isize capacity;
 
     /** @brief The current number of elements. */
-    int64_t count;
+    isize count;
 
     /**
      * @brief The actual data (i.e., the elements) stored in the stack.
@@ -23,23 +26,23 @@ struct SCUStack {
      * @note This is a dynamically allocated array of `count` elements of size
      * `elemSize`, or a `nullptr` if `capacity` is zero.
      */
-    unsigned char* data;
+    byte* data;
 
 };
 
 /** @brief The default capacity of a stack. */
-static constexpr int64_t SCU_DEFAULT_CAPACITY = 8;
+static constexpr isize SCU_DEFAULT_CAPACITY = 8;
 
 /** @brief The growth factor for increasing the capacity of a stack. */
-static constexpr int64_t SCU_GROWTH_FACTOR = 2;
+static constexpr isize SCU_GROWTH_FACTOR = 2;
 
 [[nodiscard]]
-SCUStack* scu_stack_new(int64_t elemSize) {
+SCUStack* scu_stack_new(isize elemSize) {
     return scu_stack_new_with_capacity(elemSize, SCU_DEFAULT_CAPACITY);
 }
 
 [[nodiscard]]
-SCUStack* scu_stack_new_with_capacity(int64_t elemSize, int64_t capacity) {
+SCUStack* scu_stack_new_with_capacity(isize elemSize, isize capacity) {
     SCU_ASSERT(elemSize > 0);
     SCU_ASSERT(capacity >= 0);
     SCUStack* stack = scu_malloc(SCU_SIZEOF(SCUStack));
@@ -86,28 +89,25 @@ SCUStack* scu_stack_clone(const SCUStack* stack) {
     return clone;
 }
 
-int64_t scu_stack_capacity(const SCUStack* stack) {
+isize scu_stack_capacity(const SCUStack* stack) {
     SCU_ASSERT(stack != nullptr);
     return stack->capacity;
 }
 
-int64_t scu_stack_count(const SCUStack* stack) {
+isize scu_stack_count(const SCUStack* stack) {
     SCU_ASSERT(stack != nullptr);
     return stack->count;
 }
 
-SCUError scu_stack_ensure_capacity(SCUStack* stack, int64_t capacity) {
+SCUError scu_stack_ensure_capacity(SCUStack* stack, isize capacity) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(capacity >= 0);
     if (stack->capacity < capacity) {
-        int64_t newCapacity = (stack->capacity > 0) ? stack->capacity : 1;
+        isize newCapacity = (stack->capacity > 0) ? stack->capacity : 1;
         while (newCapacity < capacity) {
             newCapacity *= SCU_GROWTH_FACTOR;
         }
-        unsigned char* newData = scu_realloc(
-            stack->data,
-            stack->elemSize * newCapacity
-        );
+        byte* newData = scu_realloc(stack->data, stack->elemSize * newCapacity);
         if (newData == nullptr) {
             return SCU_ERROR_OUT_OF_MEMORY;
         }
@@ -195,7 +195,7 @@ SCUError scu_stack_trim_excess(SCUStack* stack) {
             stack->capacity = 0;
         }
         else {
-            unsigned char* newData = scu_realloc(
+            byte* newData = scu_realloc(
                 stack->data,
                 stack->elemSize * stack->count
             );
@@ -218,7 +218,7 @@ bool scu_stack_iter_move_next(SCUStackIter* iter) {
     SCU_ASSERT(iter != nullptr);
     SCU_ASSERT(iter->stack != nullptr);
     SCUStack* stack = iter->stack;
-    int64_t index = iter->index;
+    isize index = iter->index;
     SCU_ASSERT((index >= 0) && (index <= stack->count));
     if (stack->count == 0) {
         iter->index = 0;
@@ -237,7 +237,7 @@ void* scu_stack_iter_current(const SCUStackIter* iter) {
     SCU_ASSERT(iter != nullptr);
     SCU_ASSERT(iter->stack != nullptr);
     SCUStack* stack = iter->stack;
-    int64_t index = iter->index;
+    isize index = iter->index;
     SCU_ASSERT((index >= 0) && (index < stack->count));
     return stack->data + (stack->elemSize * index);
 }

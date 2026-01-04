@@ -1,7 +1,6 @@
 #ifndef SCU_ARRAY_H
 #define SCU_ARRAY_H
 
-#include <stdint.h>
 #include "scu/common.h"
 #include "scu/compare.h"
 
@@ -70,8 +69,8 @@
  */
 void scu_array_sort(
     void* array,
-    int64_t count,
-    int64_t elemSize,
+    SCUisize count,
+    SCUisize elemSize,
     SCUCompareFunc* cmpFunc
 );
 

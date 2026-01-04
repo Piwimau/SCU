@@ -1,7 +1,7 @@
 #ifndef SCU_HASH_H
 #define SCU_HASH_H
 
-#include <stdint.h>
+#include "scu/types.h"
 
 /**
  * @brief Returns a hash for a specified value.
@@ -9,95 +9,225 @@
  * @param[in] value A pointer to the value to hash.
  * @return A hash for the specified value.
  */
-typedef uint64_t SCUHashFunc(const void* value);
+typedef SCUusize SCUHashFunc(const void* value);
 
 /**
- * @brief Returns a hash for a specified `int8_t` value.
+ * @brief Returns a hash for a specified `SCUbyte` value.
  *
  * @warning The behavior is undefined if `value` is not a pointer to an
- * `int8_t`.
+ * `SCUbyte`.
  *
  * @param[in] value A pointer to the value to hash.
- * @return A hash for the specified `int8_t` value.
+ * @return A hash for the specified value.
  */
-uint64_t scu_hash_int8(const void* value);
+SCUusize scu_hash_byte(const void* value);
 
 /**
- * @brief Returns a hash for a specified `uint8_t` value.
+ * @brief Returns a hash for a specified `SCUi8` value.
  *
- * @warning The behavior is undefined if `value` is not a pointer to a
- * `uint8_t`.
+ * @warning The behavior is undefined if `value` is not a pointer to an `SCUi8`.
  *
  * @param[in] value A pointer to the value to hash.
- * @return A hash for the specified `uint8_t` value.
+ * @return A hash for the specified value.
  */
-uint64_t scu_hash_uint8(const void* value);
+SCUusize scu_hash_i8(const void* value);
 
 /**
- * @brief Returns a hash for a specified `int16_t` value.
+ * @brief Returns a hash for a specified `SCUu8` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an `SCUu8`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_u8(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUi16` value.
  *
  * @warning The behavior is undefined if `value` is not a pointer to an
- * `int16_t`.
+ * `SCUi16`.
  *
  * @param[in] value A pointer to the value to hash.
- * @return A hash for the specified `int16_t` value.
+ * @return A hash for the specified value.
  */
-uint64_t scu_hash_int16(const void* value);
+SCUusize scu_hash_i16(const void* value);
 
 /**
- * @brief Returns a hash for a specified `uint16_t` value.
- *
- * @warning The behavior is undefined if `value` is not a pointer to a
- * `uint16_t`.
- *
- * @param[in] value A pointer to the value to hash.
- * @return A hash for the specified `uint16_t` value.
- */
-uint64_t scu_hash_uint16(const void* value);
-
-/**
- * @brief Returns a hash for a specified `int32_t` value.
+ * @brief Returns a hash for a specified `SCUu16` value.
  *
  * @warning The behavior is undefined if `value` is not a pointer to an
- * `int32_t`.
+ * `SCUu16`.
  *
  * @param[in] value A pointer to the value to hash.
- * @return A hash for the specified `int32_t` value.
+ * @return A hash for the specified value.
  */
-uint64_t scu_hash_int32(const void* value);
+SCUusize scu_hash_u16(const void* value);
 
 /**
- * @brief Returns a hash for a specified `uint32_t` value.
- *
- * @warning The behavior is undefined if `value` is not a pointer to a
- * `uint32_t`.
- *
- * @param[in] value A pointer to the value to hash.
- * @return A hash for the specified `uint32_t` value.
- */
-uint64_t scu_hash_uint32(const void* value);
-
-/**
- * @brief Returns a hash for a specified `int64_t` value.
+ * @brief Returns a hash for a specified `SCUi32` value.
  *
  * @warning The behavior is undefined if `value` is not a pointer to an
- * `int64_t`.
+ * `SCUi32`.
  *
  * @param[in] value A pointer to the value to hash.
- * @return A hash for the specified `int64_t` value.
+ * @return A hash for the specified value.
  */
-uint64_t scu_hash_int64(const void* value);
+SCUusize scu_hash_i32(const void* value);
 
 /**
- * @brief Returns a hash for a specified `uint64_t` value.
+ * @brief Returns a hash for a specified `SCUu32` value.
  *
- * @warning The behavior is undefined if `value` is not a pointer to a
- * `uint64_t`.
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUu32`.
  *
  * @param[in] value A pointer to the value to hash.
- * @return A hash for the specified `uint64_t` value.
+ * @return A hash for the specified value.
  */
-uint64_t scu_hash_uint64(const void* value);
+SCUusize scu_hash_u32(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUi64` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUi64`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_i64(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUu64` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUu64`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_u64(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUiptr` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUiptr`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_iptr(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUuptr` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUuptr`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_uptr(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUisize` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUisize`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_isize(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUusize` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUusize`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_usize(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUf32` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUf32`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_f32(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUf64` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUf64`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_f64(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `char` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to a `char`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_char(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUchar8` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUchar8`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_char8(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUchar16` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUchar16`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_char16(const void* value);
+
+/**
+ * @brief Returns a hash for a specified `SCUchar32` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to an
+ * `SCUchar32`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_char32(const void* value);
+
+/**
+ * @brief Returns a hash for a specified block of memory.
+ *
+ * @warning The behavior is undefined if `block` is not a pointer to a block of
+ * memory at least `count` bytes.
+ *
+ * @param[in] block A pointer to the block of memory to hash.
+ * @param[in] count The size of the block (in bytes).
+ * @return A hash for the specified block of memory.
+ */
+SCUusize scu_hash_bytes(const void* block, SCUisize count);
 
 /**
  * @brief Returns a hash for a specified null-terminated byte string.
@@ -111,7 +241,7 @@ uint64_t scu_hash_uint64(const void* value);
  *                  hash.
  * @return A hash for the specified null-terminated byte string.
  */
-uint64_t scu_hash_str(const void* value);
+SCUusize scu_hash_str(const void* value);
 
 /**
  * @brief Combines a hash with a specified accumulator hash.
@@ -120,21 +250,21 @@ uint64_t scu_hash_str(const void* value);
  * or aggregate data types (such as structs or arrays) by combining the hashes
  * of their individual members or elements into a single hash.
  *
- * For the initial call, zero can be passed as the seed, as shown in the
+ * For the initial call, zero may be passed as the seed, as shown in the
  * following example:
  *
  * ```c
- * typedef struct Position {
- *     int32_t x;
- *     int32_t y;
- * } Position;
+ * typedef struct Vector {
+ *     f32 x;
+ *     f32 y;
+ * } Vector;
  *
- * uint64_t position_hash(const void* value) {
+ * SCUusize hash_vector(const void* value) {
  *     SCU_ASSERT(value != nullptr);
- *     const Position* p = (const Position*) value;
- *     uint64_t hash = 0;
- *     hash = scu_hash_combine(hash, scu_hash_int32(&p->x));
- *     hash = scu_hash_combine(hash, scu_hash_int32(&p->y));
+ *     const Vector* vector = (const Vector*) value;
+ *     SCUusize hash = 0;
+ *     hash = scu_hash_combine(hash, scu_hash_f32(&vector->x));
+ *     hash = scu_hash_combine(hash, scu_hash_f32(&vector->y));
  *     return hash;
  * }
  * ```
@@ -143,6 +273,6 @@ uint64_t scu_hash_str(const void* value);
  * @param[in] hash The hash to mix into the accumulator.
  * @return The combined hash.
  */
-uint64_t scu_hash_combine(uint64_t seed, uint64_t hash);
+SCUusize scu_hash_combine(SCUusize seed, SCUusize hash);
 
 #endif

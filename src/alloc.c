@@ -1,4 +1,5 @@
-#include <inttypes.h>
+#define SCU_SHORT_ALIASES
+
 #include <stdatomic.h>
 #include <stdlib.h>
 #include "scu/alloc.h"
@@ -25,7 +26,7 @@ typedef struct SCUAllocHeader {
      * `max_align_t` to ensure proper alignment for any type with fundamental
      * alignment requirements.
      */
-    alignas(max_align_t) unsigned char data[];
+    alignas(max_align_t) byte data[];
 
 } SCUAllocHeader;
 
@@ -39,8 +40,8 @@ typedef struct SCUAllocHeader {
  * contiguous bytes, or `nullptr` on failure.
  */
 [[nodiscard]]
-static void* scu_default_malloc([[maybe_unused]] void* context, int64_t size) {
-    return malloc((size_t) size);
+static void* scu_default_malloc([[maybe_unused]] void* context, isize size) {
+    return malloc((usize) size);
 }
 
 /**
@@ -56,10 +57,10 @@ static void* scu_default_malloc([[maybe_unused]] void* context, int64_t size) {
 [[nodiscard]]
 static void* scu_default_calloc(
     [[maybe_unused]] void* context,
-    int64_t count,
-    int64_t size
+    isize count,
+    isize size
 ) {
-    return calloc((size_t) count, (size_t) size);
+    return calloc((usize) count, (usize) size);
 }
 
 /**
@@ -76,9 +77,9 @@ static void* scu_default_calloc(
 static void* scu_default_realloc(
     [[maybe_unused]] void* context,
     void* block,
-    int64_t newSize
+    isize newSize
 ) {
-    return realloc(block, (size_t) newSize);
+    return realloc(block, (usize) newSize);
 }
 
 /**
@@ -116,7 +117,7 @@ void scu_set_global_allocator(const SCUAllocator* allocator) {
 }
 
 [[nodiscard]]
-void* scu_malloc(int64_t size) {
+void* scu_malloc(isize size) {
     SCU_ASSERT(size >= 0);
     const SCUAllocator* allocator = scu_get_global_allocator();
     SCUAllocHeader* header = allocator->malloc(
@@ -131,7 +132,7 @@ void* scu_malloc(int64_t size) {
 }
 
 [[nodiscard]]
-void* scu_calloc(int64_t count, int64_t size) {
+void* scu_calloc(isize count, isize size) {
     SCU_ASSERT(count >= 0);
     SCU_ASSERT(size >= 0);
     const SCUAllocator* allocator = scu_get_global_allocator();
@@ -155,13 +156,11 @@ void* scu_calloc(int64_t count, int64_t size) {
  */
 static inline SCUAllocHeader* scu_data_to_header(void* data) {
     SCU_ASSERT(data != nullptr);
-    return (SCUAllocHeader*) (
-        ((unsigned char*) data) - SCU_SIZEOF(SCUAllocHeader)
-    );
+    return (SCUAllocHeader*) ((byte*) data - SCU_SIZEOF(SCUAllocHeader));
 }
 
 [[nodiscard]]
-void* scu_realloc(void* block, int64_t newSize) {
+void* scu_realloc(void* block, isize newSize) {
     SCU_ASSERT(newSize >= 0);
     if (block == nullptr) {
         return scu_malloc(newSize);

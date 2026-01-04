@@ -1,11 +1,13 @@
+#define SCU_SHORT_ALIASES
+
 #include <stdlib.h>
 #include "scu/array.h"
 #include "scu/assert.h"
 
 void scu_array_sort(
     void* array,
-    int64_t count,
-    int64_t elemSize,
+    isize count,
+    isize elemSize,
     SCUCompareFunc* cmpFunc
 ) {
     SCU_ASSERT(count >= 0);
@@ -15,5 +17,5 @@ void scu_array_sort(
         return;
     }
     SCU_ASSERT(array != nullptr);
-    qsort(array, (size_t) count, (size_t) elemSize, cmpFunc);
+    qsort(array, (usize) count, (usize) elemSize, cmpFunc);
 }

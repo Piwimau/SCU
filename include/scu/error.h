@@ -1,8 +1,6 @@
 #ifndef SCU_ERROR_H
 #define SCU_ERROR_H
 
-#include <stdint.h>
-
 /** @brief Represents an error code used to signal success or failure. */
 typedef enum SCUError {
 
@@ -81,7 +79,7 @@ typedef enum SCUError {
 [[noreturn]]
 void scu_fatal(
     const char* restrict file,
-    int64_t line,
+    int line,
     const char* restrict func,
     const char* restrict fmt,
     ...

@@ -1,8 +1,7 @@
 #ifndef SCU_LIST_H
 #define SCU_LIST_H
 
-#include <stdint.h>
-#include "scu/common.h"
+#include "scu/types.h"
 #include "scu/compare.h"
 #include "scu/error.h"
 
@@ -21,7 +20,7 @@
  * @return A pointer to the new list, or `nullptr` on failure.
  */
 [[nodiscard]]
-void* scu_list_new(int64_t elemSize);
+void* scu_list_new(SCUisize elemSize);
 
 /**
  * @brief Allocates and initializes a new list with a specified element size
@@ -39,7 +38,7 @@ void* scu_list_new(int64_t elemSize);
  * @return A pointer to the new list, or `nullptr` on failure.
  */
 [[nodiscard]]
-void* scu_list_new_with_capacity(int64_t elemSize, int64_t capacity);
+void* scu_list_new_with_capacity(SCUisize elemSize, SCUisize capacity);
 
 /**
  * @brief Creates a shallow copy of a specified list.
@@ -73,7 +72,7 @@ void* scu_list_clone(const void* list);
  * @param[in] list The list to examine.
  * @return The capacity of the specified list.
  */
-int64_t scu_list_capacity(const void* list);
+SCUisize scu_list_capacity(const void* list);
 
 /**
  * @brief Returns the number of elements in a specified list.
@@ -81,7 +80,7 @@ int64_t scu_list_capacity(const void* list);
  * @param[in] list The list to examine.
  * @return The number of elements in the specified list.
  */
-int64_t scu_list_count(const void* list);
+SCUisize scu_list_count(const void* list);
 
 /**
  * @brief Ensures that a specified list has at least a specified capacity.
@@ -107,7 +106,7 @@ int64_t scu_list_count(const void* list);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_list_ensure_capacity_impl(void** list, int64_t capacity);
+SCUError scu_list_ensure_capacity_impl(void** list, SCUisize capacity);
 
 /**
  * @brief Ensures that a specified list has at least a specified capacity.
@@ -218,7 +217,7 @@ SCUError scu_list_add_impl(void** restrict list, const void* restrict elem);
  */
 SCUError scu_list_insert_at_impl(
     void** restrict list,
-    int64_t index,
+    SCUisize index,
     const void* restrict elem
 );
 
@@ -274,7 +273,7 @@ SCUError scu_list_insert_at_impl(
  * @param[in, out] list  The list to remove the element from.
  * @param[in]      index The index of the element to remove.
  */
-void scu_list_remove_at(void* list, int64_t index);
+void scu_list_remove_at(void* list, SCUisize index);
 
 /**
  * @brief Clears all elements from a specified list.

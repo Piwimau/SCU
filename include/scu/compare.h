@@ -1,225 +1,509 @@
 #ifndef SCU_COMPARE_H
 #define SCU_COMPARE_H
 
-#include <stdint.h>
-
 /**
  * @brief Compares two specified values.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is less than `*b`, zero if they are equal,
- * or a positive value if `*a` is greater than `*b`.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
  */
 typedef int SCUCompareFunc(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `int8_t` values.
+ * @brief Compares two specified `SCUbyte` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int8_t`.
+ * `SCUbyte`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is less than `*b`, zero if they are equal,
- * or a positive value if `*a` is greater than `*b`.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
  */
-int scu_compare_int8(const void* a, const void* b);
+int scu_compare_byte(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `int8_t` values in reverse order.
+ * @brief Compares two specified `SCUbyte` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int8_t`.
+ * `SCUbyte`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is greater than `*b`, zero if they are
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
  * equal, or a positive value if `*a` is less than `*b`.
  */
-int scu_compare_int8_rev(const void* a, const void* b);
+int scu_compare_byte_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `uint8_t` values.
- *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint8_t`.
- *
- * @param[in] a A pointer to the first value.
- * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is less than `*b`, zero if they are equal,
- * or a positive value if `*a` is greater than `*b`.
- */
-int scu_compare_uint8(const void* a, const void* b);
-
-/**
- * @brief Compares two specified `uint8_t` values in reverse order.
- *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint8_t`.
- *
- * @param[in] a A pointer to the first value.
- * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is greater than `*b`, zero if they are
- * equal, or a positive value if `*a` is less than `*b`.
- */
-int scu_compare_uint8_rev(const void* a, const void* b);
-
-/**
- * @brief Compares two specified `int16_t` values.
+ * @brief Compares two specified `SCUi8` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int16_t`.
+ * `SCUi8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is less than `*b`, zero if they are equal,
- * or a positive value if `*a` is greater than `*b`.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
  */
-int scu_compare_int16(const void* a, const void* b);
+int scu_compare_i8(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `int16_t` values in reverse order.
+ * @brief Compares two specified `SCUi8` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int16_t`.
+ * `SCUi8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is greater than `*b`, zero if they are
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
  * equal, or a positive value if `*a` is less than `*b`.
  */
-int scu_compare_int16_rev(const void* a, const void* b);
+int scu_compare_i8_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `uint16_t` values.
- *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint16_t`.
- *
- * @param[in] a A pointer to the first value.
- * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is less than `*b`, zero if they are equal,
- * or a positive value if `*a` is greater than `*b`.
- */
-int scu_compare_uint16(const void* a, const void* b);
-
-/**
- * @brief Compares two specified `uint16_t` values in reverse order.
- *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint16_t`.
- *
- * @param[in] a A pointer to the first value.
- * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is greater than `*b`, zero if they are
- * equal, or a positive value if `*a` is less than `*b`.
- */
-int scu_compare_uint16_rev(const void* a, const void* b);
-
-/**
- * @brief Compares two specified `int32_t` values.
+ * @brief Compares two specified `SCUu8` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int32_t`.
+ * `SCUu8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is less than `*b`, zero if they are equal,
- * or a positive value if `*a` is greater than `*b`.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
  */
-int scu_compare_int32(const void* a, const void* b);
+int scu_compare_u8(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `int32_t` values in reverse order.
+ * @brief Compares two specified `SCUu8` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int32_t`.
+ * `SCUu8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is greater than `*b`, zero if they are
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
  * equal, or a positive value if `*a` is less than `*b`.
  */
-int scu_compare_int32_rev(const void* a, const void* b);
+int scu_compare_u8_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `uint32_t` values.
- *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint32_t`.
- *
- * @param[in] a A pointer to the first value.
- * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is less than `*b`, zero if they are equal,
- * or a positive value if `*a` is greater than `*b`.
- */
-int scu_compare_uint32(const void* a, const void* b);
-
-/**
- * @brief Compares two specified `uint32_t` values in reverse order.
- *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint32_t`.
- *
- * @param[in] a A pointer to the first value.
- * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is greater than `*b`, zero if they are
- * equal, or a positive value if `*a` is less than `*b`.
- */
-int scu_compare_uint32_rev(const void* a, const void* b);
-
-/**
- * @brief Compares two specified `int64_t` values.
+ * @brief Compares two specified `SCUi16` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int64_t`.
+ * `SCUi16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is less than `*b`, zero if they are equal,
- * or a positive value if `*a` is greater than `*b`.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
  */
-int scu_compare_int64(const void* a, const void* b);
+int scu_compare_i16(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `int64_t` values in reverse order.
+ * @brief Compares two specified `SCUi16` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `int64_t`.
+ * `SCUi16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is greater than `*b`, zero if they are
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
  * equal, or a positive value if `*a` is less than `*b`.
  */
-int scu_compare_int64_rev(const void* a, const void* b);
+int scu_compare_i16_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `uint64_t` values.
+ * @brief Compares two specified `SCUu16` values.
  *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint64_t`.
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUu16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is less than `*b`, zero if they are equal,
- * or a positive value if `*a` is greater than `*b`.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
  */
-int scu_compare_uint64(const void* a, const void* b);
+int scu_compare_u16(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `uint64_t` values in reverse order.
+ * @brief Compares two specified `SCUu16` values in reverse order.
  *
- * @warning The behavior is undefined if `a` or `b` is not a pointer to a
- * `uint64_t`.
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUu16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
- * @return A negative value if `*a` is greater than `*b`, zero if they are
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
  * equal, or a positive value if `*a` is less than `*b`.
  */
-int scu_compare_uint64_rev(const void* a, const void* b);
+int scu_compare_u16_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUi32` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUi32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_i32(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUi32` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUi32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_i32_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUu32` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUu32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_u32(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUu32` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUu32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_u32_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUi64` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUi64`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_i64(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUi64` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUi64`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_i64_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUu64` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUu64`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_u64(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUu64` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUu64`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_u64_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUiptr` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUiptr`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_iptr(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUiptr` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUiptr`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_iptr_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUuptr` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUuptr`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_uptr(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUuptr` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUuptr`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_uptr_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUisize` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUisize`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_isize(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUisize` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUisize`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_isize_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUusize` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUusize`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_usize(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUusize` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUusize`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_usize_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUf32` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUf32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_f32(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUf32` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUf32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_f32_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUf64` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUf64`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_f64(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUf64` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUf64`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_f64_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `char` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to a
+ * `char`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_char(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `char` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to a
+ * `char`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_char_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUchar8` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUchar8`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_char8(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUchar8` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUchar8`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_char8_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUchar16` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUchar16`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_char16(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUchar16` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUchar16`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_char16_rev(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUchar32` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUchar32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is less than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is greater than `*b`.
+ */
+int scu_compare_char32(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `SCUchar32` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to an
+ * `SCUchar32`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is greater than `*b`, zero if they compare
+ * equal, or a positive value if `*a` is less than `*b`.
+ */
+int scu_compare_char32_rev(const void* a, const void* b);
 
 /**
  * @brief Compares two specified null-terminated byte strings lexicographically.

@@ -1,11 +1,10 @@
 #ifndef SCU_HASH_MAP_H
 #define SCU_HASH_MAP_H
 
-#include <stdint.h>
-#include "scu/common.h"
 #include "scu/equal.h"
 #include "scu/error.h"
 #include "scu/hash.h"
+#include "scu/types.h"
 
 /** @brief Represents an unordered collection of key-value pairs. */
 typedef struct SCUHashMap SCUHashMap;
@@ -23,7 +22,7 @@ typedef struct SCUHashMapIter {
     SCUHashMap* hashMap;
 
     /** @brief The current index within the hash map. */
-    int64_t index;
+    SCUisize index;
 
 } SCUHashMapIter;
 
@@ -58,8 +57,8 @@ typedef struct SCUHashMapEntry {
  */
 [[nodiscard]]
 SCUHashMap* scu_hash_map_new(
-    int64_t keySize,
-    int64_t valueSize,
+    SCUisize keySize,
+    SCUisize valueSize,
     SCUHashFunc* keyHashFunc,
     SCUEqualFunc* keyEqualFunc,
     SCUEqualFunc* valueEqualFunc
@@ -86,9 +85,9 @@ SCUHashMap* scu_hash_map_new(
  */
 [[nodiscard]]
 SCUHashMap* scu_hash_map_new_with_capacity(
-    int64_t keySize,
-    int64_t valueSize,
-    int64_t capacity,
+    SCUisize keySize,
+    SCUisize valueSize,
+    SCUisize capacity,
     SCUHashFunc* keyHashFunc,
     SCUEqualFunc* keyEqualFunc,
     SCUEqualFunc* valueEqualFunc
@@ -119,7 +118,7 @@ SCUHashMap* scu_hash_map_clone(const SCUHashMap* hashMap);
  * @param[in] hashMap The hash map to examine.
  * @return The capacity of the specified hash map.
  */
-int64_t scu_hash_map_capacity(const SCUHashMap* hashMap);
+SCUisize scu_hash_map_capacity(const SCUHashMap* hashMap);
 
 /**
  * @brief Returns the number of key-value pairs in a specified hash map.
@@ -127,7 +126,7 @@ int64_t scu_hash_map_capacity(const SCUHashMap* hashMap);
  * @param[in] hashMap The hash map to examine.
  * @return The number of key-value pairs in the specified hash map.
  */
-int64_t scu_hash_map_count(const SCUHashMap* hashMap);
+SCUisize scu_hash_map_count(const SCUHashMap* hashMap);
 
 /**
  * @brief Ensures that a specified hash map has at least a specified capacity.
@@ -139,7 +138,7 @@ int64_t scu_hash_map_count(const SCUHashMap* hashMap);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_hash_map_ensure_capacity(SCUHashMap* hashMap, int64_t capacity);
+SCUError scu_hash_map_ensure_capacity(SCUHashMap* hashMap, SCUisize capacity);
 
 /**
  * @brief Adds a new key-value pair to a specified hash map.

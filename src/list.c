@@ -1,6 +1,9 @@
+#define SCU_SHORT_ALIASES
+
 #include "scu/alloc.h"
 #include "scu/array.h"
 #include "scu/assert.h"
+#include "scu/common.h"
 #include "scu/list.h"
 #include "scu/memory.h"
 
@@ -8,16 +11,16 @@
 typedef struct SCUListHeader {
 
     /** @brief The size of each element (in bytes). */
-    int64_t elemSize;
+    isize elemSize;
 
     /**
      * @brief The maximum number of elements that can be stored before a
      * reallocation is required.
      */
-    int64_t capacity;
+    isize capacity;
 
     /** @brief The current number of elements. */
-    int64_t count;
+    isize count;
 
     /**
      * @brief The actual data (i.e., the elements) stored after the header.
@@ -26,23 +29,23 @@ typedef struct SCUListHeader {
      * `max_align_t` to ensure proper alignment for any type with fundamental
      * alignment requirements.
      */
-    alignas(max_align_t) unsigned char data[];
+    alignas(max_align_t) byte data[];
 
 } SCUListHeader;
 
 /** @brief The default capacity of a list. */
-static constexpr int64_t SCU_DEFAULT_CAPACITY = 8;
+static constexpr isize SCU_DEFAULT_CAPACITY = 8;
 
 /** @brief The growth factor for increasing the capacity of a list. */
-static constexpr int64_t SCU_GROWTH_FACTOR = 2;
+static constexpr isize SCU_GROWTH_FACTOR = 2;
 
 [[nodiscard]]
-void* scu_list_new(int64_t elemSize) {
+void* scu_list_new(isize elemSize) {
     return scu_list_new_with_capacity(elemSize, SCU_DEFAULT_CAPACITY);
 }
 
 [[nodiscard]]
-void* scu_list_new_with_capacity(int64_t elemSize, int64_t capacity) {
+void* scu_list_new_with_capacity(isize elemSize, isize capacity) {
     SCU_ASSERT(elemSize > 0);
     SCU_ASSERT(capacity >= 0);
     SCUListHeader* header = scu_malloc(
@@ -65,9 +68,7 @@ void* scu_list_new_with_capacity(int64_t elemSize, int64_t capacity) {
  */
 static inline SCUListHeader* scu_data_to_header(void* data) {
     SCU_ASSERT(data != nullptr);
-    return (SCUListHeader*) (
-        ((unsigned char*) data) - SCU_SIZEOF(SCUListHeader)
-    );
+    return (SCUListHeader*) ((byte*) data - SCU_SIZEOF(SCUListHeader));
 }
 
 /**
@@ -79,7 +80,7 @@ static inline SCUListHeader* scu_data_to_header(void* data) {
 static inline const SCUListHeader* scu_data_to_header_const(const void* data) {
     SCU_ASSERT(data != nullptr);
     return (const SCUListHeader*) (
-        ((const unsigned char*) data) - SCU_SIZEOF(SCUListHeader)
+        (const byte*) data - SCU_SIZEOF(SCUListHeader)
     );
 }
 
@@ -99,22 +100,22 @@ void* scu_list_clone(const void* list) {
     return newHeader->data;
 }
 
-int64_t scu_list_capacity(const void* list) {
+isize scu_list_capacity(const void* list) {
     const SCUListHeader* header = scu_data_to_header_const(list);
     return header->capacity;
 }
 
-int64_t scu_list_count(const void* list) {
+isize scu_list_count(const void* list) {
     const SCUListHeader* header = scu_data_to_header_const(list);
     return header->count;
 }
 
-SCUError scu_list_ensure_capacity_impl(void** list, int64_t capacity) {
+SCUError scu_list_ensure_capacity_impl(void** list, isize capacity) {
     SCU_ASSERT(list != nullptr);
     SCU_ASSERT(capacity >= 0);
     SCUListHeader* header = scu_data_to_header(*list);
     if (header->capacity < capacity) {
-        int64_t newCapacity = (header->capacity > 0) ? header->capacity : 1;
+        isize newCapacity = (header->capacity > 0) ? header->capacity : 1;
         while (newCapacity < capacity) {
             newCapacity *= SCU_GROWTH_FACTOR;
         }
@@ -152,7 +153,7 @@ SCUError scu_list_add_impl(void** restrict list, const void* restrict elem) {
 
 SCUError scu_list_insert_at_impl(
     void** restrict list,
-    int64_t index,
+    isize index,
     const void* restrict elem
 ) {
     SCU_ASSERT(list != nullptr);
@@ -179,7 +180,7 @@ SCUError scu_list_insert_at_impl(
     return SCU_ERROR_NONE;
 }
 
-void scu_list_remove_at(void* list, int64_t index) {
+void scu_list_remove_at(void* list, isize index) {
     SCUListHeader* header = scu_data_to_header(list);
     SCU_ASSERT((index >= 0) && (index < header->count));
     scu_memmove(

@@ -1,8 +1,6 @@
 #ifndef SCU_ASSERT_H
 #define SCU_ASSERT_H
 
-#include <stdint.h>
-
 /**
  * @brief Declares a compile-time assertion.
  *
@@ -59,23 +57,20 @@
 void scu_assert_fail(
     const char* restrict expr,
     const char* restrict file,
-    int64_t line,
+    int line,
     const char* restrict func,
     const char* restrict fmt,
     ...
 );
 
 #ifdef NDEBUG
-
     /**
      * @brief Does nothing, as `NDEBUG` is defined.
      *
      * @param[in] expr Unused.
      */
     #define SCU_ASSERT(expr, ...) ((void) 0)
-
 #else
-
     /**
      * @brief Declares a runtime assertion.
      *
@@ -89,11 +84,7 @@ void scu_assert_fail(
      * ```c
      * void example(int* values, int length) {
      *     SCU_ASSERT(values != nullptr);
-     *     SCU_ASSERT(
-     *         length >= 0,
-     *         "The length must be positive (was %d).",
-     *         length
-     *     );
+     *     SCU_ASSERT(length >= 0, "Length must be positive (was %d).", length);
      *     ...
      * }
      * ```
@@ -123,7 +114,6 @@ void scu_assert_fail(
             }                                                                  \
         }                                                                      \
         while (false)
-
 #endif
 
 #endif

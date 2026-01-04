@@ -1,11 +1,10 @@
 #ifndef SCU_HASH_SET_H
 #define SCU_HASH_SET_H
 
-#include <stdint.h>
-#include "scu/common.h"
 #include "scu/equal.h"
 #include "scu/error.h"
 #include "scu/hash.h"
+#include "scu/types.h"
 
 /** @brief Represents an unordered hash set of elements. */
 typedef struct SCUHashSet SCUHashSet;
@@ -23,7 +22,7 @@ typedef struct SCUHashSetIter {
     SCUHashSet* hashSet;
 
     /** @brief The current index within the hash set. */
-    int64_t index;
+    SCUisize index;
 
 } SCUHashSetIter;
 
@@ -44,7 +43,7 @@ typedef struct SCUHashSetIter {
  */
 [[nodiscard]]
 SCUHashSet* scu_hash_set_new(
-    int64_t elemSize,
+    SCUisize elemSize,
     SCUHashFunc* hashFunc,
     SCUEqualFunc* equalFunc
 );
@@ -67,8 +66,8 @@ SCUHashSet* scu_hash_set_new(
  */
 [[nodiscard]]
 SCUHashSet* scu_hash_set_new_with_capacity(
-    int64_t elemSize,
-    int64_t capacity,
+    SCUisize elemSize,
+    SCUisize capacity,
     SCUHashFunc* hashFunc,
     SCUEqualFunc* equalFunc
 );
@@ -98,7 +97,7 @@ SCUHashSet* scu_hash_set_clone(const SCUHashSet* hashSet);
  * @param[in] hashSet The hash set to examine.
  * @return The capacity of the specified hash set.
  */
-int64_t scu_hash_set_capacity(const SCUHashSet* hashSet);
+SCUisize scu_hash_set_capacity(const SCUHashSet* hashSet);
 
 /**
  * @brief Returns the number of elements in a specified hash set.
@@ -106,7 +105,7 @@ int64_t scu_hash_set_capacity(const SCUHashSet* hashSet);
  * @param[in] hashSet The hash set to examine.
  * @return The number of elements in the specified hash set.
  */
-int64_t scu_hash_set_count(const SCUHashSet* hashSet);
+SCUisize scu_hash_set_count(const SCUHashSet* hashSet);
 
 /**
  * @brief Ensures that a specified hash set has at least a specified capacity.
@@ -118,7 +117,7 @@ int64_t scu_hash_set_count(const SCUHashSet* hashSet);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_hash_set_ensure_capacity(SCUHashSet* hashSet, int64_t capacity);
+SCUError scu_hash_set_ensure_capacity(SCUHashSet* hashSet, SCUisize capacity);
 
 /**
  * @brief Adds a new element to a specified hash set.

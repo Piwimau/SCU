@@ -1,5 +1,8 @@
+#define SCU_SHORT_ALIASES
+
 #include "scu/alloc.h"
 #include "scu/assert.h"
+#include "scu/common.h"
 #include "scu/hash-map.h"
 #include "scu/memory.h"
 
@@ -7,7 +10,7 @@
 typedef struct SCUBucket {
 
     /** @brief The hash of the key stored in the bucket. */
-    uint64_t hash;
+    usize hash;
 
     /** @brief Indicates whether the bucket is occupied. */
     bool isOccupied;
@@ -25,23 +28,23 @@ typedef struct SCUBucket {
      * bytes between the key and the value. The size of the value is stored by
      * the hash map owning this bucket as well.
      */
-    alignas(max_align_t) unsigned char key[];
+    alignas(max_align_t) byte key[];
 
 } SCUBucket;
 
 struct SCUHashMap {
 
     /** @brief The size of each key (in bytes). */
-    int64_t keySize;
+    isize keySize;
 
     /** @brief The size of each value (in bytes). */
-    int64_t valueSize;
+    isize valueSize;
 
     /** @brief The offset of the value within a bucket (in bytes). */
-    int64_t valueOffset;
+    isize valueOffset;
 
     /** @brief The effective size of a bucket (in bytes). */
-    int64_t bucketSize;
+    isize bucketSize;
 
     /**
      * @brief The maximum number of key-value pairs that could theoretically be
@@ -51,10 +54,10 @@ struct SCUHashMap {
      * buckets. The actual number of key-value pairs that can be stored without
      * a reallocation is lower and depends on the load factor of the hash map.
      */
-    int64_t capacity;
+    isize capacity;
 
     /** @brief The current number of key-value pairs. */
-    int64_t count;
+    isize count;
 
     /** @brief A function used for hashing keys. */
     SCUHashFunc* keyHashFunc;
@@ -76,21 +79,21 @@ struct SCUHashMap {
 };
 
 /** @brief The default capacity of a hash map. */
-static constexpr int64_t SCU_DEFAULT_CAPACITY = 8;
+static constexpr isize SCU_DEFAULT_CAPACITY = 8;
 
 /** @brief The numerator of the maximum load factor of a hash map. */
-static constexpr int64_t SCU_MAX_LOAD_FACTOR_NUM = 9;
+static constexpr isize SCU_MAX_LOAD_FACTOR_NUM = 9;
 
 /** @brief The denominator of the maximum load factor of a hash map. */
-static constexpr int64_t SCU_MAX_LOAD_FACTOR_DEN = 10;
+static constexpr isize SCU_MAX_LOAD_FACTOR_DEN = 10;
 
 /** @brief The growth factor for increasing the capacity of a hash map. */
-static constexpr int64_t SCU_GROWTH_FACTOR = 2;
+static constexpr isize SCU_GROWTH_FACTOR = 2;
 
 [[nodiscard]]
 SCUHashMap* scu_hash_map_new(
-    int64_t keySize,
-    int64_t valueSize,
+    isize keySize,
+    isize valueSize,
     SCUHashFunc* keyHashFunc,
     SCUEqualFunc* keyEqualFunc,
     SCUEqualFunc* valueEqualFunc
@@ -115,7 +118,7 @@ SCUHashMap* scu_hash_map_new(
  * @return The smallest multiple of `alignment` greater than or equal to
  * `value`.
  */
-static inline int64_t scu_align_up(int64_t value, int64_t alignment) {
+static inline isize scu_align_up(isize value, isize alignment) {
     SCU_ASSERT(value >= 0);
     SCU_ASSERT(alignment > 0);
     SCU_ASSERT((alignment & (alignment - 1)) == 0);
@@ -130,28 +133,30 @@ static inline int64_t scu_align_up(int64_t value, int64_t alignment) {
  * @return The smallest power of two greater than or equal to the specified
  * value.
  */
-static inline int64_t scu_next_power_of_two(int64_t n) {
-    SCU_ASSERT((n >= 0) && (n <= (INT64_C(1) << 62)));
+static inline isize scu_next_power_of_two(isize n) {
+    SCU_ASSERT((n >= 0) && (n <= (ISIZE_MAX / 2)));
     if (n <= 1) {
         return 1;
     }
-    uint64_t v = (uint64_t) n;
+    usize v = (usize) n;
     v--;
     v |= v >> 1;
     v |= v >> 2;
     v |= v >> 4;
     v |= v >> 8;
     v |= v >> 16;
+#if SCU_ISIZE_WIDTH == 64
     v |= v >> 32;
+#endif
     v++;
-    return (int64_t) v;
+    return (isize) v;
 }
 
 [[nodiscard]]
 SCUHashMap* scu_hash_map_new_with_capacity(
-    int64_t keySize,
-    int64_t valueSize,
-    int64_t capacity,
+    isize keySize,
+    isize valueSize,
+    isize capacity,
     SCUHashFunc* keyHashFunc,
     SCUEqualFunc* keyEqualFunc,
     SCUEqualFunc* valueEqualFunc
@@ -226,12 +231,12 @@ SCUHashMap* scu_hash_map_clone(const SCUHashMap* hashMap) {
     return clone;
 }
 
-int64_t scu_hash_map_capacity(const SCUHashMap* hashMap) {
+isize scu_hash_map_capacity(const SCUHashMap* hashMap) {
     SCU_ASSERT(hashMap != nullptr);
     return hashMap->capacity;
 }
 
-int64_t scu_hash_map_count(const SCUHashMap* hashMap) {
+isize scu_hash_map_count(const SCUHashMap* hashMap) {
     SCU_ASSERT(hashMap != nullptr);
     return hashMap->count;
 }
@@ -246,13 +251,13 @@ int64_t scu_hash_map_count(const SCUHashMap* hashMap) {
  */
 static inline SCUBucket* scu_bucket_at(
     SCUBucket* buckets,
-    int64_t index,
-    int64_t bucketSize
+    isize index,
+    isize bucketSize
 ) {
     SCU_ASSERT(buckets != nullptr);
     SCU_ASSERT(index >= 0);
     SCU_ASSERT(bucketSize > SCU_SIZEOF(SCUBucket));
-    return (SCUBucket*) (((unsigned char*) buckets) + (index * bucketSize));
+    return (SCUBucket*) ((byte*) buckets + (index * bucketSize));
 }
 
 /**
@@ -262,9 +267,9 @@ static inline SCUBucket* scu_bucket_at(
  * @param[in] capacity The capacity (in number of buckets).
  * @return The ideal bucket index for the specified hash.
  */
-static inline int64_t scu_ideal_index(uint64_t hash, int64_t capacity) {
+static inline isize scu_ideal_index(usize hash, isize capacity) {
     SCU_ASSERT(capacity > 0);
-    return (int64_t) (hash & ((uint64_t) (capacity - 1)));
+    return (isize) (hash & ((usize) (capacity - 1)));
 }
 
 /**
@@ -274,9 +279,9 @@ static inline int64_t scu_ideal_index(uint64_t hash, int64_t capacity) {
  * @param[in] capacity The capacity (in number of buckets).
  * @return The wrapped index within the bounds of the specified capacity.
  */
-static inline int64_t scu_wrap_index(int64_t index, int64_t capacity) {
+static inline isize scu_wrap_index(isize index, isize capacity) {
     SCU_ASSERT(capacity > 0);
-    return (int64_t) ((uint64_t) index & (uint64_t) (capacity - 1));
+    return (isize) ((usize) index & (usize) (capacity - 1));
 }
 
 /**
@@ -291,14 +296,14 @@ static inline int64_t scu_wrap_index(int64_t index, int64_t capacity) {
  * @param[in] capacity The capacity (in number of buckets).
  * @return The probe distance of the key.
  */
-static inline int64_t scu_probe_distance(
-    uint64_t hash,
-    int64_t index,
-    int64_t capacity
+static inline isize scu_probe_distance(
+    usize hash,
+    isize index,
+    isize capacity
 ) {
     SCU_ASSERT(capacity > 0);
     SCU_ASSERT((index >= 0) && (index < capacity));
-    int64_t idealIndex = scu_ideal_index(hash, capacity);
+    isize idealIndex = scu_ideal_index(hash, capacity);
     return scu_wrap_index(index - idealIndex, capacity);
 }
 
@@ -319,20 +324,20 @@ static inline int64_t scu_probe_distance(
 static inline void scu_hash_map_rehash_buckets(
     SCUHashMap* hashMap,
     SCUBucket* oldBuckets,
-    int64_t oldCapacity
+    isize oldCapacity
 ) {
     SCU_ASSERT(hashMap != nullptr);
     SCU_ASSERT(oldBuckets != nullptr);
     SCU_ASSERT(oldCapacity > 0);
-    for (int64_t i = 0; i < oldCapacity; i++) {
+    for (isize i = 0; i < oldCapacity; i++) {
         SCUBucket* oldBucket = scu_bucket_at(
             oldBuckets,
             i,
             hashMap->bucketSize
         );
         if (oldBucket->isOccupied) {
-            int64_t index = scu_ideal_index(oldBucket->hash, hashMap->capacity);
-            int64_t distance = 0;
+            isize index = scu_ideal_index(oldBucket->hash, hashMap->capacity);
+            isize distance = 0;
             while (true) {
                 SCUBucket* newBucket = scu_bucket_at(
                     hashMap->buckets,
@@ -344,7 +349,7 @@ static inline void scu_hash_map_rehash_buckets(
                     hashMap->count++;
                     break;
                 }
-                int64_t otherDistance = scu_probe_distance(
+                isize otherDistance = scu_probe_distance(
                     newBucket->hash,
                     index,
                     hashMap->capacity
@@ -360,21 +365,21 @@ static inline void scu_hash_map_rehash_buckets(
     }
 }
 
-SCUError scu_hash_map_ensure_capacity(SCUHashMap* hashMap, int64_t capacity) {
+SCUError scu_hash_map_ensure_capacity(SCUHashMap* hashMap, isize capacity) {
     SCU_ASSERT(hashMap != nullptr);
     SCU_ASSERT(capacity >= 0);
-    int64_t minCapacity = ((capacity * SCU_MAX_LOAD_FACTOR_DEN)
+    isize minCapacity = ((capacity * SCU_MAX_LOAD_FACTOR_DEN)
         + SCU_MAX_LOAD_FACTOR_NUM - 1) / SCU_MAX_LOAD_FACTOR_NUM;
     if (hashMap->capacity >= minCapacity) {
         return SCU_ERROR_NONE;
     }
-    int64_t newCapacity = scu_next_power_of_two(minCapacity);
+    isize newCapacity = scu_next_power_of_two(minCapacity);
     SCUBucket* newBuckets = scu_calloc(newCapacity, hashMap->bucketSize);
     if (newBuckets == nullptr) {
         return SCU_ERROR_OUT_OF_MEMORY;
     }
-    int64_t oldCapacity = hashMap->capacity;
-    int64_t oldCount = hashMap->count;
+    isize oldCapacity = hashMap->capacity;
+    isize oldCount = hashMap->count;
     SCUBucket* oldBuckets = hashMap->buckets;
     hashMap->capacity = newCapacity;
     hashMap->count = 0;
@@ -405,10 +410,10 @@ SCUError scu_hash_map_add(
  * @param[in] valueOffset The offset of the value within the bucket (in bytes).
  * @return A pointer to the value stored in the bucket.
  */
-static inline void* scu_bucket_value(SCUBucket* bucket, int64_t valueOffset) {
+static inline void* scu_bucket_value(SCUBucket* bucket, isize valueOffset) {
     SCU_ASSERT(bucket != nullptr);
     SCU_ASSERT(valueOffset > SCU_SIZEOF(SCUBucket));
-    return ((unsigned char*) bucket) + valueOffset;
+    return (byte*) bucket + valueOffset;
 }
 
 SCUError scu_hash_map_try_add(
@@ -421,7 +426,7 @@ SCUError scu_hash_map_try_add(
     SCU_ASSERT(value != nullptr);
     if ((hashMap->count * SCU_MAX_LOAD_FACTOR_DEN)
             >= (hashMap->capacity * SCU_MAX_LOAD_FACTOR_NUM)) {
-        int64_t newCapacity = (hashMap->capacity == 0)
+        isize newCapacity = (hashMap->capacity == 0)
             ? SCU_DEFAULT_CAPACITY
             : (hashMap->capacity * SCU_GROWTH_FACTOR);
         SCUError error = scu_hash_map_ensure_capacity(hashMap, newCapacity);
@@ -441,8 +446,8 @@ SCUError scu_hash_map_try_add(
         value,
         hashMap->valueSize
     );
-    int64_t index = scu_ideal_index(tempBucket->hash, hashMap->capacity);
-    int64_t distance = 0;
+    isize index = scu_ideal_index(tempBucket->hash, hashMap->capacity);
+    isize distance = 0;
     while (true) {
         SCUBucket* bucket = scu_bucket_at(
             hashMap->buckets,
@@ -460,7 +465,7 @@ SCUError scu_hash_map_try_add(
             scu_free(tempBucket);
             return SCU_ERROR_ALREADY_PRESENT;
         }
-        int64_t otherDistance = scu_probe_distance(
+        isize otherDistance = scu_probe_distance(
             bucket->hash,
             index,
             hashMap->capacity
@@ -494,9 +499,9 @@ bool scu_hash_map_try_get_impl(
         *value = nullptr;
         return false;
     }
-    uint64_t hash = hashMap->keyHashFunc(key);
-    int64_t index = scu_ideal_index(hash, hashMap->capacity);
-    int64_t distance = 0;
+    usize hash = hashMap->keyHashFunc(key);
+    isize index = scu_ideal_index(hash, hashMap->capacity);
+    isize distance = 0;
     while (true) {
         SCUBucket* bucket = scu_bucket_at(
             hashMap->buckets,
@@ -507,7 +512,7 @@ bool scu_hash_map_try_get_impl(
             *value = nullptr;
             return false;
         }
-        int64_t otherDistance = scu_probe_distance(
+        isize otherDistance = scu_probe_distance(
             bucket->hash,
             index,
             hashMap->capacity
@@ -546,9 +551,9 @@ bool scu_hash_map_try_set(
     if (hashMap->count == 0) {
         return false;
     }
-    uint64_t hash = hashMap->keyHashFunc(key);
-    int64_t index = scu_ideal_index(hash, hashMap->capacity);
-    int64_t distance = 0;
+    usize hash = hashMap->keyHashFunc(key);
+    isize index = scu_ideal_index(hash, hashMap->capacity);
+    isize distance = 0;
     while (true) {
         SCUBucket* bucket = scu_bucket_at(
             hashMap->buckets,
@@ -558,7 +563,7 @@ bool scu_hash_map_try_set(
         if (!bucket->isOccupied) {
             return false;
         }
-        int64_t otherDistance = scu_probe_distance(
+        isize otherDistance = scu_probe_distance(
             bucket->hash,
             index,
             hashMap->capacity
@@ -585,9 +590,9 @@ bool scu_hash_map_contains_key(const SCUHashMap* hashMap, const void* key) {
     if (hashMap->count == 0) {
         return false;
     }
-    uint64_t hash = hashMap->keyHashFunc(key);
-    int64_t index = scu_ideal_index(hash, hashMap->capacity);
-    int64_t distance = 0;
+    usize hash = hashMap->keyHashFunc(key);
+    isize index = scu_ideal_index(hash, hashMap->capacity);
+    isize distance = 0;
     while (true) {
         SCUBucket* bucket = scu_bucket_at(
             hashMap->buckets,
@@ -597,7 +602,7 @@ bool scu_hash_map_contains_key(const SCUHashMap* hashMap, const void* key) {
         if (!bucket->isOccupied) {
             return false;
         }
-        int64_t otherDistance = scu_probe_distance(
+        isize otherDistance = scu_probe_distance(
             bucket->hash,
             index,
             hashMap->capacity
@@ -619,7 +624,7 @@ bool scu_hash_map_contains_value(const SCUHashMap* hashMap, const void* value) {
     if (hashMap->count == 0) {
         return false;
     }
-    for (int64_t i = 0; i < hashMap->capacity; i++) {
+    for (isize i = 0; i < hashMap->capacity; i++) {
         SCUBucket* bucket = scu_bucket_at(
             hashMap->buckets,
             i,
@@ -644,9 +649,9 @@ bool scu_hash_map_remove(
     if (hashMap->count == 0) {
         return false;
     }
-    uint64_t hash = hashMap->keyHashFunc(key);
-    int64_t index = scu_ideal_index(hash, hashMap->capacity);
-    int64_t distance = 0;
+    usize hash = hashMap->keyHashFunc(key);
+    isize index = scu_ideal_index(hash, hashMap->capacity);
+    isize distance = 0;
     while (true) {
         SCUBucket* bucket = scu_bucket_at(
             hashMap->buckets,
@@ -656,7 +661,7 @@ bool scu_hash_map_remove(
         if (!bucket->isOccupied) {
             return false;
         }
-        int64_t otherDistance = scu_probe_distance(
+        isize otherDistance = scu_probe_distance(
             bucket->hash,
             index,
             hashMap->capacity
@@ -676,7 +681,7 @@ bool scu_hash_map_remove(
         hashMap->bucketSize
     );
     while (true) {
-        int64_t nextIndex = scu_wrap_index(index + 1, hashMap->capacity);
+        isize nextIndex = scu_wrap_index(index + 1, hashMap->capacity);
         SCUBucket* nextBucket = scu_bucket_at(
             hashMap->buckets,
             nextIndex,
@@ -685,7 +690,7 @@ bool scu_hash_map_remove(
         if (!nextBucket->isOccupied) {
             break;
         }
-        int64_t nextDistance = scu_probe_distance(
+        isize nextDistance = scu_probe_distance(
             nextBucket->hash,
             nextIndex,
             hashMap->capacity
@@ -705,7 +710,7 @@ bool scu_hash_map_remove(
 void scu_hash_map_clear(SCUHashMap* hashMap) {
     SCU_ASSERT(hashMap != nullptr);
     if (hashMap->count > 0) {
-        for (int64_t i = 0; i < hashMap->capacity; i++) {
+        for (isize i = 0; i < hashMap->capacity; i++) {
             SCUBucket* bucket = scu_bucket_at(
                 hashMap->buckets,
                 i,
@@ -725,9 +730,9 @@ SCUError scu_hash_map_trim_excess(SCUHashMap* hashMap) {
         hashMap->capacity = 0;
         return SCU_ERROR_NONE;
     }
-    int64_t minCapacity = ((hashMap->count * SCU_MAX_LOAD_FACTOR_DEN)
+    isize minCapacity = ((hashMap->count * SCU_MAX_LOAD_FACTOR_DEN)
         + SCU_MAX_LOAD_FACTOR_NUM - 1) / SCU_MAX_LOAD_FACTOR_NUM;
-    int64_t newCapacity = scu_next_power_of_two(minCapacity);
+    isize newCapacity = scu_next_power_of_two(minCapacity);
     if (hashMap->capacity <= newCapacity) {
         return SCU_ERROR_NONE;
     }
@@ -735,7 +740,7 @@ SCUError scu_hash_map_trim_excess(SCUHashMap* hashMap) {
     if (newBuckets == nullptr) {
         return SCU_ERROR_OUT_OF_MEMORY;
     }
-    int64_t oldCapacity = hashMap->capacity;
+    isize oldCapacity = hashMap->capacity;
     SCUBucket* oldBuckets = hashMap->buckets;
     hashMap->capacity = newCapacity;
     hashMap->count = 0;
@@ -754,7 +759,7 @@ bool scu_hash_map_iter_move_next(SCUHashMapIter* iter) {
     SCU_ASSERT(iter != nullptr);
     SCU_ASSERT(iter->hashMap != nullptr);
     SCUHashMap* hashMap = iter->hashMap;
-    int64_t index = iter->index;
+    isize index = iter->index;
     SCU_ASSERT((index >= -1) && (index <= hashMap->capacity));
     if (hashMap->count == 0) {
         iter->index = hashMap->capacity;
@@ -781,7 +786,7 @@ SCUHashMapEntry scu_hash_map_iter_current(const SCUHashMapIter* iter) {
     SCU_ASSERT(iter != nullptr);
     SCU_ASSERT(iter->hashMap != nullptr);
     SCUHashMap* hashMap = iter->hashMap;
-    int64_t index = iter->index;
+    isize index = iter->index;
     SCU_ASSERT((index >= 0) && (index < hashMap->capacity));
     SCUBucket* bucket = scu_bucket_at(
         hashMap->buckets,

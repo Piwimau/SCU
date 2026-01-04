@@ -1,4 +1,3 @@
-#include <inttypes.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include "scu/assert.h"
@@ -8,7 +7,7 @@
 [[noreturn]]
 void scu_fatal(
     const char* restrict file,
-    int64_t line,
+    int line,
     const char* restrict func,
     const char* restrict fmt,
     ...
@@ -19,7 +18,7 @@ void scu_fatal(
     SCU_ASSERT(fmt != nullptr);
     scu_fprintf(
         SCU_STDERR,
-        "SCU: Fatal error occurred at %s:%" PRId64 " in %s().\n",
+        "SCU: Fatal error occurred at %s:%d in %s().\n",
         file,
         line,
         func
