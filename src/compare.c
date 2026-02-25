@@ -1,5 +1,6 @@
 #define SCU_SHORT_ALIASES
 
+#include <math.h>
 #include <string.h>
 #include "scu/assert.h"
 #include "scu/compare.h"
@@ -218,6 +219,8 @@ int scu_compare_f32(const void* a, const void* b) {
     SCU_ASSERT(b != nullptr);
     f32 l = *(const f32*) a;
     f32 r = *(const f32*) b;
+    SCU_ASSERT(!isnan(l));
+    SCU_ASSERT(!isnan(r));
     return (l < r) ? -1 : (l > r) ? 1 : 0;
 }
 
@@ -226,6 +229,8 @@ int scu_compare_f32_rev(const void* a, const void* b) {
     SCU_ASSERT(b != nullptr);
     f32 l = *(const f32*) a;
     f32 r = *(const f32*) b;
+    SCU_ASSERT(!isnan(l));
+    SCU_ASSERT(!isnan(r));
     return (l > r) ? -1 : (l < r) ? 1 : 0;
 }
 
@@ -234,6 +239,8 @@ int scu_compare_f64(const void* a, const void* b) {
     SCU_ASSERT(b != nullptr);
     f64 l = *(const f64*) a;
     f64 r = *(const f64*) b;
+    SCU_ASSERT(!isnan(l));
+    SCU_ASSERT(!isnan(r));
     return (l < r) ? -1 : (l > r) ? 1 : 0;
 }
 
@@ -242,6 +249,8 @@ int scu_compare_f64_rev(const void* a, const void* b) {
     SCU_ASSERT(b != nullptr);
     f64 l = *(const f64*) a;
     f64 r = *(const f64*) b;
+    SCU_ASSERT(!isnan(l));
+    SCU_ASSERT(!isnan(r));
     return (l > r) ? -1 : (l < r) ? 1 : 0;
 }
 

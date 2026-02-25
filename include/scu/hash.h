@@ -156,7 +156,7 @@ SCUusize scu_hash_usize(const void* value);
  * @brief Returns a hash for a specified `SCUf32` value.
  *
  * @warning The behavior is undefined if `value` is not a pointer to an
- * `SCUf32`.
+ * `SCUf32`, or if `*value` is NaN.
  *
  * @param[in] value A pointer to the value to hash.
  * @return A hash for the specified value.
@@ -167,7 +167,7 @@ SCUusize scu_hash_f32(const void* value);
  * @brief Returns a hash for a specified `SCUf64` value.
  *
  * @warning The behavior is undefined if `value` is not a pointer to an
- * `SCUf64`.
+ * `SCUf64`, or if `*value` is NaN.
  *
  * @param[in] value A pointer to the value to hash.
  * @return A hash for the specified value.

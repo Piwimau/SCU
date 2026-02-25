@@ -170,7 +170,7 @@ bool scu_equal_usize(const void* a, const void* b);
  * @brief Determines whether two specified `SCUf32` values are equal.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUf32`.
+ * `SCUf32`, or if either `*a` or `*b` is NaN.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -182,7 +182,7 @@ bool scu_equal_f32(const void* a, const void* b);
  * @brief Determines whether two specified `SCUf64` values are equal.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUf64`.
+ * `SCUf64`, or if either `*a` or `*b` is NaN.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.

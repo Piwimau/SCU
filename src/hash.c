@@ -1,5 +1,6 @@
 #define SCU_SHORT_ALIASES
 
+#include <math.h>
 #include "scu/assert.h"
 #include "scu/hash.h"
 #include "scu/memory.h"
@@ -160,36 +161,26 @@ usize scu_hash_usize(const void* value) {
 usize scu_hash_f32(const void* value) {
     SCU_ASSERT(value != nullptr);
     f32 v = *(const f32*) value;
+    SCU_ASSERT(!isnan(v));
     // Normalize -0.0F to +0.0F.
     if (v == 0.0F) {
         v = 0.0F;
     }
     u32 bits;
-    // Normalize NaN to a single bit pattern.
-    if (v != v) {
-        bits = 0x7FC00000;
-    }
-    else {
-        scu_memcpy(&bits, &v, SCU_SIZEOF(f32));
-    }
+    scu_memcpy(&bits, &v, SCU_SIZEOF(f32));
     return scu_hash_mix_usize(bits);
 }
 
 usize scu_hash_f64(const void* value) {
     SCU_ASSERT(value != nullptr);
     f64 v = *(const f64*) value;
+    SCU_ASSERT(!isnan(v));
     // Normalize -0.0 to +0.0.
     if (v == 0.0) {
         v = 0.0;
     }
     u64 bits;
-    // Normalize NaN to a single bit pattern.
-    if (v != v) {
-        bits = 0x7FF8000000000000;
-    }
-    else {
-        scu_memcpy(&bits, &v, SCU_SIZEOF(f64));
-    }
+    scu_memcpy(&bits, &v, SCU_SIZEOF(f64));
     return scu_hash_mix_u64(bits);
 }
 

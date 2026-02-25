@@ -1,5 +1,6 @@
 #define SCU_SHORT_ALIASES
 
+#include <math.h>
 #include <string.h>
 #include "scu/assert.h"
 #include "scu/equal.h"
@@ -86,13 +87,21 @@ bool scu_equal_usize(const void* a, const void* b) {
 bool scu_equal_f32(const void* a, const void* b) {
     SCU_ASSERT(a != nullptr);
     SCU_ASSERT(b != nullptr);
-    return *(const f32*) a == *(const f32*) b;
+    f32 l = *(const f32*) a;
+    f32 r = *(const f32*) b;
+    SCU_ASSERT(!isnan(l));
+    SCU_ASSERT(!isnan(r));
+    return l == r;
 }
 
 bool scu_equal_f64(const void* a, const void* b) {
     SCU_ASSERT(a != nullptr);
     SCU_ASSERT(b != nullptr);
-    return *(const f64*) a == *(const f64*) b;
+    f64 l = *(const f64*) a;
+    f64 r = *(const f64*) b;
+    SCU_ASSERT(!isnan(l));
+    SCU_ASSERT(!isnan(r));
+    return l == r;
 }
 
 bool scu_equal_char(const void* a, const void* b) {
