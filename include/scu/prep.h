@@ -1,7 +1,5 @@
-#ifndef SCU_COMMON_H
-#define SCU_COMMON_H
-
-#include "scu/types.h"
+#ifndef SCU_PREP_H
+#define SCU_PREP_H
 
 /**
  * @brief Converts an expression to a string literal.
@@ -48,23 +46,5 @@
  * @return The concatenated token after expanding `a` and `b`.
  */
 #define SCU_XCONCAT(a, b) SCU_CONCAT(a, b)
-
-/**
- * @brief Returns the size of an expression (in bytes) as an `SCUisize`.
- *
- * @param[in] expr The expression to evaluate the size of.
- * @return The size of the expression (in bytes) as an `SCUisize`.
- */
-#define SCU_SIZEOF(expr) ((SCUisize) sizeof(expr))
-
-/**
- * @brief Returns the alignment requirement of an expression (in bytes) as an
- * `SCUisize`.
- *
- * @param[in] expr The expression to evaluate the alignment requirement of.
- * @return The alignment requirement of the expression (in bytes) as an
- * `SCUisize`.
- */
-#define SCU_ALIGNOF(expr) ((SCUisize) alignof(expr))
 
 #endif

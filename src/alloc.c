@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "scu/alloc.h"
 #include "scu/assert.h"
-#include "scu/common.h"
+#include "scu/memory.h"
 
 /**
  * @brief Represents a header stored before each allocated block of memory.

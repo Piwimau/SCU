@@ -1,9 +1,9 @@
 #ifndef SCU_LIST_H
 #define SCU_LIST_H
 
-#include "scu/types.h"
 #include "scu/compare.h"
 #include "scu/error.h"
+#include "scu/types.h"
 
 /**
  * @brief Allocates and initializes a new list with a specified element size and

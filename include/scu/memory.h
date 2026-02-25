@@ -4,6 +4,24 @@
 #include "scu/types.h"
 
 /**
+ * @brief Returns the size of an expression (in bytes) as an `SCUisize`.
+ *
+ * @param[in] expr The expression to evaluate the size of.
+ * @return The size of the expression (in bytes) as an `SCUisize`.
+ */
+#define SCU_SIZEOF(expr) ((SCUisize) sizeof(expr))
+
+/**
+ * @brief Returns the alignment requirement of an expression (in bytes) as an
+ * `SCUisize`.
+ *
+ * @param[in] expr The expression to evaluate the alignment requirement of.
+ * @return The alignment requirement of the expression (in bytes) as an
+ * `SCUisize`.
+ */
+#define SCU_ALIGNOF(expr) ((SCUisize) alignof(expr))
+
+/**
  * @brief Finds the first occurrence of a specified byte in a block of memory.
  *
  * @note If `count` is zero, `block` is ignored (it may even be a `nullptr`),

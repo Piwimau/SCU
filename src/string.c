@@ -3,7 +3,6 @@
 #include <string.h>
 #include "scu/alloc.h"
 #include "scu/assert.h"
-#include "scu/common.h"
 #include "scu/math.h"
 #include "scu/memory.h"
 #include "scu/string.h"

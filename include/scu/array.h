@@ -1,8 +1,8 @@
 #ifndef SCU_ARRAY_H
 #define SCU_ARRAY_H
 
-#include "scu/common.h"
 #include "scu/compare.h"
+#include "scu/memory.h"
 
 /**
  * @brief Returns the number of elements in a statically allocated array.

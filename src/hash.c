@@ -1,12 +1,10 @@
 #define SCU_SHORT_ALIASES
 
 #include "scu/assert.h"
-#include "scu/common.h"
 #include "scu/hash.h"
 #include "scu/memory.h"
 
 #if USIZE_WIDTH == 32
-
     /** @brief The FNV-1a offset basis for 32-bit hashes. */
     static constexpr usize SCU_FNV_OFFSET_BASIS = 0x811C9DC5;
 
@@ -45,9 +43,7 @@
             scu_hash_mix_usize(high)
         );
     }
-
 #else
-
     /** @brief The FNV-1a offset basis for 64-bit hashes. */
     static constexpr usize SCU_FNV_OFFSET_BASIS = 0xCBF29CE484222325;
 
@@ -81,7 +77,6 @@
     static inline usize scu_hash_mix_u64(u64 v) {
         return scu_hash_mix_usize(v);
     }
-
 #endif
 
 usize scu_hash_byte(const void* value) {

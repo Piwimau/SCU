@@ -4,6 +4,7 @@
 #include "scu/equal.h"
 #include "scu/error.h"
 #include "scu/hash.h"
+#include "scu/prep.h"
 #include "scu/types.h"
 
 /** @brief Represents an unordered hash set of elements. */

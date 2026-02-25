@@ -2,6 +2,7 @@
 #define SCU_STACK_H
 
 #include "scu/error.h"
+#include "scu/prep.h"
 #include "scu/types.h"
 
 /** @brief Represents a last-in-first-out (LIFO) collection of elements. */

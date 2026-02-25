@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include "scu/alloc.h"
 #include "scu/assert.h"
-#include "scu/common.h"
 #include "scu/io.h"
+#include "scu/memory.h"
 #include "scu/string.h"
 
 struct SCUFile {

@@ -3,7 +3,6 @@
 #include "scu/alloc.h"
 #include "scu/array.h"
 #include "scu/assert.h"
-#include "scu/common.h"
 #include "scu/list.h"
 #include "scu/memory.h"
 
