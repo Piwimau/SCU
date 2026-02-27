@@ -210,7 +210,10 @@ SCUError scu_stack_trim_excess(SCUStack* stack) {
 
 SCUStackIter scu_stack_iter(const SCUStack* stack) {
     SCU_ASSERT(stack != nullptr);
-    return (SCUStackIter) { .stack = (SCUStack*) stack, .index = stack->count };
+    return (SCUStackIter) {
+        .stack = SCU_CONST_CAST(SCUStack*, stack),
+        .index = stack->count
+    };
 }
 
 bool scu_stack_iter_move_next(SCUStackIter* iter) {

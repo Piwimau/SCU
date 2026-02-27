@@ -274,7 +274,10 @@ SCUError scu_queue_trim_excess(SCUQueue* queue) {
 
 SCUQueueIter scu_queue_iter(const SCUQueue* queue) {
     SCU_ASSERT(queue != nullptr);
-    return (SCUQueueIter) { .queue = (SCUQueue*) queue, .index = -1 };
+    return (SCUQueueIter) {
+        .queue = SCU_CONST_CAST(SCUQueue*, queue),
+        .index = -1
+    };
 }
 
 bool scu_queue_iter_move_next(SCUQueueIter* iter) {

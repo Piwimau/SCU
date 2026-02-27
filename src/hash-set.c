@@ -543,7 +543,10 @@ SCUError scu_hash_set_trim_excess(SCUHashSet* hashSet) {
 
 SCUHashSetIter scu_hash_set_iter(const SCUHashSet* hashSet) {
     SCU_ASSERT(hashSet != nullptr);
-    return (SCUHashSetIter) { .hashSet = (SCUHashSet*) hashSet, .index = -1 };
+    return (SCUHashSetIter) {
+        .hashSet = SCU_CONST_CAST(SCUHashSet*, hashSet),
+        .index = -1
+    };
 }
 
 bool scu_hash_set_iter_move_next(SCUHashSetIter* iter) {

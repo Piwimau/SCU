@@ -1,8 +1,8 @@
 #ifndef SCU_QUEUE_H
 #define SCU_QUEUE_H
 
+#include "scu/common.h"
 #include "scu/error.h"
-#include "scu/prep.h"
 #include "scu/types.h"
 
 /** @brief Represents a first-in-first-out (FIFO) collection of elements. */

@@ -755,7 +755,10 @@ SCUError scu_hash_map_trim_excess(SCUHashMap* hashMap) {
 
 SCUHashMapIter scu_hash_map_iter(const SCUHashMap* hashMap) {
     SCU_ASSERT(hashMap != nullptr);
-    return (SCUHashMapIter) { .hashMap = (SCUHashMap*) hashMap, .index = -1 };
+    return (SCUHashMapIter) {
+        .hashMap = SCU_CONST_CAST(SCUHashMap*, hashMap),
+        .index = -1
+    };
 }
 
 bool scu_hash_map_iter_move_next(SCUHashMapIter* iter) {

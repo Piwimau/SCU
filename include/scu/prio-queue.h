@@ -1,9 +1,9 @@
 #ifndef SCU_PRIO_QUEUE_H
 #define SCU_PRIO_QUEUE_H
 
+#include "scu/common.h"
 #include "scu/compare.h"
 #include "scu/error.h"
-#include "scu/prep.h"
 #include "scu/types.h"
 
 /** @brief Represents a collection of elements and associated priorities. */

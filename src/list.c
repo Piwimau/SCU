@@ -4,6 +4,7 @@
 #include "scu/alloc.h"
 #include "scu/array.h"
 #include "scu/assert.h"
+#include "scu/common.h"
 #include "scu/list.h"
 #include "scu/memory.h"
 
@@ -71,22 +72,11 @@ static inline SCUListHeader* scu_data_to_header(void* data) {
     return (SCUListHeader*) ((byte*) data - SCU_SIZEOF(SCUListHeader));
 }
 
-/**
- * @brief Returns a pointer to the header of a list given its data.
- *
- * @param[in] data A pointer to the actual data of the list.
- * @return A pointer to the header of the list.
- */
-static inline const SCUListHeader* scu_data_to_header_const(const void* data) {
-    SCU_ASSERT(data != nullptr);
-    return (const SCUListHeader*) (
-        (const byte*) data - SCU_SIZEOF(SCUListHeader)
-    );
-}
-
 [[nodiscard]]
 void* scu_list_clone(const void* list) {
-    const SCUListHeader* header = scu_data_to_header_const(list);
+    const SCUListHeader* header = scu_data_to_header(
+        SCU_CONST_CAST(void*, list)
+    );
     SCUListHeader* clone = scu_malloc(
         SCU_SIZEOF(SCUListHeader) + (header->elemSize * header->capacity)
     );
@@ -101,12 +91,16 @@ void* scu_list_clone(const void* list) {
 }
 
 isize scu_list_capacity(const void* list) {
-    const SCUListHeader* header = scu_data_to_header_const(list);
+    const SCUListHeader* header = scu_data_to_header(
+        SCU_CONST_CAST(void*, list)
+    );
     return header->capacity;
 }
 
 isize scu_list_count(const void* list) {
-    const SCUListHeader* header = scu_data_to_header_const(list);
+    const SCUListHeader* header = scu_data_to_header(
+        SCU_CONST_CAST(void*, list)
+    );
     return header->count;
 }
 

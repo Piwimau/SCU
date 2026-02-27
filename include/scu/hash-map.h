@@ -1,10 +1,10 @@
 #ifndef SCU_HASH_MAP_H
 #define SCU_HASH_MAP_H
 
+#include "scu/common.h"
 #include "scu/equal.h"
 #include "scu/error.h"
 #include "scu/hash.h"
-#include "scu/prep.h"
 #include "scu/types.h"
 
 /** @brief Represents an unordered collection of key-value pairs. */

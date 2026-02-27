@@ -1,8 +1,8 @@
 #ifndef SCU_STACK_H
 #define SCU_STACK_H
 
+#include "scu/common.h"
 #include "scu/error.h"
-#include "scu/prep.h"
 #include "scu/types.h"
 
 /** @brief Represents a last-in-first-out (LIFO) collection of elements. */

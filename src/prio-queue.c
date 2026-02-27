@@ -354,7 +354,7 @@ SCUError scu_prio_queue_trim_excess(SCUPrioQueue* prioQueue) {
 SCUPrioQueueIter scu_prio_queue_iter(const SCUPrioQueue* prioQueue) {
     SCU_ASSERT(prioQueue != nullptr);
     return (SCUPrioQueueIter) {
-        .prioQueue = (SCUPrioQueue*) prioQueue,
+        .prioQueue = SCU_CONST_CAST(SCUPrioQueue*, prioQueue),
         .index = -1
     };
 }

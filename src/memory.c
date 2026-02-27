@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include "scu/assert.h"
+#include "scu/common.h"
 #include "scu/memory.h"
 
 void* scu_memchr(const void* block, byte c, isize count) {
@@ -22,7 +23,7 @@ void* scu_memrchr(const void* block, byte c, isize count) {
     const byte* p = (const byte*) block;
     for (isize i = count - 1; i >= 0; i--) {
         if (p[i] == c) {
-            return (void*) (p + i);
+            return SCU_CONST_CAST(void*, p + i);
         }
     }
     return nullptr;
