@@ -15,6 +15,7 @@
 #include "scu/math.h"
 #include "scu/memory.h"
 #include "scu/prep.h"
+#include "scu/prio-queue.h"
 #include "scu/stack.h"
 #include "scu/string.h"
 #include "scu/time.h"
