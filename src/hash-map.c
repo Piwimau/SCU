@@ -1,5 +1,6 @@
 #define SCU_SHORT_ALIASES
 
+#include <stddef.h>
 #include "scu/alloc.h"
 #include "scu/assert.h"
 #include "scu/hash-map.h"
@@ -176,7 +177,10 @@ SCUHashMap* scu_hash_map_new_with_capacity(
         SCU_SIZEOF(SCUBucket) + keySize,
         SCU_ALIGNOF(max_align_t)
     );
-    hashMap->bucketSize = hashMap->valueOffset + valueSize;
+    hashMap->bucketSize = scu_align_up(
+        hashMap->valueOffset + valueSize,
+        SCU_ALIGNOF(max_align_t)
+    );
     hashMap->count = 0;
     hashMap->keyHashFunc = keyHashFunc;
     hashMap->keyEqualFunc = keyEqualFunc;
@@ -207,12 +211,12 @@ SCUHashMap* scu_hash_map_clone(const SCUHashMap* hashMap) {
     clone->valueSize = hashMap->valueSize;
     clone->valueOffset = hashMap->valueOffset;
     clone->bucketSize = hashMap->bucketSize;
-    clone->capacity = hashMap->capacity;
     clone->count = hashMap->count;
     clone->keyHashFunc = hashMap->keyHashFunc;
     clone->keyEqualFunc = hashMap->keyEqualFunc;
     clone->valueEqualFunc = hashMap->valueEqualFunc;
     if (hashMap->capacity > 0) {
+        clone->capacity = hashMap->capacity;
         clone->buckets = scu_malloc(hashMap->bucketSize * hashMap->capacity);
         if (clone->buckets == nullptr) {
             scu_free(clone);
@@ -225,6 +229,7 @@ SCUHashMap* scu_hash_map_clone(const SCUHashMap* hashMap) {
         );
     }
     else {
+        clone->capacity = 0;
         clone->buckets = nullptr;
     }
     return clone;

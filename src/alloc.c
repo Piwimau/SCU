@@ -1,6 +1,7 @@
 #define SCU_SHORT_ALIASES
 
 #include <stdatomic.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include "scu/alloc.h"
 #include "scu/assert.h"

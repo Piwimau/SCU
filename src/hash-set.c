@@ -1,5 +1,6 @@
 #define SCU_SHORT_ALIASES
 
+#include <stddef.h>
 #include "scu/alloc.h"
 #include "scu/assert.h"
 #include "scu/hash-set.h"
