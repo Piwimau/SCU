@@ -74,13 +74,13 @@ SCUStack* scu_stack_clone(const SCUStack* stack) {
     clone->elemSize = stack->elemSize;
     clone->capacity = stack->capacity;
     clone->count = stack->count;
-    if (stack->capacity > 0) {
-        clone->data = scu_malloc(stack->elemSize * stack->capacity);
+    if (clone->capacity > 0) {
+        clone->data = scu_malloc(clone->elemSize * clone->capacity);
         if (clone->data == nullptr) {
             scu_free(clone);
             return nullptr;
         }
-        scu_memcpy(clone->data, stack->data, stack->elemSize * stack->count);
+        scu_memcpy(clone->data, stack->data, clone->elemSize * clone->count);
     }
     else {
         clone->data = nullptr;
@@ -201,8 +201,8 @@ SCUError scu_stack_trim_excess(SCUStack* stack) {
             if (newData == nullptr) {
                 return SCU_ERROR_OUT_OF_MEMORY;
             }
-            stack->capacity = stack->count;
             stack->data = newData;
+            stack->capacity = stack->count;
         }
     }
     return SCU_ERROR_NONE;

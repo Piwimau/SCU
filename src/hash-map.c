@@ -211,13 +211,13 @@ SCUHashMap* scu_hash_map_clone(const SCUHashMap* hashMap) {
     clone->valueSize = hashMap->valueSize;
     clone->valueOffset = hashMap->valueOffset;
     clone->bucketSize = hashMap->bucketSize;
+    clone->capacity = hashMap->capacity;
     clone->count = hashMap->count;
     clone->keyHashFunc = hashMap->keyHashFunc;
     clone->keyEqualFunc = hashMap->keyEqualFunc;
     clone->valueEqualFunc = hashMap->valueEqualFunc;
-    if (hashMap->capacity > 0) {
-        clone->capacity = hashMap->capacity;
-        clone->buckets = scu_malloc(hashMap->bucketSize * hashMap->capacity);
+    if (clone->capacity > 0) {
+        clone->buckets = scu_malloc(clone->bucketSize * clone->capacity);
         if (clone->buckets == nullptr) {
             scu_free(clone);
             return nullptr;
@@ -225,11 +225,10 @@ SCUHashMap* scu_hash_map_clone(const SCUHashMap* hashMap) {
         scu_memcpy(
             clone->buckets,
             hashMap->buckets,
-            hashMap->bucketSize * hashMap->capacity
+            clone->bucketSize * clone->capacity
         );
     }
     else {
-        clone->capacity = 0;
         clone->buckets = nullptr;
     }
     return clone;

@@ -164,8 +164,8 @@ SCUHashSet* scu_hash_set_clone(const SCUHashSet* hashSet) {
     clone->count = hashSet->count;
     clone->hashFunc = hashSet->hashFunc;
     clone->equalFunc = hashSet->equalFunc;
-    if (hashSet->capacity > 0) {
-        clone->buckets = scu_malloc(hashSet->bucketSize * hashSet->capacity);
+    if (clone->capacity > 0) {
+        clone->buckets = scu_malloc(clone->bucketSize * clone->capacity);
         if (clone->buckets == nullptr) {
             scu_free(clone);
             return nullptr;
@@ -173,7 +173,7 @@ SCUHashSet* scu_hash_set_clone(const SCUHashSet* hashSet) {
         scu_memcpy(
             clone->buckets,
             hashSet->buckets,
-            hashSet->bucketSize * hashSet->capacity
+            clone->bucketSize * clone->capacity
         );
     }
     else {

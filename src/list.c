@@ -87,17 +87,17 @@ static inline const SCUListHeader* scu_data_to_header_const(const void* data) {
 [[nodiscard]]
 void* scu_list_clone(const void* list) {
     const SCUListHeader* header = scu_data_to_header_const(list);
-    SCUListHeader* newHeader = scu_malloc(
+    SCUListHeader* clone = scu_malloc(
         SCU_SIZEOF(SCUListHeader) + (header->elemSize * header->capacity)
     );
-    if (newHeader == nullptr) {
+    if (clone == nullptr) {
         return nullptr;
     }
-    newHeader->elemSize = header->elemSize;
-    newHeader->capacity = header->capacity;
-    newHeader->count = header->count;
-    scu_memcpy(newHeader->data, header->data, header->elemSize * header->count);
-    return newHeader->data;
+    clone->elemSize = header->elemSize;
+    clone->capacity = header->capacity;
+    clone->count = header->count;
+    scu_memcpy(clone->data, header->data, clone->elemSize * clone->count);
+    return clone->data;
 }
 
 isize scu_list_capacity(const void* list) {
