@@ -19,4 +19,12 @@
  */
 #define SCU_MAX(a, b) (((a) > (b)) ? (a) : (b))
 
+/**
+ * @brief Returns the absolute of a specified value.
+ *
+ * @param[in] x The value to compute the absolute of.
+ * @return The absolute of `x`.
+ */
+#define SCU_ABS(x) (((x) < 0) ? -(x) : (x))
+
 #endif
