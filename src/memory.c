@@ -20,7 +20,7 @@ void* scu_memrchr(const void* block, byte c, isize count) {
         return nullptr;
     }
     SCU_ASSERT(block != nullptr);
-    const byte* p = (const byte*) block;
+    const byte* p = block;
     for (isize i = count - 1; i >= 0; i--) {
         if (p[i] == c) {
             return SCU_CONST_CAST(void*, p + i);
@@ -101,8 +101,8 @@ void scu_memswap(void* restrict left, void* restrict right, isize count) {
     }
     SCU_ASSERT(left != nullptr);
     SCU_ASSERT(right != nullptr);
-    byte* l = (byte*) left;
-    byte* r = (byte*) right;
+    byte* l = left;
+    byte* r = right;
     for (isize i = 0; i < count; i++) {
         byte temp = l[i];
         l[i] = r[i];
