@@ -160,10 +160,12 @@ SCUError scu_prio_queue_enqueue(
  *
  * @param[in, out] prioQueue The priority queue to dequeue the element from.
  * @param[out]     elem      The dequeued element.
+ * @param[out]     prio      The priority of the dequeued element.
  */
 void scu_prio_queue_dequeue(
     SCUPrioQueue* restrict prioQueue,
-    void* restrict elem
+    void* restrict elem,
+    void* restrict prio
 );
 
 /**
@@ -173,11 +175,14 @@ void scu_prio_queue_dequeue(
  * @param[in, out] prioQueue The priority queue to dequeue the element from.
  * @param[out]     elem      The dequeued element on success, otherwise
  *                           unchanged.
+ * @param[out]     prio      The priority of the dequeued element on success,
+ *                           otherwise unchanged.
  * @return `true` if an element was successfully dequeued, otherwise `false`.
  */
 bool scu_prio_queue_try_dequeue(
     SCUPrioQueue* restrict prioQueue,
-    void* restrict elem
+    void* restrict elem,
+    void* restrict prio
 );
 
 /**
@@ -192,10 +197,13 @@ bool scu_prio_queue_try_dequeue(
  *
  * @param[in]  prioQueue The priority queue to examine.
  * @param[out] elem      A pointer to the element with the lowest priority.
+ * @param[out] prio      A pointer to the priority of the element with the
+ *                       lowest priority.
  */
 void scu_prio_queue_peek_impl(
     const SCUPrioQueue* restrict prioQueue,
-    void** restrict elem
+    void** restrict elem,
+    void** restrict prio
 );
 
 /**
@@ -207,9 +215,11 @@ void scu_prio_queue_peek_impl(
  *
  * @param[in]  prioQueue The priority queue to examine.
  * @param[out] elem      A pointer to the element with the lowest priority.
+ * @param[out] prio      A pointer to the priority of the element with the
+ *                       lowest priority.
  */
-#define scu_prio_queue_peek(queue, elem)             \
-    scu_prio_queue_peek_impl(queue, (void**) (elem))
+#define scu_prio_queue_peek(queue, elem, prio)                        \
+    scu_prio_queue_peek_impl(queue, (void**) (elem), (void**) (prio))
 
 /**
  * @brief Tries to return the element with the lowest priority from a specified
@@ -221,11 +231,14 @@ void scu_prio_queue_peek_impl(
  * @param[in]  prioQueue The priority queue to examine.
  * @param[out] elem      A pointer to the element with the lowest priority on
  *                       success, otherwise a `nullptr`.
+ * @param[out] prio      A pointer to the priority of the element with the
+ *                       lowest priority on success, otherwise a `nullptr`.
  * @return `true` if an element was successfully retrieved, otherwise `false`.
  */
 bool scu_prio_queue_try_peek_impl(
     const SCUPrioQueue* restrict prioQueue,
-    void** restrict elem
+    void** restrict elem,
+    void** restrict prio
 );
 
 /**
@@ -235,10 +248,12 @@ bool scu_prio_queue_try_peek_impl(
  * @param[in]  prioQueue The priority queue to examine.
  * @param[out] elem      A pointer to the element with the lowest priority on
  *                       success, otherwise a `nullptr`.
+ * @param[out] prio      A pointer to the priority of the element with the
+ *                       lowest priority on success, otherwise a `nullptr`.
  * @return `true` if an element was successfully retrieved, otherwise `false`.
  */
-#define scu_prio_queue_try_peek(queue, elem)             \
-    scu_prio_queue_try_peek_impl(queue, (void**) (elem))
+#define scu_prio_queue_try_peek(queue, elem, prio)                        \
+    scu_prio_queue_try_peek_impl(queue, (void**) (elem), (void**) (prio))
 
 /**
  * @brief Removes all elements from a specified priority queue.

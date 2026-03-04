@@ -245,23 +245,27 @@ SCUError scu_prio_queue_enqueue(
 
 void scu_prio_queue_dequeue(
     SCUPrioQueue* restrict prioQueue,
-    void* restrict elem
+    void* restrict elem,
+    void* restrict prio
 ) {
-    if (!scu_prio_queue_try_dequeue(prioQueue, elem)) {
+    if (!scu_prio_queue_try_dequeue(prioQueue, elem, prio)) {
         SCU_FATAL("The specified priority queue is empty.\n");
     }
 }
 
 bool scu_prio_queue_try_dequeue(
     SCUPrioQueue* restrict prioQueue,
-    void* restrict elem
+    void* restrict elem,
+    void* restrict prio
 ) {
     SCU_ASSERT(prioQueue != nullptr);
     SCU_ASSERT(elem != nullptr);
+    SCU_ASSERT(prio != nullptr);
     if (prioQueue->count == 0) {
         return false;
     }
     scu_memcpy(elem, scu_node_elem(prioQueue, 0), prioQueue->elemSize);
+    scu_memcpy(prio, scu_node_prio(prioQueue, 0), prioQueue->prioSize);
     prioQueue->count--;
     if (prioQueue->count > 0) {
         scu_memcpy(
@@ -301,24 +305,29 @@ bool scu_prio_queue_try_dequeue(
 
 void scu_prio_queue_peek_impl(
     const SCUPrioQueue* restrict prioQueue,
-    void** restrict elem
+    void** restrict elem,
+    void** restrict prio
 ) {
-    if (!scu_prio_queue_try_peek_impl(prioQueue, elem)) {
+    if (!scu_prio_queue_try_peek_impl(prioQueue, elem, prio)) {
         SCU_FATAL("The specified priority queue is empty.\n");
     }
 }
 
 bool scu_prio_queue_try_peek_impl(
     const SCUPrioQueue* restrict prioQueue,
-    void** restrict elem
+    void** restrict elem,
+    void** restrict prio
 ) {
     SCU_ASSERT(prioQueue != nullptr);
     SCU_ASSERT(elem != nullptr);
+    SCU_ASSERT(prio != nullptr);
     if (prioQueue->count == 0) {
         *elem = nullptr;
+        *prio = nullptr;
         return false;
     }
     *elem = scu_node_elem(prioQueue, 0);
+    *prio = scu_node_prio(prioQueue, 0);
     return true;
 }
 
