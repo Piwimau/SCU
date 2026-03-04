@@ -126,13 +126,32 @@ SCUError scu_hash_set_ensure_capacity(SCUHashSet* hashSet, SCUisize capacity);
  * @note This function dynamically allocates memory using `scu_malloc()` and
  * `scu_calloc()`.
  *
+ * @warning The behavior is undefined if the element is already present in the
+ * hash set. Use `scu_hash_set_try_add()` to handle this case gracefully.
+ *
+ * @param[in, out] hashSet The hash set to add the element to.
+ * @param[in]      elem    The element to add.
+ * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
+ * `SCU_ERROR_NONE` on success.
+ */
+SCUError scu_hash_set_add(
+    SCUHashSet* restrict hashSet,
+    const void* restrict elem
+);
+
+/**
+ * @brief Tries to add a new element to a specified hash set.
+ *
+ * @note This function dynamically allocates memory using `scu_malloc()` and
+ * `scu_calloc()`.
+ *
  * @param[in, out] hashSet The hash set to add the element to.
  * @param[in]      elem    The element to add.
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred,
  * `SCU_ERROR_ALREADY_PRESENT` if the element is already present in the hash
  * set, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_hash_set_add(
+SCUError scu_hash_set_try_add(
     SCUHashSet* restrict hashSet,
     const void* restrict elem
 );

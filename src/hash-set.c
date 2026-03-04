@@ -345,6 +345,17 @@ SCUError scu_hash_set_add(
     SCUHashSet* restrict hashSet,
     const void* restrict elem
 ) {
+    SCUError error = scu_hash_set_try_add(hashSet, elem);
+    if (error == SCU_ERROR_ALREADY_PRESENT) {
+        SCU_FATAL("The specified element is already present.\n");
+    }
+    return error;
+}
+
+SCUError scu_hash_set_try_add(
+    SCUHashSet* restrict hashSet,
+    const void* restrict elem
+) {
     SCU_ASSERT(hashSet != nullptr);
     SCU_ASSERT(elem != nullptr);
     if ((hashSet->count * SCU_MAX_LOAD_FACTOR_DEN)
