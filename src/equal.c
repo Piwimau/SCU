@@ -6,6 +6,12 @@
 #include "scu/equal.h"
 #include "scu/types.h"
 
+bool scu_equal_bool(const void* a, const void* b) {
+    SCU_ASSERT(a != nullptr);
+    SCU_ASSERT(b != nullptr);
+    return *(const bool*) a == *(const bool*) b;
+}
+
 bool scu_equal_byte(const void* a, const void* b) {
     SCU_ASSERT(a != nullptr);
     SCU_ASSERT(b != nullptr);

@@ -6,6 +6,22 @@
 #include "scu/compare.h"
 #include "scu/types.h"
 
+int scu_compare_bool(const void* a, const void* b) {
+    SCU_ASSERT(a != nullptr);
+    SCU_ASSERT(b != nullptr);
+    bool l = *(const bool*) a;
+    bool r = *(const bool*) b;
+    return (l < r) ? -1 : (l > r) ? 1 : 0;
+}
+
+int scu_compare_bool_rev(const void* a, const void* b) {
+    SCU_ASSERT(a != nullptr);
+    SCU_ASSERT(b != nullptr);
+    bool l = *(const bool*) a;
+    bool r = *(const bool*) b;
+    return (l > r) ? -1 : (l < r) ? 1 : 0;
+}
+
 int scu_compare_byte(const void* a, const void* b) {
     SCU_ASSERT(a != nullptr);
     SCU_ASSERT(b != nullptr);

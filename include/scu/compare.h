@@ -12,6 +12,32 @@
 typedef int SCUCompareFunc(const void* a, const void* b);
 
 /**
+ * @brief Compares two specified `bool` values.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to a
+ * `bool`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is `false` and `*b` is `true`, zero if they
+ * compare equal, or a positive value if `*a` is `true` and `*b` is `false`.
+ */
+int scu_compare_bool(const void* a, const void* b);
+
+/**
+ * @brief Compares two specified `bool` values in reverse order.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to a
+ * `bool`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return A negative value if `*a` is `true` and `*b` is `false`, zero if they
+ * compare equal, or a positive value if `*a` is `false` and `*b` is `true`.
+ */
+int scu_compare_bool_rev(const void* a, const void* b);
+
+/**
  * @brief Compares two specified `SCUbyte` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an

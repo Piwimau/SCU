@@ -12,6 +12,16 @@
 typedef SCUusize SCUHashFunc(const void* value);
 
 /**
+ * @brief Returns a hash for a specified `bool` value.
+ *
+ * @warning The behavior is undefined if `value` is not a pointer to a `bool`.
+ *
+ * @param[in] value A pointer to the value to hash.
+ * @return A hash for the specified value.
+ */
+SCUusize scu_hash_bool(const void* value);
+
+/**
  * @brief Returns a hash for a specified `SCUbyte` value.
  *
  * @warning The behavior is undefined if `value` is not a pointer to an

@@ -80,6 +80,12 @@
     }
 #endif
 
+usize scu_hash_bool(const void* value) {
+    SCU_ASSERT(value != nullptr);
+    usize v = *(const bool*) value;
+    return scu_hash_mix_usize(v);
+}
+
 usize scu_hash_byte(const void* value) {
     SCU_ASSERT(value != nullptr);
     usize v = *(const byte*) value;

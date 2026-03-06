@@ -11,6 +11,18 @@
 typedef bool SCUEqualFunc(const void* a, const void* b);
 
 /**
+ * @brief Determines whether two specified `bool` values are equal.
+ *
+ * @warning The behavior is undefined if `a` or `b` is not a pointer to a
+ * `bool`.
+ *
+ * @param[in] a A pointer to the first value.
+ * @param[in] b A pointer to the second value.
+ * @return `true` if `*a` and `*b` are equal, otherwise `false`.
+ */
+bool scu_equal_bool(const void* a, const void* b);
+
+/**
  * @brief Determines whether two specified `SCUbyte` values are equal.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
