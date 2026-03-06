@@ -226,29 +226,24 @@ bool scu_hash_map_try_get_impl(
 /**
  * @brief Associates a key with a new value in a specified hash map.
  *
- * @warning The behavior is undefined if the key is not present in the hash map.
- * Use `scu_hash_map_try_set()` to handle this case gracefully.
+ * @note This function dynamically allocates memory using `scu_malloc()` and
+ * `scu_calloc()`.
+ *
+ * If the key is already present in the specified hash map, its associated value
+ * is replaced with the new value. Otherwise, a new key-value pair is added to
+ * the hash map with the specified key and value. Note that this function is
+ * primarily intended for updating the values of existing keys, and is optimized
+ * for this use case. If it is known that the key is (likely) not present in the
+ * hash map, consider using `scu_hash_map_add()` or `scu_hash_map_try_add()`
+ * instead, which may be more efficient in this case.
  *
  * @param[in, out] hashMap The hash map to set the value in.
  * @param[in]      key     The key to associate with the new value.
  * @param[in]      value   The new value to associate with the key.
+ * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
+ * `SCU_ERROR_NONE` on success.
  */
-void scu_hash_map_set(
-    SCUHashMap* restrict hashMap,
-    const void* restrict key,
-    const void* restrict value
-);
-
-/**
- * @brief Tries to associate a key with a new value in a specified hash map.
- *
- * @param[in, out] hashMap The hash map to set the value in.
- * @param[in]      key     The key to associate with the new value.
- * @param[in]      value   The new value to associate with the key.
- * @return `true` if the key was present in the hash map and the value was set,
- * otherwise `false`.
- */
-bool scu_hash_map_try_set(
+SCUError scu_hash_map_set(
     SCUHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value

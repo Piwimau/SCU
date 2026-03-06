@@ -358,8 +358,10 @@ SCUError scu_hash_set_try_add(
 ) {
     SCU_ASSERT(hashSet != nullptr);
     SCU_ASSERT(elem != nullptr);
-    if ((hashSet->count * SCU_MAX_LOAD_FACTOR_DEN)
-            >= (hashSet->capacity * SCU_MAX_LOAD_FACTOR_NUM)) {
+    if (
+        (hashSet->count * SCU_MAX_LOAD_FACTOR_DEN)
+            >= (hashSet->capacity * SCU_MAX_LOAD_FACTOR_NUM)
+    ) {
         isize newCapacity = (hashSet->capacity == 0)
             ? SCU_DEFAULT_CAPACITY
             : (hashSet->capacity * SCU_GROWTH_FACTOR);

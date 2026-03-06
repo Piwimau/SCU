@@ -427,8 +427,10 @@ SCUError scu_hash_map_try_add(
     SCU_ASSERT(hashMap != nullptr);
     SCU_ASSERT(key != nullptr);
     SCU_ASSERT(value != nullptr);
-    if ((hashMap->count * SCU_MAX_LOAD_FACTOR_DEN)
-            >= (hashMap->capacity * SCU_MAX_LOAD_FACTOR_NUM)) {
+    if (
+        (hashMap->count * SCU_MAX_LOAD_FACTOR_DEN)
+            >= (hashMap->capacity * SCU_MAX_LOAD_FACTOR_NUM)
+    ) {
         isize newCapacity = (hashMap->capacity == 0)
             ? SCU_DEFAULT_CAPACITY
             : (hashMap->capacity * SCU_GROWTH_FACTOR);
@@ -535,17 +537,7 @@ bool scu_hash_map_try_get_impl(
     }
 }
 
-void scu_hash_map_set(
-    SCUHashMap* restrict hashMap,
-    const void* restrict key,
-    const void* restrict value
-) {
-    if (!scu_hash_map_try_set(hashMap, key, value)) {
-        SCU_FATAL("The specified key is not present.\n");
-    }
-}
-
-bool scu_hash_map_try_set(
+SCUError scu_hash_map_set(
     SCUHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value
@@ -553,11 +545,76 @@ bool scu_hash_map_try_set(
     SCU_ASSERT(hashMap != nullptr);
     SCU_ASSERT(key != nullptr);
     SCU_ASSERT(value != nullptr);
-    if (hashMap->count == 0) {
-        return false;
+    // If the key is already present in the hash map (which is the common case
+    // for this operation), we update its value in-place without allocating any
+    // additional memory.
+    if (hashMap->count > 0) {
+        usize hash = hashMap->keyHashFunc(key);
+        isize index = scu_ideal_index(hash, hashMap->capacity);
+        isize distance = 0;
+        while (true) {
+            SCUBucket* bucket = scu_bucket_at(
+                hashMap->buckets,
+                index,
+                hashMap->bucketSize
+            );
+            if (!bucket->isOccupied) {
+                break;
+            }
+            isize otherDistance = scu_probe_distance(
+                bucket->hash,
+                index,
+                hashMap->capacity
+            );
+            if (distance > otherDistance) {
+                break;
+            }
+            if (
+                (bucket->hash == hash)
+                    && hashMap->keyEqualFunc(bucket->key, key)
+            ) {
+                scu_memcpy(
+                    scu_bucket_value(bucket, hashMap->valueOffset),
+                    value,
+                    hashMap->valueSize
+                );
+                return SCU_ERROR_NONE;
+            }
+            index = scu_wrap_index(index + 1, hashMap->capacity);
+            distance++;
+        }
     }
-    usize hash = hashMap->keyHashFunc(key);
-    isize index = scu_ideal_index(hash, hashMap->capacity);
+    // The key is not present in the hash map, so we need to add a new key-value
+    // pair. We might have to increase the capacity of the hash map first if
+    // adding a new key-value pair would exceed the maximum load factor. Note
+    // that we have to search for the appropriate insertion point again after
+    // ensuring the capacity, since the buckets might have been rehashed to new
+    // positions during the capacity increase.
+    if (
+        (hashMap->count * SCU_MAX_LOAD_FACTOR_DEN)
+            >= (hashMap->capacity * SCU_MAX_LOAD_FACTOR_NUM)
+    ) {
+        isize newCapacity = (hashMap->capacity == 0)
+            ? SCU_DEFAULT_CAPACITY
+            : (hashMap->capacity * SCU_GROWTH_FACTOR);
+        SCUError error = scu_hash_map_ensure_capacity(hashMap, newCapacity);
+        if (error != SCU_ERROR_NONE) {
+            return error;
+        }
+    }
+    SCUBucket* tempBucket = scu_malloc(hashMap->bucketSize);
+    if (tempBucket == nullptr) {
+        return SCU_ERROR_OUT_OF_MEMORY;
+    }
+    tempBucket->hash = hashMap->keyHashFunc(key);
+    tempBucket->isOccupied = true;
+    scu_memcpy(tempBucket->key, key, hashMap->keySize);
+    scu_memcpy(
+        scu_bucket_value(tempBucket, hashMap->valueOffset),
+        value,
+        hashMap->valueSize
+    );
+    isize index = scu_ideal_index(tempBucket->hash, hashMap->capacity);
     isize distance = 0;
     while (true) {
         SCUBucket* bucket = scu_bucket_at(
@@ -566,7 +623,10 @@ bool scu_hash_map_try_set(
             hashMap->bucketSize
         );
         if (!bucket->isOccupied) {
-            return false;
+            scu_memcpy(bucket, tempBucket, hashMap->bucketSize);
+            hashMap->count++;
+            scu_free(tempBucket);
+            return SCU_ERROR_NONE;
         }
         isize otherDistance = scu_probe_distance(
             bucket->hash,
@@ -574,15 +634,8 @@ bool scu_hash_map_try_set(
             hashMap->capacity
         );
         if (distance > otherDistance) {
-            return false;
-        }
-        if ((bucket->hash == hash) && hashMap->keyEqualFunc(bucket->key, key)) {
-            scu_memcpy(
-                scu_bucket_value(bucket, hashMap->valueOffset),
-                value,
-                hashMap->valueSize
-            );
-            return true;
+            scu_memswap(bucket, tempBucket, hashMap->bucketSize);
+            distance = otherDistance;
         }
         index = scu_wrap_index(index + 1, hashMap->capacity);
         distance++;
