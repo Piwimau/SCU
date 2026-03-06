@@ -54,7 +54,10 @@ typedef enum SCUError {
     SCU_ERROR_ALREADY_PRESENT,
 
     /** @brief Indicates that something did not have the expected format. */
-    SCU_ERROR_INVALID_FORMAT
+    SCU_ERROR_INVALID_FORMAT,
+
+    /** @brief Indicates that an error occurred while measuring some time. */
+    SCU_ERROR_TIMING_FAILED
 
 } SCUError;
 

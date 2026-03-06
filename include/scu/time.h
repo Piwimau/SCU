@@ -1,6 +1,7 @@
 #ifndef SCU_TIME_H
 #define SCU_TIME_H
 
+#include "scu/error.h"
 #include "scu/types.h"
 
 /** @brief Represents a timing mode for measuring CPU time. */
@@ -49,8 +50,8 @@ typedef struct SCUStopwatch {
 
 } SCUStopwatch;
 
-/** @brief Represents a timing. */
-typedef struct SCUTiming {
+/** @brief Represents the result of a timing. */
+typedef struct SCUTimingResult {
 
     /** @brief The measured wall time in nanoseconds. */
     SCUi64 wallNs;
@@ -58,7 +59,10 @@ typedef struct SCUTiming {
     /** @brief The measured CPU time in nanoseconds. */
     SCUi64 cpuNs;
 
-} SCUTiming;
+    /** @brief An error code indicating whether the timing was successful. */
+    SCUError error;
+
+} SCUTimingResult;
 
 /**
  * @brief Initializes a specified stopwatch.
@@ -144,19 +148,23 @@ bool scu_stopwatch_is_running(const SCUStopwatch* stopwatch);
 /**
  * @brief Retrieves the elapsed wall and CPU time from a specified stopwatch.
  *
- * @note If the stopwatch was never started before or was previously reset, this
- * function returns a zero-initialized timing. Otherwise, it returns the
- * accumulated wall and CPU time measured by the stopwatch in nanoseconds up to
- * the point when it was last stopped (if the stopwatch is stopped) or up to the
- * current point in time (if the stopwatch is running).
+ * @note If the stopwatch was never started before or was previously reset, the
+ * the returned timing result has both `wallNs` and `cpuNs` fields set to `0`,
+ * and the `error` field set to `SCU_ERROR_NONE`. Otherwise, the timing result
+ * contains the accumulated wall and CPU time measured by the stopwatch in
+ * nanoseconds up to the point when it was last stopped (if the stopwatch is
+ * stopped) or up to the current point in time (if the stopwatch is running).
+ * The `error` field is also set to `SCU_ERROR_NONE` in this case.
  *
- * In the unlikely event that retrieving the elapsed times fails, both fields of
- * the returned timing are set to `-1`.
+ * In the (unlikely) case that retrieving the elapsed times fails, the `error`
+ * field of the returned timing result is set to `SCU_ERROR_TIMING_FAILED`, and
+ * both `wallNs` and `cpuNs` contain an unspecified value.
  *
  * @param[in] stopwatch The stopwatch to examine.
- * @return A timing containing the elapsed wall and CPU time in nanoseconds.
+ * @return A timing result containing the elapsed wall and CPU time in
+ * nanoseconds on success, or an appropriate error code on failure.
  */
-SCUTiming scu_stopwatch_elapsed(const SCUStopwatch* stopwatch);
+SCUTimingResult scu_stopwatch_elapsed(const SCUStopwatch* stopwatch);
 
 /**
  * @brief Measures the wall and CPU time required to execute a block of code.
@@ -164,47 +172,53 @@ SCUTiming scu_stopwatch_elapsed(const SCUStopwatch* stopwatch);
  * This macro simplifies the process of measuring the wall and CPU time required
  * to execute a block of code. It creates a new stopwatch, starts it, executes
  * the block of code, stops the stopwatch, and retrieves the elapsed times,
- * which are assigned to `timing->wallNs` and `timing->cpuNs` respectively.
+ * which are assigned to `result->wallNs` and `result->cpuNs` respectively.
  *
  * The following example demonstrates the basic usage of this macro:
  *
  * ```c
- * SCUTiming timing;
- * SCU_TIME(SCU_TIMING_MODE_PROCESS, &timing) {
+ * SCUTimingResult result;
+ * SCU_TIME(SCU_TIMING_MODE_PROCESS, &result) {
  *     // Some code to be timed...
  * }
- * if ((timing.wallNs == -1) || (timing.cpuNs == -1)) {
+ * if (result.error != SCU_ERROR_NONE) {
  *     // Handle the error...
  * }
  * else {
- *     // Use timing.wallNs and timing.cpuNs...
+ *     // Use result.wallNs and result.cpuNs...
  * }
  * ```
  *
  * @note If the stopwatch cannot be started, the block of code is not executed.
- * In this case, both `timing->wallNs` and `timing->cpuNs` are set to `-1`. This
- * is also the case if retrieving the elapsed times fails after executing the
- * block of code and stopping the stopwatch.
+ * In this case, both `result->wallNs` and `result->cpuNs` are set to an
+ * unspecified value, and `result->error` is set to `SCU_ERROR_TIMING_FAILED`.
+ * This is also the case if retrieving the elapsed times fails after executing
+ * the block of code and stopping the stopwatch.
  *
  * @param[in]  timingMode The timing mode for measuring CPU time.
- * @param[out] timing     A timing for the elapsed wall and CPU time on success,
- *                        or a timing with both fields set to `-1` on failure.
+ * @param[out] result     A timing result containing the elapsed wall and CPU
+ * time in nanoseconds on success, or an appropriate error code on failure.
  */
-#define SCU_TIME(timingMode, timing)                                         \
-    for (bool scuOnce = true; scuOnce; scuOnce = false)                      \
-        for (                                                                \
-            SCUStopwatch scuStopwatch = { .timingMode = (timingMode) };      \
-            scuOnce;                                                         \
-            scuOnce = false                                                  \
-        )                                                                    \
-            for (                                                            \
-                ;                                                            \
-                scuOnce && (scu_stopwatch_start(&scuStopwatch)               \
-                    ? true                                                   \
-                    : ((timing)->wallNs = -1, (timing)->cpuNs = -1, false)); \
-                scuOnce = false,                                             \
-                scu_stopwatch_stop(&scuStopwatch),                           \
-                *(timing) = scu_stopwatch_elapsed(&scuStopwatch)             \
+#define SCU_TIME(timingMode, result)                                    \
+    for (bool scuOnce = true; scuOnce; scuOnce = false)                 \
+        for (                                                           \
+            SCUStopwatch scuStopwatch = { .timingMode = (timingMode) }; \
+            scuOnce;                                                    \
+            scuOnce = false                                             \
+        )                                                               \
+            for (                                                       \
+                ;                                                       \
+                scuOnce && (scu_stopwatch_start(&scuStopwatch)          \
+                    ? true                                              \
+                    : (                                                 \
+                        (result)->wallNs = -1,                          \
+                        (result)->cpuNs = -1,                           \
+                        (result)->error = SCU_ERROR_TIMING_FAILED,      \
+                        false                                           \
+                    ));                                                 \
+                scuOnce = false,                                        \
+                scu_stopwatch_stop(&scuStopwatch),                      \
+                *(result) = scu_stopwatch_elapsed(&scuStopwatch)        \
             )
 
 #endif

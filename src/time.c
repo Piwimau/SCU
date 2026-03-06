@@ -207,21 +207,27 @@ bool scu_stopwatch_is_running(const SCUStopwatch* stopwatch) {
     return stopwatch->isRunning;
 }
 
-SCUTiming scu_stopwatch_elapsed(const SCUStopwatch* stopwatch) {
+SCUTimingResult scu_stopwatch_elapsed(const SCUStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
     if (!stopwatch->isRunning) {
-        return (SCUTiming) {
+        return (SCUTimingResult) {
             .wallNs = stopwatch->accWallNs,
-            .cpuNs = stopwatch->accCpuNs
+            .cpuNs = stopwatch->accCpuNs,
+            .error = SCU_ERROR_NONE
         };
     }
     i64 wallNs = scu_wall_ns();
     i64 cpuNs = scu_cpu_ns(stopwatch->timingMode);
     if ((wallNs == -1) || (cpuNs == -1)) {
-        return (SCUTiming) { .wallNs = -1, .cpuNs = -1 };
+        return (SCUTimingResult) {
+            .wallNs = -1,
+            .cpuNs = -1,
+            .error = SCU_ERROR_TIMING_FAILED
+        };
     }
-    return (SCUTiming) {
+    return (SCUTimingResult) {
         .wallNs = stopwatch->accWallNs + (wallNs - stopwatch->startWallNs),
-        .cpuNs = stopwatch->accCpuNs + (cpuNs - stopwatch->startCpuNs)
+        .cpuNs = stopwatch->accCpuNs + (cpuNs - stopwatch->startCpuNs),
+        .error = SCU_ERROR_NONE
     };
 }
