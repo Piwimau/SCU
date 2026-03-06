@@ -315,8 +315,10 @@ void scu_stack_free(SCUStack* stack);
     for (                                                                    \
         SCUStackIter SCU_XCONCAT(it, __LINE__) = scu_stack_iter(stack);      \
         scu_stack_iter_move_next(&SCU_XCONCAT(it, __LINE__))                 \
-            && ((elem) = scu_stack_iter_current(&SCU_XCONCAT(it, __LINE__)), \
-                true);                                                       \
+            && (                                                             \
+                (elem) = scu_stack_iter_current(&SCU_XCONCAT(it, __LINE__)), \
+                true                                                         \
+            );                                                               \
     )
 
 #endif

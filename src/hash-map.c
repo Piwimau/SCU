@@ -463,8 +463,10 @@ SCUError scu_hash_map_try_add(
             scu_free(tempBucket);
             return SCU_ERROR_NONE;
         }
-        if ((bucket->hash == tempBucket->hash)
-                && hashMap->keyEqualFunc(bucket->key, tempBucket->key)) {
+        if (
+            (bucket->hash == tempBucket->hash)
+                && hashMap->keyEqualFunc(bucket->key, tempBucket->key)
+        ) {
             scu_free(tempBucket);
             return SCU_ERROR_ALREADY_PRESENT;
         }

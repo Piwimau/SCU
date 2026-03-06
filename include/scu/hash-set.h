@@ -308,8 +308,10 @@ void scu_hash_set_free(SCUHashSet* hashSet);
     for (                                                                       \
         SCUHashSetIter SCU_XCONCAT(it, __LINE__) = scu_hash_set_iter(hashSet);  \
         scu_hash_set_iter_move_next(&SCU_XCONCAT(it, __LINE__))                 \
-            && ((elem) = scu_hash_set_iter_current(&SCU_XCONCAT(it, __LINE__)), \
-                true);                                                          \
+            && (                                                                \
+                (elem) = scu_hash_set_iter_current(&SCU_XCONCAT(it, __LINE__)), \
+                true                                                            \
+            );                                                                  \
     )
 
 #endif

@@ -317,8 +317,10 @@ void scu_queue_free(SCUQueue* queue);
     for (                                                                    \
         SCUQueueIter SCU_XCONCAT(it, __LINE__) = scu_queue_iter(queue);      \
         scu_queue_iter_move_next(&SCU_XCONCAT(it, __LINE__))                 \
-            && ((elem) = scu_queue_iter_current(&SCU_XCONCAT(it, __LINE__)), \
-                true);                                                       \
+            && (                                                             \
+                (elem) = scu_queue_iter_current(&SCU_XCONCAT(it, __LINE__)), \
+                true                                                         \
+            );                                                               \
     )
 
 #endif

@@ -400,8 +400,10 @@ void scu_prio_queue_free(SCUPrioQueue* prioQueue);
     for (                                                                            \
         SCUPrioQueueIter SCU_XCONCAT(it, __LINE__) = scu_prio_queue_iter(prioQueue); \
         scu_prio_queue_iter_move_next(&SCU_XCONCAT(it, __LINE__))                    \
-            && ((entry) = scu_prio_queue_iter_current(&SCU_XCONCAT(it, __LINE__)),   \
-                true);                                                               \
+            && (                                                                     \
+                (entry) = scu_prio_queue_iter_current(&SCU_XCONCAT(it, __LINE__)),   \
+                true                                                                 \
+            );                                                                       \
     )
 
 #endif

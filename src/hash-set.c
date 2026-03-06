@@ -389,8 +389,10 @@ SCUError scu_hash_set_try_add(
             scu_free(tempBucket);
             return SCU_ERROR_NONE;
         }
-        if ((bucket->hash == tempBucket->hash)
-                && hashSet->equalFunc(bucket->elem, tempBucket->elem)) {
+        if (
+            (bucket->hash == tempBucket->hash)
+                && hashSet->equalFunc(bucket->elem, tempBucket->elem)
+        ) {
             scu_free(tempBucket);
             return SCU_ERROR_ALREADY_PRESENT;
         }

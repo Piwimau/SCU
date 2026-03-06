@@ -421,8 +421,10 @@ void scu_hash_map_free(SCUHashMap* hashMap);
     for (                                                                        \
         SCUHashMapIter SCU_XCONCAT(it, __LINE__) = scu_hash_map_iter(hashMap);   \
         scu_hash_map_iter_move_next(&SCU_XCONCAT(it, __LINE__))                  \
-            && ((entry) = scu_hash_map_iter_current(&SCU_XCONCAT(it, __LINE__)), \
-                true);                                                           \
+            && (                                                                 \
+                (entry) = scu_hash_map_iter_current(&SCU_XCONCAT(it, __LINE__)), \
+                true                                                             \
+            );                                                                   \
     )
 
 #endif
