@@ -71,11 +71,11 @@ static inline i64 scu_wall_ns() {
 }
 
 /**
- * @brief Returns the current CPU time in nanoseconds.
+ * @brief Returns the current process CPU time in nanoseconds.
  *
- * @return The current CPU time in nanoseconds, or `-1` on failure.
+ * @return The current process CPU time in nanoseconds, or `-1` on failure.
  */
-static inline i64 scu_cpu_ns() {
+static inline i64 scu_process_cpu_ns() {
 #ifdef _WIN32
     FILETIME creationTime, exitTime, kernelTime, userTime;
     WINBOOL success = GetProcessTimes(
@@ -98,6 +98,51 @@ static inline i64 scu_cpu_ns() {
 #endif
 }
 
+/**
+ * @brief Returns the current thread CPU time in nanoseconds.
+ *
+ * @return The current thread CPU time in nanoseconds, or `-1` on failure.
+ */
+static inline i64 scu_thread_cpu_ns() {
+#ifdef _WIN32
+    FILETIME creationTime, exitTime, kernelTime, userTime;
+    WINBOOL success = GetThreadTimes(
+        GetCurrentThread(),
+        &creationTime,
+        &exitTime,
+        &kernelTime,
+        &userTime
+    );
+    if (!success) {
+        return -1;
+    }
+    return scu_filetime_to_ns(&kernelTime) + scu_filetime_to_ns(&userTime);
+#else
+    SCUTimespec timespec;
+    if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &timespec) != 0) {
+        return -1;
+    }
+    return scu_timespec_to_ns(&timespec);
+#endif
+}
+
+/**
+ * @brief Returns the current CPU time in nanoseconds.
+ *
+ * @param[in] timingMode The timing mode for measuring CPU time.
+ * @return The current CPU time in nanoseconds, or `-1` on failure.
+ */
+static inline i64 scu_cpu_ns(SCUTimingMode timingMode) {
+    return (timingMode == SCU_TIMING_MODE_PROCESS)
+        ? scu_process_cpu_ns()
+        : scu_thread_cpu_ns();
+}
+
+void scu_stopwatch_init(SCUStopwatch* stopwatch, SCUTimingMode timingMode) {
+    SCU_ASSERT(stopwatch != nullptr);
+    *stopwatch = (SCUStopwatch) { .timingMode = timingMode };
+}
+
 bool scu_stopwatch_start(SCUStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
     if (!stopwatch->isRunning) {
@@ -105,7 +150,7 @@ bool scu_stopwatch_start(SCUStopwatch* stopwatch) {
         if (wallNs == -1) {
             return false;
         }
-        i64 cpuNs = scu_cpu_ns();
+        i64 cpuNs = scu_cpu_ns(stopwatch->timingMode);
         if (cpuNs == -1) {
             return false;
         }
@@ -122,7 +167,7 @@ bool scu_stopwatch_restart(SCUStopwatch* stopwatch) {
     if (wallNs == -1) {
         return false;
     }
-    i64 cpuNs = scu_cpu_ns();
+    i64 cpuNs = scu_cpu_ns(stopwatch->timingMode);
     if (cpuNs == -1) {
         return false;
     }
@@ -141,7 +186,7 @@ bool scu_stopwatch_stop(SCUStopwatch* stopwatch) {
         if (wallNs == -1) {
             return false;
         }
-        i64 cpuNs = scu_cpu_ns();
+        i64 cpuNs = scu_cpu_ns(stopwatch->timingMode);
         if (cpuNs == -1) {
             return false;
         }
@@ -154,7 +199,7 @@ bool scu_stopwatch_stop(SCUStopwatch* stopwatch) {
 
 void scu_stopwatch_reset(SCUStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
-    *stopwatch = (SCUStopwatch) { };
+    *stopwatch = (SCUStopwatch) { .timingMode = stopwatch->timingMode };
 }
 
 bool scu_stopwatch_is_running(const SCUStopwatch* stopwatch) {
@@ -171,7 +216,7 @@ SCUTiming scu_stopwatch_elapsed(const SCUStopwatch* stopwatch) {
         };
     }
     i64 wallNs = scu_wall_ns();
-    i64 cpuNs = scu_cpu_ns();
+    i64 cpuNs = scu_cpu_ns(stopwatch->timingMode);
     if ((wallNs == -1) || (cpuNs == -1)) {
         return (SCUTiming) { .wallNs = -1, .cpuNs = -1 };
     }

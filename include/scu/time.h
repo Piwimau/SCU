@@ -3,6 +3,23 @@
 
 #include "scu/types.h"
 
+/** @brief Represents a timing mode for measuring CPU time. */
+typedef enum SCUTimingMode {
+
+    /**
+     * @brief Indicates that the CPU time should be measured for the entire
+     * process.
+     */
+    SCU_TIMING_MODE_PROCESS,
+
+    /**
+     * @brief Indicates that the CPU time should be measured for the current
+     * thread only.
+     */
+    SCU_TIMING_MODE_THREAD
+
+} SCUTimingMode;
+
 /**
  * @brief Represents a stopwatch for measuring wall and CPU time.
  *
@@ -11,6 +28,9 @@
  * undefined if its fields are accessed directly.
  */
 typedef struct SCUStopwatch {
+
+    /** @brief The timing mode for measuring CPU time. */
+    SCUTimingMode timingMode;
 
     /** @brief The last starting wall time in nanoseconds. */
     SCUi64 startWallNs;
@@ -39,6 +59,19 @@ typedef struct SCUTiming {
     SCUi64 cpuNs;
 
 } SCUTiming;
+
+/**
+ * @brief Initializes a specified stopwatch.
+ *
+ * @note This function may be called more than once to reinitialize the same
+ * stopwatch with a different timing mode. Any previously accumulated wall and
+ * CPU times are discarded, and the stopwatch is stopped if it was previously
+ * running.
+ *
+ * @param[in, out] stopwatch  The stopwatch to initialize.
+ * @param[in]      timingMode The timing mode for measuring CPU time.
+ */
+void scu_stopwatch_init(SCUStopwatch* stopwatch, SCUTimingMode timingMode);
 
 /**
  * @brief Starts a specified stopwatch.
@@ -137,7 +170,7 @@ SCUTiming scu_stopwatch_elapsed(const SCUStopwatch* stopwatch);
  *
  * ```c
  * SCUTiming timing;
- * SCU_TIME(&timing) {
+ * SCU_TIME(SCU_TIMING_MODE_PROCESS, &timing) {
  *     // Some code to be timed...
  * }
  * if ((timing.wallNs == -1) || (timing.cpuNs == -1)) {
@@ -153,12 +186,17 @@ SCUTiming scu_stopwatch_elapsed(const SCUStopwatch* stopwatch);
  * is also the case if retrieving the elapsed times fails after executing the
  * block of code and stopping the stopwatch.
  *
- * @param[out] timing A timing for the elapsed wall and CPU time on success,
- *                    or a timing with both fields set to `-1` on failure.
+ * @param[in]  timingMode The timing mode for measuring CPU time.
+ * @param[out] timing     A timing for the elapsed wall and CPU time on success,
+ *                        or a timing with both fields set to `-1` on failure.
  */
-#define SCU_TIME(timing)                                                     \
+#define SCU_TIME(timingMode, timing)                                         \
     for (bool scuOnce = true; scuOnce; scuOnce = false)                      \
-        for (SCUStopwatch scuStopwatch = { }; scuOnce; scuOnce = false)      \
+        for (                                                                \
+            SCUStopwatch scuStopwatch = { .timingMode = (timingMode) };      \
+            scuOnce;                                                         \
+            scuOnce = false                                                  \
+        )                                                                    \
             for (                                                            \
                 ;                                                            \
                 scuOnce && (scu_stopwatch_start(&scuStopwatch)               \
