@@ -194,14 +194,15 @@ SCUError scu_list_trim_excess_impl(void** list) {
     SCU_ASSERT(list != nullptr);
     SCUListHeader* header = scu_data_to_header(*list);
     if (header->capacity > header->count) {
+        isize newCapacity = header->count;
         SCUListHeader* newHeader = scu_realloc(
             header,
-            SCU_SIZEOF(SCUListHeader) + (header->elemSize * header->count)
+            SCU_SIZEOF(SCUListHeader) + (header->elemSize * newCapacity)
         );
         if (newHeader == nullptr) {
             return SCU_ERROR_OUT_OF_MEMORY;
         }
-        newHeader->capacity = header->count;
+        newHeader->capacity = newCapacity;
         *list = newHeader->data;
     }
     return SCU_ERROR_NONE;
