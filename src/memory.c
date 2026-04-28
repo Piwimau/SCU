@@ -11,7 +11,7 @@ void* scu_memchr(const void* block, byte c, isize count) {
         return nullptr;
     }
     SCU_ASSERT(block != nullptr);
-    return memchr(block, c, (usize) count);
+    return SCU_CONST_CAST(void*, memchr(block, c, (usize) count));
 }
 
 void* scu_memrchr(const void* block, byte c, isize count) {

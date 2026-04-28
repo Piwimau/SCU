@@ -1,5 +1,12 @@
 #define SCU_SHORT_ALIASES
 
+#ifndef _POSIX_C_SOURCE
+    #define _POSIX_C_SOURCE 200809L
+#endif
+#ifndef _FILE_OFFSET_BITS
+    #define _FILE_OFFSET_BITS 64
+#endif
+
 #include <pthread.h>
 #include <stdio.h>
 #include "scu/alloc.h"

@@ -4,6 +4,9 @@
     #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
 #else
+    #ifndef _POSIX_C_SOURCE
+        #define _POSIX_C_SOURCE 199309L
+    #endif
     #include <time.h>
 #endif
 #include "scu/assert.h"
