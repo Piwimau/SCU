@@ -15,7 +15,7 @@
 #include "scu/memory.h"
 #include "scu/string.h"
 
-struct SCUFile {
+struct ScuFile {
 
     /** @brief The underlying file stream handle. */
     FILE* handle;
@@ -35,7 +35,7 @@ static constexpr isize SCU_CHUNK_SIZE = 4096;
 static pthread_once_t scuStdinInitialized = PTHREAD_ONCE_INIT;
 
 /** @brief The file stream associated with the standard input stream. */
-static SCUFile scuStdin;
+static ScuFile scuStdin;
 
 /**
  * @brief A flag to ensure the file stream associated with the standard output
@@ -44,7 +44,7 @@ static SCUFile scuStdin;
 static pthread_once_t scuStdoutInitialized = PTHREAD_ONCE_INIT;
 
 /** @brief The file stream associated with the standard output stream. */
-static SCUFile scuStdout;
+static ScuFile scuStdout;
 
 /**
  * @brief A flag to ensure the file stream associated with the standard error
@@ -53,7 +53,7 @@ static SCUFile scuStdout;
 static pthread_once_t scuStderrInitialized = PTHREAD_ONCE_INIT;
 
 /** @brief The file stream associated with the standard error stream. */
-static SCUFile scuStderr;
+static ScuFile scuStderr;
 
 /**
  * @brief Initializes the file stream associated with the standard input stream.
@@ -77,23 +77,23 @@ static void scu_init_stderr() {
     scuStderr.handle = stderr;
 }
 
-SCUFile* scu_stdin() {
+ScuFile* scu_stdin() {
     pthread_once(&scuStdinInitialized, scu_init_stdin);
     return &scuStdin;
 }
 
-SCUFile* scu_stdout() {
+ScuFile* scu_stdout() {
     pthread_once(&scuStdoutInitialized, scu_init_stdout);
     return &scuStdout;
 }
 
-SCUFile* scu_stderr() {
+ScuFile* scu_stderr() {
     pthread_once(&scuStderrInitialized, scu_init_stderr);
     return &scuStderr;
 }
 
-SCUError scu_fopen(
-    SCUFile* restrict* restrict file,
+ScuError scu_fopen(
+    ScuFile* restrict* restrict file,
     const char* restrict name,
     const char* restrict mode
 ) {
@@ -105,7 +105,7 @@ SCUError scu_fopen(
         *file = nullptr;
         return SCU_ERROR_OPENING_FILE;
     }
-    *file = scu_malloc(SCU_SIZEOF(SCUFile));
+    *file = scu_malloc(SCU_SIZEOF(ScuFile));
     if (*file == nullptr) {
         fclose(handle);
         return SCU_ERROR_OUT_OF_MEMORY;
@@ -114,14 +114,14 @@ SCUError scu_fopen(
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_fopentmp(SCUFile** file) {
+ScuError scu_fopentmp(ScuFile** file) {
     SCU_ASSERT(file != nullptr);
     FILE* handle = tmpfile();
     if (handle == nullptr) {
         *file = nullptr;
         return SCU_ERROR_OPENING_FILE;
     }
-    *file = scu_malloc(SCU_SIZEOF(SCUFile));
+    *file = scu_malloc(SCU_SIZEOF(ScuFile));
     if (*file == nullptr) {
         return SCU_ERROR_OUT_OF_MEMORY;
     }
@@ -129,8 +129,8 @@ SCUError scu_fopentmp(SCUFile** file) {
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_freopen(
-    SCUFile* restrict file,
+ScuError scu_freopen(
+    ScuFile* restrict file,
     const char* restrict name,
     const char* restrict mode
 ) {
@@ -145,7 +145,7 @@ SCUError scu_freopen(
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_fclose(SCUFile* file) {
+ScuError scu_fclose(ScuFile* file) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     int result = fclose(file->handle);
@@ -154,7 +154,7 @@ SCUError scu_fclose(SCUFile* file) {
     return (result == EOF) ? SCU_ERROR_CLOSING_FILE : SCU_ERROR_NONE;
 }
 
-SCUError scu_fflush(SCUFile* file) {
+ScuError scu_fflush(ScuFile* file) {
     if (file == nullptr) {
         return (fflush(nullptr) == EOF)
             ? SCU_ERROR_FLUSHING_FILE
@@ -166,12 +166,12 @@ SCUError scu_fflush(SCUFile* file) {
         : SCU_ERROR_NONE;
 }
 
-SCUError scu_fremove(const char* name) {
+ScuError scu_fremove(const char* name) {
     SCU_ASSERT(name != nullptr);
     return (remove(name) != 0) ? SCU_ERROR_REMOVING_FILE : SCU_ERROR_NONE;
 }
 
-SCUError scu_frename(const char* oldName, const char* newName) {
+ScuError scu_frename(const char* oldName, const char* newName) {
     SCU_ASSERT(oldName != nullptr);
     SCU_ASSERT(newName != nullptr);
     return (rename(oldName, newName) != 0)
@@ -180,7 +180,7 @@ SCUError scu_frename(const char* oldName, const char* newName) {
 }
 
 isize scu_fread(
-    SCUFile* restrict file,
+    ScuFile* restrict file,
     void* restrict buffer,
     isize count,
     isize size
@@ -202,7 +202,7 @@ isize scu_read(void* buffer, isize count, isize size) {
 }
 
 isize scu_fwrite(
-    SCUFile* restrict file,
+    ScuFile* restrict file,
     const void* restrict buffer,
     isize count,
     isize size
@@ -223,7 +223,7 @@ isize scu_write(const void* buffer, isize count, isize size) {
     return scu_fwrite(SCU_STDOUT, buffer, count, size);
 }
 
-SCUError scu_freadc(SCUFile* restrict file, char* restrict c) {
+ScuError scu_freadc(ScuFile* restrict file, char* restrict c) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     SCU_ASSERT(c != nullptr);
@@ -238,11 +238,11 @@ SCUError scu_freadc(SCUFile* restrict file, char* restrict c) {
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_readc(char* c) {
+ScuError scu_readc(char* c) {
     return scu_freadc(SCU_STDIN, c);
 }
 
-SCUError scu_fwritec(SCUFile* file, char c) {
+ScuError scu_fwritec(ScuFile* file, char c) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     return (fputc(c, file->handle) == EOF)
@@ -250,11 +250,11 @@ SCUError scu_fwritec(SCUFile* file, char c) {
         : SCU_ERROR_NONE;
 }
 
-SCUError scu_writec(char c) {
+ScuError scu_writec(char c) {
     return scu_fwritec(SCU_STDOUT, c);
 }
 
-SCUError scu_funreadc(SCUFile* file, char c) {
+ScuError scu_funreadc(ScuFile* file, char c) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     return (ungetc(c, file->handle) == EOF)
@@ -262,7 +262,7 @@ SCUError scu_funreadc(SCUFile* file, char c) {
         : SCU_ERROR_NONE;
 }
 
-SCUError scu_freads(SCUFile* restrict file, char* restrict buffer, isize size) {
+ScuError scu_freads(ScuFile* restrict file, char* restrict buffer, isize size) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     SCU_ASSERT(size >= 0);
@@ -286,11 +286,11 @@ SCUError scu_freads(SCUFile* restrict file, char* restrict buffer, isize size) {
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_reads(char* buffer, isize size) {
+ScuError scu_reads(char* buffer, isize size) {
     return scu_freads(SCU_STDIN, buffer, size);
 }
 
-SCUError scu_fwrites(SCUFile* restrict file, const char* restrict buffer) {
+ScuError scu_fwrites(ScuFile* restrict file, const char* restrict buffer) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     SCU_ASSERT(buffer != nullptr);
@@ -304,7 +304,7 @@ SCUError scu_fwrites(SCUFile* restrict file, const char* restrict buffer) {
     return (written < n) ? SCU_ERROR_WRITING_FILE : SCU_ERROR_NONE;
 }
 
-SCUError scu_writes(const char* buffer) {
+ScuError scu_writes(const char* buffer) {
     return scu_fwrites(SCU_STDOUT, buffer);
 }
 
@@ -333,7 +333,7 @@ SCUError scu_writes(const char* buffer) {
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-static inline SCUError scu_ensure_size(
+static inline ScuError scu_ensure_size(
     char* restrict* restrict buffer,
     isize* restrict size,
     isize requiredSize
@@ -358,8 +358,8 @@ static inline SCUError scu_ensure_size(
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_freadln(
-    SCUFile* restrict file,
+ScuError scu_freadln(
+    ScuFile* restrict file,
     char* restrict* restrict buffer,
     isize* restrict size
 ) {
@@ -371,7 +371,7 @@ SCUError scu_freadln(
     SCU_ASSERT(*size >= 0);
     isize used = 0;
     while (true) {
-        SCUError error = scu_ensure_size(
+        ScuError error = scu_ensure_size(
             buffer,
             size,
             (used + SCU_CHUNK_SIZE) * SCU_SIZEOF(char)
@@ -395,24 +395,24 @@ SCUError scu_freadln(
     }
 }
 
-SCUError scu_readln(char* restrict* restrict buffer, isize* restrict size) {
+ScuError scu_readln(char* restrict* restrict buffer, isize* restrict size) {
     return scu_freadln(SCU_STDIN, buffer, size);
 }
 
-SCUError scu_fwriteln(SCUFile* restrict file, const char* restrict buffer) {
-    SCUError error = scu_fwrites(file, buffer);
+ScuError scu_fwriteln(ScuFile* restrict file, const char* restrict buffer) {
+    ScuError error = scu_fwrites(file, buffer);
     if (error != SCU_ERROR_NONE) {
         return error;
     }
     return scu_fwritec(file, '\n');
 }
 
-SCUError scu_writeln(const char* buffer) {
+ScuError scu_writeln(const char* buffer) {
     return scu_fwriteln(SCU_STDOUT, buffer);
 }
 
-SCUError scu_freadall(
-    SCUFile* restrict file,
+ScuError scu_freadall(
+    ScuFile* restrict file,
     char* restrict* restrict buffer,
     isize* restrict size
 ) {
@@ -424,7 +424,7 @@ SCUError scu_freadall(
     SCU_ASSERT(*size >= 0);
     isize used = 0;
     while (true) {
-        SCUError error = scu_ensure_size(
+        ScuError error = scu_ensure_size(
             buffer,
             size,
             (used + SCU_CHUNK_SIZE) * SCU_SIZEOF(char)
@@ -450,12 +450,12 @@ SCUError scu_freadall(
     }
 }
 
-SCUError scu_readall(char* restrict* restrict buffer, isize* restrict size) {
+ScuError scu_readall(char* restrict* restrict buffer, isize* restrict size) {
     return scu_freadall(SCU_STDIN, buffer, size);
 }
 
 isize scu_vfscanf(
-    SCUFile* restrict file,
+    ScuFile* restrict file,
     const char* restrict format,
     va_list args
 ) {
@@ -466,7 +466,7 @@ isize scu_vfscanf(
     return (n == EOF) ? -1 : n;
 }
 
-isize scu_fscanf(SCUFile* restrict file, const char* restrict format, ...) {
+isize scu_fscanf(ScuFile* restrict file, const char* restrict format, ...) {
     va_list args;
     va_start(args, format);
     isize n = scu_vfscanf(file, format, args);
@@ -510,7 +510,7 @@ isize scu_sscanf(
 }
 
 isize scu_vfprintf(
-    SCUFile* restrict file,
+    ScuFile* restrict file,
     const char* restrict format,
     va_list args
 ) {
@@ -521,7 +521,7 @@ isize scu_vfprintf(
     return (n < 0) ? -1 : n;
 }
 
-isize scu_fprintf(SCUFile* restrict file, const char* restrict format, ...) {
+isize scu_fprintf(ScuFile* restrict file, const char* restrict format, ...) {
     va_list args;
     va_start(args, format);
     isize n = scu_vfprintf(file, format, args);
@@ -573,7 +573,7 @@ isize scu_snprintf(
     return n;
 }
 
-SCUError scu_vrsnprintf(
+ScuError scu_vrsnprintf(
     char* restrict* restrict buffer,
     isize* restrict size,
     const char* restrict format,
@@ -594,7 +594,7 @@ SCUError scu_vrsnprintf(
         }
         return SCU_ERROR_WRITING_BUFFER;
     }
-    SCUError error = scu_ensure_size(buffer, size, (n + 1) * SCU_SIZEOF(char));
+    ScuError error = scu_ensure_size(buffer, size, (n + 1) * SCU_SIZEOF(char));
     if (error != SCU_ERROR_NONE) {
         return error;
     }
@@ -606,7 +606,7 @@ SCUError scu_vrsnprintf(
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_rsnprintf(
+ScuError scu_rsnprintf(
     char* restrict* restrict buffer,
     isize* restrict size,
     const char* restrict format,
@@ -614,12 +614,12 @@ SCUError scu_rsnprintf(
 ) {
     va_list args;
     va_start(args, format);
-    SCUError error = scu_vrsnprintf(buffer, size, format, args);
+    ScuError error = scu_vrsnprintf(buffer, size, format, args);
     va_end(args);
     return error;
 }
 
-SCUError scu_vrasnprintf(
+ScuError scu_vrasnprintf(
     char* restrict* restrict buffer,
     isize* restrict size,
     const char* restrict format,
@@ -638,7 +638,7 @@ SCUError scu_vrasnprintf(
         return SCU_ERROR_WRITING_BUFFER;
     }
     isize offset = (*buffer == nullptr) ? 0 : scu_strlen(*buffer);
-    SCUError error = scu_ensure_size(
+    ScuError error = scu_ensure_size(
         buffer,
         size,
         (offset + n + 1) * SCU_SIZEOF(char)
@@ -654,7 +654,7 @@ SCUError scu_vrasnprintf(
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_rasnprintf(
+ScuError scu_rasnprintf(
     char* restrict* restrict buffer,
     isize* restrict size,
     const char* restrict format,
@@ -662,12 +662,12 @@ SCUError scu_rasnprintf(
 ) {
     va_list args;
     va_start(args, format);
-    SCUError error = scu_vrasnprintf(buffer, size, format, args);
+    ScuError error = scu_vrasnprintf(buffer, size, format, args);
     va_end(args);
     return error;
 }
 
-isize scu_ftell(SCUFile* file) {
+isize scu_ftell(ScuFile* file) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
 #ifdef _WIN32
@@ -677,7 +677,7 @@ isize scu_ftell(SCUFile* file) {
 #endif
 }
 
-SCUError scu_fseek(SCUFile* file, SCUSeekOrigin seekOrigin, isize offset) {
+ScuError scu_fseek(ScuFile* file, ScuSeekOrigin seekOrigin, isize offset) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     SCU_ASSERT(
@@ -710,25 +710,25 @@ SCUError scu_fseek(SCUFile* file, SCUSeekOrigin seekOrigin, isize offset) {
 #endif
 }
 
-void scu_frewind(SCUFile* file) {
+void scu_frewind(ScuFile* file) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     rewind(file->handle);
 }
 
-void scu_fclear(SCUFile* file) {
+void scu_fclear(ScuFile* file) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     clearerr(file->handle);
 }
 
-bool scu_feof(SCUFile* file) {
+bool scu_feof(ScuFile* file) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     return feof(file->handle) != 0;
 }
 
-bool scu_ferror(SCUFile* file) {
+bool scu_ferror(ScuFile* file) {
     SCU_ASSERT(file != nullptr);
     SCU_ASSERT(file->handle != nullptr);
     return ferror(file->handle) != 0;

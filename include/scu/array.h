@@ -69,9 +69,9 @@
  */
 void scu_array_sort(
     void* array,
-    SCUisize count,
-    SCUisize elemSize,
-    SCUCompareFunc* cmpFunc
+    Scuisize count,
+    Scuisize elemSize,
+    ScuCompareFunc* cmpFunc
 );
 
 #endif

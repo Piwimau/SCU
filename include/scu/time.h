@@ -5,7 +5,7 @@
 #include "scu/types.h"
 
 /** @brief Represents a timing mode for measuring CPU time. */
-typedef enum SCUTimingMode {
+typedef enum ScuTimingMode {
 
     /**
      * @brief Indicates that the CPU time should be measured for the entire
@@ -19,7 +19,7 @@ typedef enum SCUTimingMode {
      */
     SCU_TIMING_MODE_THREAD
 
-} SCUTimingMode;
+} ScuTimingMode;
 
 /**
  * @brief Represents a stopwatch for measuring wall and CPU time.
@@ -28,41 +28,41 @@ typedef enum SCUTimingMode {
  * detail and should not be relied upon. Most importantly, the behavior is
  * undefined if its fields are accessed directly.
  */
-typedef struct SCUStopwatch {
+typedef struct ScuStopwatch {
 
     /** @brief The timing mode for measuring CPU time. */
-    SCUTimingMode timingMode;
+    ScuTimingMode timingMode;
 
     /** @brief The last starting wall time in nanoseconds. */
-    SCUi64 startWallNs;
+    Scui64 startWallNs;
 
     /** @brief The last starting CPU time in nanoseconds. */
-    SCUi64 startCpuNs;
+    Scui64 startCpuNs;
 
     /** @brief The accumulated wall time in nanoseconds. */
-    SCUi64 accWallNs;
+    Scui64 accWallNs;
 
     /** @brief The accumulated CPU time in nanoseconds. */
-    SCUi64 accCpuNs;
+    Scui64 accCpuNs;
 
     /** @brief Whether the stopwatch is currently running. */
     bool isRunning;
 
-} SCUStopwatch;
+} ScuStopwatch;
 
 /** @brief Represents the result of a timing. */
-typedef struct SCUTimingResult {
+typedef struct ScuTimingResult {
 
     /** @brief The measured wall time in nanoseconds. */
-    SCUi64 wallNs;
+    Scui64 wallNs;
 
     /** @brief The measured CPU time in nanoseconds. */
-    SCUi64 cpuNs;
+    Scui64 cpuNs;
 
     /** @brief An error code indicating whether the timing was successful. */
-    SCUError error;
+    ScuError error;
 
-} SCUTimingResult;
+} ScuTimingResult;
 
 /**
  * @brief Initializes a specified stopwatch.
@@ -75,7 +75,7 @@ typedef struct SCUTimingResult {
  * @param[in, out] stopwatch  The stopwatch to initialize.
  * @param[in]      timingMode The timing mode for measuring CPU time.
  */
-void scu_stopwatch_init(SCUStopwatch* stopwatch, SCUTimingMode timingMode);
+void scu_stopwatch_init(ScuStopwatch* stopwatch, ScuTimingMode timingMode);
 
 /**
  * @brief Starts a specified stopwatch.
@@ -90,7 +90,7 @@ void scu_stopwatch_init(SCUStopwatch* stopwatch, SCUTimingMode timingMode);
  * @param[in, out] stopwatch The stopwatch to start.
  * @return `true` if the stopwatch was started successfully, otherwise `false`.
  */
-bool scu_stopwatch_start(SCUStopwatch* stopwatch);
+bool scu_stopwatch_start(ScuStopwatch* stopwatch);
 
 /**
  * @brief Restarts a specified stopwatch.
@@ -107,7 +107,7 @@ bool scu_stopwatch_start(SCUStopwatch* stopwatch);
  * @return `true` if the stopwatch was restarted successfully, otherwise
  * `false`.
  */
-bool scu_stopwatch_restart(SCUStopwatch* stopwatch);
+bool scu_stopwatch_restart(ScuStopwatch* stopwatch);
 
 /**
  * @brief Stops a specified stopwatch.
@@ -121,7 +121,7 @@ bool scu_stopwatch_restart(SCUStopwatch* stopwatch);
  * @param[in, out] stopwatch The stopwatch to stop.
  * @return `true` if the stopwatch was stopped successfully, otherwise `false`.
  */
-bool scu_stopwatch_stop(SCUStopwatch* stopwatch);
+bool scu_stopwatch_stop(ScuStopwatch* stopwatch);
 
 /**
  * @brief Resets a specified stopwatch.
@@ -135,7 +135,7 @@ bool scu_stopwatch_stop(SCUStopwatch* stopwatch);
  *
  * @param[in, out] stopwatch The stopwatch to reset.
  */
-void scu_stopwatch_reset(SCUStopwatch* stopwatch);
+void scu_stopwatch_reset(ScuStopwatch* stopwatch);
 
 /**
  * @brief Determines whether a specified stopwatch is currently running.
@@ -143,7 +143,7 @@ void scu_stopwatch_reset(SCUStopwatch* stopwatch);
  * @param[in] stopwatch The stopwatch to examine.
  * @return `true` if the stopwatch is currently running, otherwise `false`.
  */
-bool scu_stopwatch_is_running(const SCUStopwatch* stopwatch);
+bool scu_stopwatch_is_running(const ScuStopwatch* stopwatch);
 
 /**
  * @brief Retrieves the elapsed wall and CPU time from a specified stopwatch.
@@ -164,7 +164,7 @@ bool scu_stopwatch_is_running(const SCUStopwatch* stopwatch);
  * @return A timing result containing the elapsed wall and CPU time in
  * nanoseconds on success, or an appropriate error code on failure.
  */
-SCUTimingResult scu_stopwatch_elapsed(const SCUStopwatch* stopwatch);
+ScuTimingResult scu_stopwatch_elapsed(const ScuStopwatch* stopwatch);
 
 /**
  * @brief Measures the wall and CPU time required to execute a block of code.
@@ -177,7 +177,7 @@ SCUTimingResult scu_stopwatch_elapsed(const SCUStopwatch* stopwatch);
  * The following example demonstrates the basic usage of this macro:
  *
  * ```c
- * SCUTimingResult result;
+ * ScuTimingResult result;
  * SCU_TIME(SCU_TIMING_MODE_PROCESS, &result) {
  *     // Some code to be timed...
  * }
@@ -202,7 +202,7 @@ SCUTimingResult scu_stopwatch_elapsed(const SCUStopwatch* stopwatch);
 #define SCU_TIME(mode, result)                                     \
     for (bool scuOnce = true; scuOnce; scuOnce = false)            \
         for (                                                      \
-            SCUStopwatch scuStopwatch = { .timingMode = (mode) };  \
+            ScuStopwatch scuStopwatch = { .timingMode = (mode) };  \
             scuOnce;                                               \
             scuOnce = false                                        \
         )                                                          \

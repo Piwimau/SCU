@@ -4,22 +4,22 @@
 #include "scu/types.h"
 
 /**
- * @brief Returns the size of an expression (in bytes) as an `SCUisize`.
+ * @brief Returns the size of an expression (in bytes) as an `Scuisize`.
  *
  * @param[in] expr The expression to evaluate the size of.
- * @return The size of the expression (in bytes) as an `SCUisize`.
+ * @return The size of the expression (in bytes) as an `Scuisize`.
  */
-#define SCU_SIZEOF(expr) ((SCUisize) sizeof(expr))
+#define SCU_SIZEOF(expr) ((Scuisize) sizeof(expr))
 
 /**
  * @brief Returns the alignment requirement of an expression (in bytes) as an
- * `SCUisize`.
+ * `Scuisize`.
  *
  * @param[in] expr The expression to evaluate the alignment requirement of.
  * @return The alignment requirement of the expression (in bytes) as an
- * `SCUisize`.
+ * `Scuisize`.
  */
-#define SCU_ALIGNOF(expr) ((SCUisize) alignof(expr))
+#define SCU_ALIGNOF(expr) ((Scuisize) alignof(expr))
 
 /**
  * @brief Finds the first occurrence of a specified byte in a block of memory.
@@ -36,7 +36,7 @@
  * @return A pointer to the first occurrence of `c` in `block`, or `nullptr` if
  * no such byte is found.
  */
-void* scu_memchr(const void* block, SCUbyte c, SCUisize count);
+void* scu_memchr(const void* block, Scubyte c, Scuisize count);
 
 /**
  * @brief Finds the last occurrence of a specified byte in a block of memory.
@@ -53,7 +53,7 @@ void* scu_memchr(const void* block, SCUbyte c, SCUisize count);
  * @return A pointer to the last occurrence of `c` in `block`, or `nullptr` if
  * no such byte is found.
  */
-void* scu_memrchr(const void* block, SCUbyte c, SCUisize count);
+void* scu_memrchr(const void* block, Scubyte c, Scuisize count);
 
 /**
  * @brief Compares two blocks of memory lexicographically.
@@ -78,7 +78,7 @@ void* scu_memrchr(const void* block, SCUbyte c, SCUisize count);
  * order, zero if they compare equal or `count` is zero, or a positive value if
  * `left` appears after `right`.
  */
-int scu_memcmp(const void* left, const void* right, SCUisize count);
+int scu_memcmp(const void* left, const void* right, Scuisize count);
 
 /**
  * @brief Fills a block of memory with a specified byte.
@@ -99,7 +99,7 @@ int scu_memcmp(const void* left, const void* right, SCUisize count);
  * @param[in]  count The number of bytes to fill.
  * @return A copy of `dest`.
  */
-void* scu_memset(void* dest, SCUbyte c, SCUisize count);
+void* scu_memset(void* dest, Scubyte c, Scuisize count);
 
 /**
  * @brief Copies a non-overlapping block of memory from one location to another.
@@ -120,7 +120,7 @@ void* scu_memset(void* dest, SCUbyte c, SCUisize count);
  * @param[in]  count The number of bytes to copy.
  * @return A copy of `dest`.
  */
-void* scu_memcpy(void* restrict dest, const void* restrict src, SCUisize count);
+void* scu_memcpy(void* restrict dest, const void* restrict src, Scuisize count);
 
 /**
  * @brief Copies a non-overlapping block of memory from one location to another,
@@ -148,8 +148,8 @@ void* scu_memcpy(void* restrict dest, const void* restrict src, SCUisize count);
 void* scu_memccpy(
     void* restrict dest,
     const void* restrict src,
-    SCUbyte c,
-    SCUisize count
+    Scubyte c,
+    Scuisize count
 );
 
 /**
@@ -176,7 +176,7 @@ void* scu_memccpy(
 void* scu_mempcpy(
     void* restrict dest,
     const void* restrict src,
-    SCUisize count
+    Scuisize count
 );
 
 /**
@@ -198,7 +198,7 @@ void* scu_mempcpy(
  * @param[in]  count The number of bytes to copy.
  * @return A copy of `dest`.
  */
-void* scu_memmove(void* dest, const void* src, SCUisize count);
+void* scu_memmove(void* dest, const void* src, Scuisize count);
 
 /**
  * @brief Swaps the contents of two non-overlapping blocks of memory.
@@ -215,6 +215,6 @@ void* scu_memmove(void* dest, const void* src, SCUisize count);
  * @param[in, out] right The second block of memory.
  * @param[in]      count The number of bytes to swap.
  */
-void scu_memswap(void* restrict left, void* restrict right, SCUisize count);
+void scu_memswap(void* restrict left, void* restrict right, Scuisize count);
 
 #endif

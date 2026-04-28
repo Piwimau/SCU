@@ -9,16 +9,16 @@
 #include "scu/memory.h"
 
 [[nodiscard]]
-SCUBenchCtx scu_bench_ctx_new(
-    SCUTimingMode timingMode,
+ScuBenchCtx scu_bench_ctx_new(
+    ScuTimingMode timingMode,
     isize warmup,
     isize iterations,
-    SCUBenchResult* benchResult
+    ScuBenchResult* benchResult
 ) {
     SCU_ASSERT(warmup >= 0);
     SCU_ASSERT(iterations >= 0);
     SCU_ASSERT(benchResult != nullptr);
-    SCUBenchCtx ctx = {
+    ScuBenchCtx ctx = {
         .timingMode = timingMode,
         .warmup = warmup,
         .iterations = iterations,
@@ -47,7 +47,7 @@ SCUBenchCtx scu_bench_ctx_new(
  * @param[in]      count   The number of samples in the array.
  * @return The benchmark statistics for the specified array of samples.
  */
-static inline SCUBenchStats scu_bench_stats_from_samples(
+static inline ScuBenchStats scu_bench_stats_from_samples(
     i64* samples,
     isize count
 ) {
@@ -70,7 +70,7 @@ static inline SCUBenchStats scu_bench_stats_from_samples(
     f64 stdDevNs = (count > 1)
         ? sqrt(sumOfSquaredDiffsNs / (f64) (count - 1))
         : 0.0;
-    return (SCUBenchStats) {
+    return (ScuBenchStats) {
         .minNs = samples[0],
         .maxNs = samples[count - 1],
         .meanNs = meanNs,
@@ -79,10 +79,10 @@ static inline SCUBenchStats scu_bench_stats_from_samples(
     };
 }
 
-bool scu_bench_ctx_is_running(SCUBenchCtx* ctx) {
+bool scu_bench_ctx_is_running(ScuBenchCtx* ctx) {
     SCU_ASSERT(ctx != nullptr);
     if (ctx->error != SCU_ERROR_NONE) {
-        *ctx->benchResult = (SCUBenchResult) {
+        *ctx->benchResult = (ScuBenchResult) {
             .iterations = ctx->iteration,
             .error = ctx->error
         };
@@ -108,13 +108,13 @@ bool scu_bench_ctx_is_running(SCUBenchCtx* ctx) {
         ctx->cpuSamples = nullptr;
     }
     else {
-        ctx->benchResult->wall = (SCUBenchStats) { };
-        ctx->benchResult->cpu = (SCUBenchStats) { };
+        ctx->benchResult->wall = (ScuBenchStats) { };
+        ctx->benchResult->cpu = (ScuBenchStats) { };
     }
     return false;
 }
 
-void scu_bench_ctx_advance(SCUBenchCtx* ctx) {
+void scu_bench_ctx_advance(ScuBenchCtx* ctx) {
     SCU_ASSERT(ctx != nullptr);
     if (ctx->timingResult.error != SCU_ERROR_NONE) {
         scu_free(ctx->wallSamples);

@@ -8,7 +8,7 @@
 #include "scu/types.h"
 
 /** @brief Represents an unordered collection of key-value pairs. */
-typedef struct SCUHashMap SCUHashMap;
+typedef struct ScuHashMap ScuHashMap;
 
 /**
  * @brief Represents an iterator for a hash map.
@@ -17,18 +17,18 @@ typedef struct SCUHashMap SCUHashMap;
  * detail and should not be relied upon. Most importantly, the behavior is
  * undefined if its fields are accessed directly.
  */
-typedef struct SCUHashMapIter {
+typedef struct ScuHashMapIter {
 
     /** @brief The hash map being iterated over. */
-    SCUHashMap* hashMap;
+    ScuHashMap* hashMap;
 
     /** @brief The current index within the hash map. */
-    SCUisize index;
+    Scuisize index;
 
-} SCUHashMapIter;
+} ScuHashMapIter;
 
 /** @brief Represents an entry in a hash map. */
-typedef struct SCUHashMapEntry {
+typedef struct ScuHashMapEntry {
 
     /** @brief The key of the entry. */
     void* key;
@@ -36,7 +36,7 @@ typedef struct SCUHashMapEntry {
     /** @brief The value of the entry. */
     void* value;
 
-} SCUHashMapEntry;
+} ScuHashMapEntry;
 
 /**
  * @brief Allocates and initializes a new hash map with the specified key and
@@ -57,12 +57,12 @@ typedef struct SCUHashMapEntry {
  * @return A pointer to the new hash map, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUHashMap* scu_hash_map_new(
-    SCUisize keySize,
-    SCUisize valueSize,
-    SCUHashFunc* keyHashFunc,
-    SCUEqualFunc* keyEqualFunc,
-    SCUEqualFunc* valueEqualFunc
+ScuHashMap* scu_hash_map_new(
+    Scuisize keySize,
+    Scuisize valueSize,
+    ScuHashFunc* keyHashFunc,
+    ScuEqualFunc* keyEqualFunc,
+    ScuEqualFunc* valueEqualFunc
 );
 
 /**
@@ -85,13 +85,13 @@ SCUHashMap* scu_hash_map_new(
  * @return A pointer to the new hash map, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUHashMap* scu_hash_map_new_with_capacity(
-    SCUisize keySize,
-    SCUisize valueSize,
-    SCUisize capacity,
-    SCUHashFunc* keyHashFunc,
-    SCUEqualFunc* keyEqualFunc,
-    SCUEqualFunc* valueEqualFunc
+ScuHashMap* scu_hash_map_new_with_capacity(
+    Scuisize keySize,
+    Scuisize valueSize,
+    Scuisize capacity,
+    ScuHashFunc* keyHashFunc,
+    ScuEqualFunc* keyEqualFunc,
+    ScuEqualFunc* valueEqualFunc
 );
 
 /**
@@ -106,7 +106,7 @@ SCUHashMap* scu_hash_map_new_with_capacity(
  * @return A pointer to the cloned hash map, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUHashMap* scu_hash_map_clone(const SCUHashMap* hashMap);
+ScuHashMap* scu_hash_map_clone(const ScuHashMap* hashMap);
 
 /**
  * @brief Returns the capacity of a specified hash map, i.e., the maximum number
@@ -119,7 +119,7 @@ SCUHashMap* scu_hash_map_clone(const SCUHashMap* hashMap);
  * @param[in] hashMap The hash map to examine.
  * @return The capacity of the specified hash map.
  */
-SCUisize scu_hash_map_capacity(const SCUHashMap* hashMap);
+Scuisize scu_hash_map_capacity(const ScuHashMap* hashMap);
 
 /**
  * @brief Returns the number of key-value pairs in a specified hash map.
@@ -127,7 +127,7 @@ SCUisize scu_hash_map_capacity(const SCUHashMap* hashMap);
  * @param[in] hashMap The hash map to examine.
  * @return The number of key-value pairs in the specified hash map.
  */
-SCUisize scu_hash_map_count(const SCUHashMap* hashMap);
+Scuisize scu_hash_map_count(const ScuHashMap* hashMap);
 
 /**
  * @brief Ensures that a specified hash map has at least a specified capacity.
@@ -139,7 +139,7 @@ SCUisize scu_hash_map_count(const SCUHashMap* hashMap);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_hash_map_ensure_capacity(SCUHashMap* hashMap, SCUisize capacity);
+ScuError scu_hash_map_ensure_capacity(ScuHashMap* hashMap, Scuisize capacity);
 
 /**
  * @brief Adds a new key-value pair to a specified hash map.
@@ -156,8 +156,8 @@ SCUError scu_hash_map_ensure_capacity(SCUHashMap* hashMap, SCUisize capacity);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_hash_map_add(
-    SCUHashMap* restrict hashMap,
+ScuError scu_hash_map_add(
+    ScuHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value
 );
@@ -175,8 +175,8 @@ SCUError scu_hash_map_add(
  * `SCU_ERROR_ALREADY_PRESENT` if the key is already present in the hash map, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_hash_map_try_add(
-    SCUHashMap* restrict hashMap,
+ScuError scu_hash_map_try_add(
+    ScuHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value
 );
@@ -191,7 +191,7 @@ SCUError scu_hash_map_try_add(
  * @param[in] key     The key to look up.
  * @return A pointer to the value associated with the specified key.
  */
-void* scu_hash_map_get(const SCUHashMap* hashMap, const void* key);
+void* scu_hash_map_get(const ScuHashMap* hashMap, const void* key);
 
 /**
  * @brief Tries to get the value associated with a key in a specified hash map.
@@ -206,7 +206,7 @@ void* scu_hash_map_get(const SCUHashMap* hashMap, const void* key);
  * @return `true` if the key was present in the hash map, otherwise `false`.
  */
 bool scu_hash_map_try_get_impl(
-    const SCUHashMap* restrict hashMap,
+    const ScuHashMap* restrict hashMap,
     const void* restrict key,
     void* restrict* restrict value
 );
@@ -243,8 +243,8 @@ bool scu_hash_map_try_get_impl(
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_hash_map_set(
-    SCUHashMap* restrict hashMap,
+ScuError scu_hash_map_set(
+    ScuHashMap* restrict hashMap,
     const void* restrict key,
     const void* restrict value
 );
@@ -256,7 +256,7 @@ SCUError scu_hash_map_set(
  * @param[in] key     The key to search for.
  * @return `true` if the key is present in the hash map, otherwise `false`.
  */
-bool scu_hash_map_contains_key(const SCUHashMap* hashMap, const void* key);
+bool scu_hash_map_contains_key(const ScuHashMap* hashMap, const void* key);
 
 /**
  * @brief Determines whether a value is present in a specified hash map.
@@ -265,7 +265,7 @@ bool scu_hash_map_contains_key(const SCUHashMap* hashMap, const void* key);
  * @param[in] value   The value to search for.
  * @return `true` if the value is present in the hash map, otherwise `false`.
  */
-bool scu_hash_map_contains_value(const SCUHashMap* hashMap, const void* value);
+bool scu_hash_map_contains_value(const ScuHashMap* hashMap, const void* value);
 
 /**
  * @brief Removes a key-value pair with a specified key from a specified hash
@@ -285,7 +285,7 @@ bool scu_hash_map_contains_value(const SCUHashMap* hashMap, const void* value);
  * removed, otherwise `false`.
  */
 bool scu_hash_map_remove(
-    SCUHashMap* restrict hashMap,
+    ScuHashMap* restrict hashMap,
     const void* restrict key
 );
 
@@ -303,7 +303,7 @@ bool scu_hash_map_remove(
  *
  * @param[in, out] hashMap The hash map to clear.
  */
-void scu_hash_map_clear(SCUHashMap* hashMap);
+void scu_hash_map_clear(ScuHashMap* hashMap);
 
 /**
  * @brief Trims the excess capacity of a specified hash map to match its current
@@ -315,7 +315,7 @@ void scu_hash_map_clear(SCUHashMap* hashMap);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_hash_map_trim_excess(SCUHashMap* hashMap);
+ScuError scu_hash_map_trim_excess(ScuHashMap* hashMap);
 
 /**
  * @brief Returns an iterator for a specified hash map.
@@ -332,7 +332,7 @@ SCUError scu_hash_map_trim_excess(SCUHashMap* hashMap);
  * @param[in] hashMap The hash map to iterate over.
  * @return An iterator for the specified hash map.
  */
-SCUHashMapIter scu_hash_map_iter(const SCUHashMap* hashMap);
+ScuHashMapIter scu_hash_map_iter(const ScuHashMap* hashMap);
 
 /**
  * @brief Advances a specified hash map iterator to the next key-value pair.
@@ -342,7 +342,7 @@ SCUHashMapIter scu_hash_map_iter(const SCUHashMap* hashMap);
  * key-value pair, otherwise `false` (i.e., the hash map does not contain any
  * more key-value pairs).
  */
-bool scu_hash_map_iter_move_next(SCUHashMapIter* iter);
+bool scu_hash_map_iter_move_next(ScuHashMapIter* iter);
 
 /**
  * @brief Returns the current key-value pair of a specified hash map iterator.
@@ -350,7 +350,7 @@ bool scu_hash_map_iter_move_next(SCUHashMapIter* iter);
  * @param[in] iter The iterator to examine.
  * @return An entry representing the current key-value pair of the iterator.
  */
-SCUHashMapEntry scu_hash_map_iter_current(const SCUHashMapIter* iter);
+ScuHashMapEntry scu_hash_map_iter_current(const ScuHashMapIter* iter);
 
 /**
  * @brief Resets a specified hash map iterator to its initial position.
@@ -362,7 +362,7 @@ SCUHashMapEntry scu_hash_map_iter_current(const SCUHashMapIter* iter);
  *
  * @param[in, out] iter The iterator to reset.
  */
-void scu_hash_map_iter_reset(SCUHashMapIter* iter);
+void scu_hash_map_iter_reset(ScuHashMapIter* iter);
 
 /**
  * @brief Deallocates a specified hash map.
@@ -380,7 +380,7 @@ void scu_hash_map_iter_reset(SCUHashMapIter* iter);
  *
  * @param[in, out] hashMap The hash map to deallocate.
  */
-void scu_hash_map_free(SCUHashMap* hashMap);
+void scu_hash_map_free(ScuHashMap* hashMap);
 
 /**
  * @brief Iterates over each key-value pair in a specified hash map.
@@ -393,9 +393,9 @@ void scu_hash_map_free(SCUHashMap* hashMap);
  *
  * ```c
  * // K and V are the types of the keys and values stored in the hash map.
- * SCUHashMap* map = scu_hash_map_new(SCU_SIZEOF(K), SCU_SIZEOF(V), ...);
+ * ScuHashMap* map = scu_hash_map_new(SCU_SIZEOF(K), SCU_SIZEOF(V), ...);
  * ...
- * SCUHashMapEntry entry;
+ * ScuHashMapEntry entry;
  * SCU_HASH_MAP_FOREACH(entry, map) {
  *     // Do something with the key and value.
  *     K* key = entry.key;
@@ -404,7 +404,7 @@ void scu_hash_map_free(SCUHashMap* hashMap);
  * ```
  *
  * @note The variable `entry` must be declared manually before the loop. It must
- * be of type `SCUHashMapEntry`.
+ * be of type `ScuHashMapEntry`.
  *
  * @warning The behavior is undefined if the hash map is modified (e.g.,
  * key-value pairs are added or removed) while being iterated over.
@@ -414,7 +414,7 @@ void scu_hash_map_free(SCUHashMap* hashMap);
  */
 #define SCU_HASH_MAP_FOREACH(entry, hashMap)                                     \
     for (                                                                        \
-        SCUHashMapIter SCU_XCONCAT(it, __LINE__) = scu_hash_map_iter(hashMap);   \
+        ScuHashMapIter SCU_XCONCAT(it, __LINE__) = scu_hash_map_iter(hashMap);   \
         scu_hash_map_iter_move_next(&SCU_XCONCAT(it, __LINE__))                  \
             && (                                                                 \
                 (entry) = scu_hash_map_iter_current(&SCU_XCONCAT(it, __LINE__)), \

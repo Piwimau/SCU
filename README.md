@@ -13,7 +13,7 @@ stack, queue, as well as a priority queue.
 
 int main() {
     const char* langs[] = { "C", "Rust", "C#", "C", "C++", "C", "C#" };
-    SCUHashMap* freqs = scu_hash_map_new(
+    ScuHashMap* freqs = scu_hash_map_new(
         SCU_SIZEOF(const char*),
         SCU_SIZEOF(i32),
         scu_hash_str,
@@ -30,7 +30,7 @@ int main() {
             scu_hash_map_add(freqs, lang, &(i32) { 1 });
         }
     }
-    SCUHashMapEntry entry;
+    ScuHashMapEntry entry;
     SCU_HASH_MAP_FOREACH(entry, freqs) {
         const char* lang = *(const char**) entry.key;
         i32 freq = *(i32*) entry.value;
@@ -156,20 +156,20 @@ by an additional underscore and a module-specific prefix to further group
 related items together. To give you some examples:
 
 ```c
-// Types are prefixed with `SCU` and use the `PascalCase` naming convention.
-SCUError error;
-SCUQueue* queue;
-SCUHashSet* visited;
+// Types are prefixed with `Scu` and use the `PascalCase` naming convention.
+ScuError error;
+ScuQueue* queue;
+ScuHashSet* visited;
 
 // Constants (including enum values) and macros are prefixed with `SCU_` and use
 // the `ALL_CAPS` naming convention.
-typedef enum SCUError {
+typedef enum ScuError {
     SCU_ERROR_NONE,
     SCU_ERROR_OUT_OF_MEMORY,
     ...
-} SCUError;
+} ScuError;
 
-#define SCU_SIZEOF(expr) ((SCUisize) sizeof(expr))
+#define SCU_SIZEOF(expr) ((Scuisize) sizeof(expr))
 #define SCU_ABS(x) (((x) < 0) ? -(x) : (x))
 
 // Functions and function-like macros are prefixed with `scu_` and use either
@@ -182,24 +182,24 @@ scu_hash_map_try_add(map, &key, &value);
 
 // Struct and union members, as well as macro and function parameters use the
 // `camelCase` naming convention.
-typedef struct SCUTimingResult {
-    SCUi64 wallNs;
-    SCUi64 cpuNs;
-    SCUError error;
-} SCUTimingResult;
+typedef struct ScuTimingResult {
+    Scui64 wallNs;
+    Scui64 cpuNs;
+    ScuError error;
+} ScuTimingResult;
 
 [[nodiscard]]
-SCUHashSet* scu_hash_set_new(
-    SCUisize elemSize,
-    SCUHashFunc* hashFunc,
-    SCUEqualFunc* equalFunc
+ScuHashSet* scu_hash_set_new(
+    Scuisize elemSize,
+    ScuHashFunc* hashFunc,
+    ScuEqualFunc* equalFunc
 );
 ```
 
 One notable exception to the conventions described above are the common types
-defined in [`types.h`](include/scu/types.h), which are prefixed with `SCU` but
+defined in [`types.h`](include/scu/types.h), which are prefixed with `Scu` but
 use the `lowercase` naming convention. This is because these types are intended
-to feel more like built-in types and can even be used without the `SCU` prefix
+to feel more like built-in types and can even be used without the `Scu` prefix
 in user code. To achieve this, a macro `SCU_SHORT_ALIASES` must be defined
 before the `types.h` header is (directly or indirectly) included, which will
 define additional short aliases for common types.
@@ -216,7 +216,7 @@ f32 f = 3.14F;
 
 ### Signed Integers
 
-SCU exclusively uses signed integers (e.g., `SCUisize`, which is a synonym for
+SCU exclusively uses signed integers (e.g., `Scuisize`, which is a synonym for
 `ptrdiff_t`) instead of unsigned integers for representing sizes, quantities or
 indices. This is in contrast to the C standard library, which makes heavy use of
 unsigned integers such as `size_t` for these purposes. Although unsigned
@@ -257,27 +257,27 @@ Of course, functions provided by SCU may also fail for reasons other than
 programming errors, such as encountering an out-of-memory condition or failing
 to read from a file. In such cases, the functions either return a special
 sentinel value (e.g., `nullptr`, `-1` or `false`) or an error code of type
-`SCUError` if it is expected that the caller may want to distinguish between
+`ScuError` if it is expected that the caller may want to distinguish between
 different error conditions.
 
 ```c
 // Returns `nullptr` if an out-of-memory condition occurs.
 [[nodiscard]]
-SCUStack* scu_stack_new(SCUisize elemSize);
+ScuStack* scu_stack_new(Scuisize elemSize);
 
 // Returns `-1` if `c` is not found in `s`.
-SCUisize scu_str_index_of_byte(const char* s, char c);
+Scuisize scu_str_index_of_byte(const char* s, char c);
 
 // Returns `false` if `elem` was not present in `hashSet`.
 bool scu_hash_set_remove(
-    SCUHashSet* restrict hashSet,
+    ScuHashSet* restrict hashSet,
     const void* restrict elem
 );
 
 // Returns `SCU_ERROR_END_OF_FILE` if the end-of-file condition is reached
 // before a byte is read, `SCU_ERROR_READING_FILE` if an error occurred while
 // reading from the specified file stream, or `SCU_ERROR_NONE` on success.
-SCUError scu_freadc(SCUFile* restrict file, char* restrict c);
+ScuError scu_freadc(ScuFile* restrict file, char* restrict c);
 ```
 
 Needless to say, it is advisable to always check these return values, at least

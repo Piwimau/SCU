@@ -34,15 +34,15 @@ static constexpr i64 SCU_NANOS_PER_SEC = 1'000'000'000;
     }
 #else
     /** @brief Represents a time interval in seconds and nanoseconds. */
-    typedef struct timespec SCUTimespec;
+    typedef struct timespec ScuTimespec;
 
     /**
-     * @brief Converts a specified `SCUTimespec` value to nanoseconds.
+     * @brief Converts a specified `ScuTimespec` value to nanoseconds.
      *
-     * @param[in] timespec The `SCUTimespec` value to convert.
-     * @return The converted `SCUTimespec` value in nanoseconds.
+     * @param[in] timespec The `ScuTimespec` value to convert.
+     * @return The converted `ScuTimespec` value in nanoseconds.
      */
-    static inline i64 scu_timespec_to_ns(const SCUTimespec* timespec) {
+    static inline i64 scu_timespec_to_ns(const ScuTimespec* timespec) {
         SCU_ASSERT(timespec != nullptr);
         return (timespec->tv_sec * SCU_NANOS_PER_SEC) + timespec->tv_nsec;
     }
@@ -65,7 +65,7 @@ static inline i64 scu_wall_ns() {
     }
     return (counter.QuadPart * SCU_NANOS_PER_SEC) / frequency.QuadPart;
 #else
-    SCUTimespec timespec;
+    ScuTimespec timespec;
     if (clock_gettime(CLOCK_MONOTONIC, &timespec) != 0) {
         return -1;
     }
@@ -93,7 +93,7 @@ static inline i64 scu_process_cpu_ns() {
     }
     return scu_filetime_to_ns(&kernelTime) + scu_filetime_to_ns(&userTime);
 #else
-    SCUTimespec timespec;
+    ScuTimespec timespec;
     if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &timespec) != 0) {
         return -1;
     }
@@ -121,7 +121,7 @@ static inline i64 scu_thread_cpu_ns() {
     }
     return scu_filetime_to_ns(&kernelTime) + scu_filetime_to_ns(&userTime);
 #else
-    SCUTimespec timespec;
+    ScuTimespec timespec;
     if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &timespec) != 0) {
         return -1;
     }
@@ -135,18 +135,18 @@ static inline i64 scu_thread_cpu_ns() {
  * @param[in] timingMode The timing mode for measuring CPU time.
  * @return The current CPU time in nanoseconds, or `-1` on failure.
  */
-static inline i64 scu_cpu_ns(SCUTimingMode timingMode) {
+static inline i64 scu_cpu_ns(ScuTimingMode timingMode) {
     return (timingMode == SCU_TIMING_MODE_PROCESS)
         ? scu_process_cpu_ns()
         : scu_thread_cpu_ns();
 }
 
-void scu_stopwatch_init(SCUStopwatch* stopwatch, SCUTimingMode timingMode) {
+void scu_stopwatch_init(ScuStopwatch* stopwatch, ScuTimingMode timingMode) {
     SCU_ASSERT(stopwatch != nullptr);
-    *stopwatch = (SCUStopwatch) { .timingMode = timingMode };
+    *stopwatch = (ScuStopwatch) { .timingMode = timingMode };
 }
 
-bool scu_stopwatch_start(SCUStopwatch* stopwatch) {
+bool scu_stopwatch_start(ScuStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
     if (!stopwatch->isRunning) {
         i64 wallNs = scu_wall_ns();
@@ -164,7 +164,7 @@ bool scu_stopwatch_start(SCUStopwatch* stopwatch) {
     return true;
 }
 
-bool scu_stopwatch_restart(SCUStopwatch* stopwatch) {
+bool scu_stopwatch_restart(ScuStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
     i64 wallNs = scu_wall_ns();
     if (wallNs == -1) {
@@ -182,7 +182,7 @@ bool scu_stopwatch_restart(SCUStopwatch* stopwatch) {
     return true;
 }
 
-bool scu_stopwatch_stop(SCUStopwatch* stopwatch) {
+bool scu_stopwatch_stop(ScuStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
     if (stopwatch->isRunning) {
         i64 wallNs = scu_wall_ns();
@@ -200,20 +200,20 @@ bool scu_stopwatch_stop(SCUStopwatch* stopwatch) {
     return true;
 }
 
-void scu_stopwatch_reset(SCUStopwatch* stopwatch) {
+void scu_stopwatch_reset(ScuStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
-    *stopwatch = (SCUStopwatch) { .timingMode = stopwatch->timingMode };
+    *stopwatch = (ScuStopwatch) { .timingMode = stopwatch->timingMode };
 }
 
-bool scu_stopwatch_is_running(const SCUStopwatch* stopwatch) {
+bool scu_stopwatch_is_running(const ScuStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
     return stopwatch->isRunning;
 }
 
-SCUTimingResult scu_stopwatch_elapsed(const SCUStopwatch* stopwatch) {
+ScuTimingResult scu_stopwatch_elapsed(const ScuStopwatch* stopwatch) {
     SCU_ASSERT(stopwatch != nullptr);
     if (!stopwatch->isRunning) {
-        return (SCUTimingResult) {
+        return (ScuTimingResult) {
             .wallNs = stopwatch->accWallNs,
             .cpuNs = stopwatch->accCpuNs,
             .error = SCU_ERROR_NONE
@@ -222,13 +222,13 @@ SCUTimingResult scu_stopwatch_elapsed(const SCUStopwatch* stopwatch) {
     i64 wallNs = scu_wall_ns();
     i64 cpuNs = scu_cpu_ns(stopwatch->timingMode);
     if ((wallNs == -1) || (cpuNs == -1)) {
-        return (SCUTimingResult) {
+        return (ScuTimingResult) {
             .wallNs = -1,
             .cpuNs = -1,
             .error = SCU_ERROR_TIMING_FAILED
         };
     }
-    return (SCUTimingResult) {
+    return (ScuTimingResult) {
         .wallNs = stopwatch->accWallNs + (wallNs - stopwatch->startWallNs),
         .cpuNs = stopwatch->accCpuNs + (cpuNs - stopwatch->startCpuNs),
         .error = SCU_ERROR_NONE

@@ -9,7 +9,7 @@
  * @return A negative value if `*a` is less than `*b`, zero if they compare
  * equal, or a positive value if `*a` is greater than `*b`.
  */
-typedef int SCUCompareFunc(const void* a, const void* b);
+typedef int ScuCompareFunc(const void* a, const void* b);
 
 /**
  * @brief Compares two specified `bool` values.
@@ -38,10 +38,10 @@ int scu_compare_bool(const void* a, const void* b);
 int scu_compare_bool_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUbyte` values.
+ * @brief Compares two specified `Scubyte` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUbyte`.
+ * `Scubyte`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -51,10 +51,10 @@ int scu_compare_bool_rev(const void* a, const void* b);
 int scu_compare_byte(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUbyte` values in reverse order.
+ * @brief Compares two specified `Scubyte` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUbyte`.
+ * `Scubyte`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -64,10 +64,10 @@ int scu_compare_byte(const void* a, const void* b);
 int scu_compare_byte_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUi8` values.
+ * @brief Compares two specified `Scui8` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUi8`.
+ * `Scui8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -77,10 +77,10 @@ int scu_compare_byte_rev(const void* a, const void* b);
 int scu_compare_i8(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUi8` values in reverse order.
+ * @brief Compares two specified `Scui8` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUi8`.
+ * `Scui8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -90,10 +90,10 @@ int scu_compare_i8(const void* a, const void* b);
 int scu_compare_i8_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUu8` values.
+ * @brief Compares two specified `Scuu8` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUu8`.
+ * `Scuu8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -103,10 +103,10 @@ int scu_compare_i8_rev(const void* a, const void* b);
 int scu_compare_u8(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUu8` values in reverse order.
+ * @brief Compares two specified `Scuu8` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUu8`.
+ * `Scuu8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -116,10 +116,10 @@ int scu_compare_u8(const void* a, const void* b);
 int scu_compare_u8_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUi16` values.
+ * @brief Compares two specified `Scui16` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUi16`.
+ * `Scui16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -129,10 +129,10 @@ int scu_compare_u8_rev(const void* a, const void* b);
 int scu_compare_i16(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUi16` values in reverse order.
+ * @brief Compares two specified `Scui16` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUi16`.
+ * `Scui16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -142,10 +142,10 @@ int scu_compare_i16(const void* a, const void* b);
 int scu_compare_i16_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUu16` values.
+ * @brief Compares two specified `Scuu16` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUu16`.
+ * `Scuu16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -155,10 +155,10 @@ int scu_compare_i16_rev(const void* a, const void* b);
 int scu_compare_u16(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUu16` values in reverse order.
+ * @brief Compares two specified `Scuu16` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUu16`.
+ * `Scuu16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -168,10 +168,10 @@ int scu_compare_u16(const void* a, const void* b);
 int scu_compare_u16_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUi32` values.
+ * @brief Compares two specified `Scui32` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUi32`.
+ * `Scui32`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -181,10 +181,10 @@ int scu_compare_u16_rev(const void* a, const void* b);
 int scu_compare_i32(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUi32` values in reverse order.
+ * @brief Compares two specified `Scui32` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUi32`.
+ * `Scui32`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -194,10 +194,10 @@ int scu_compare_i32(const void* a, const void* b);
 int scu_compare_i32_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUu32` values.
+ * @brief Compares two specified `Scuu32` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUu32`.
+ * `Scuu32`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -207,10 +207,10 @@ int scu_compare_i32_rev(const void* a, const void* b);
 int scu_compare_u32(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUu32` values in reverse order.
+ * @brief Compares two specified `Scuu32` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUu32`.
+ * `Scuu32`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -220,10 +220,10 @@ int scu_compare_u32(const void* a, const void* b);
 int scu_compare_u32_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUi64` values.
+ * @brief Compares two specified `Scui64` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUi64`.
+ * `Scui64`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -233,10 +233,10 @@ int scu_compare_u32_rev(const void* a, const void* b);
 int scu_compare_i64(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUi64` values in reverse order.
+ * @brief Compares two specified `Scui64` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUi64`.
+ * `Scui64`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -246,10 +246,10 @@ int scu_compare_i64(const void* a, const void* b);
 int scu_compare_i64_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUu64` values.
+ * @brief Compares two specified `Scuu64` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUu64`.
+ * `Scuu64`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -259,10 +259,10 @@ int scu_compare_i64_rev(const void* a, const void* b);
 int scu_compare_u64(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUu64` values in reverse order.
+ * @brief Compares two specified `Scuu64` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUu64`.
+ * `Scuu64`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -272,10 +272,10 @@ int scu_compare_u64(const void* a, const void* b);
 int scu_compare_u64_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUiptr` values.
+ * @brief Compares two specified `Scuiptr` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUiptr`.
+ * `Scuiptr`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -285,10 +285,10 @@ int scu_compare_u64_rev(const void* a, const void* b);
 int scu_compare_iptr(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUiptr` values in reverse order.
+ * @brief Compares two specified `Scuiptr` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUiptr`.
+ * `Scuiptr`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -298,10 +298,10 @@ int scu_compare_iptr(const void* a, const void* b);
 int scu_compare_iptr_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUuptr` values.
+ * @brief Compares two specified `Scuuptr` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUuptr`.
+ * `Scuuptr`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -311,10 +311,10 @@ int scu_compare_iptr_rev(const void* a, const void* b);
 int scu_compare_uptr(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUuptr` values in reverse order.
+ * @brief Compares two specified `Scuuptr` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUuptr`.
+ * `Scuuptr`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -324,10 +324,10 @@ int scu_compare_uptr(const void* a, const void* b);
 int scu_compare_uptr_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUisize` values.
+ * @brief Compares two specified `Scuisize` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUisize`.
+ * `Scuisize`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -337,10 +337,10 @@ int scu_compare_uptr_rev(const void* a, const void* b);
 int scu_compare_isize(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUisize` values in reverse order.
+ * @brief Compares two specified `Scuisize` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUisize`.
+ * `Scuisize`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -350,10 +350,10 @@ int scu_compare_isize(const void* a, const void* b);
 int scu_compare_isize_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUusize` values.
+ * @brief Compares two specified `Scuusize` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUusize`.
+ * `Scuusize`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -363,10 +363,10 @@ int scu_compare_isize_rev(const void* a, const void* b);
 int scu_compare_usize(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUusize` values in reverse order.
+ * @brief Compares two specified `Scuusize` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUusize`.
+ * `Scuusize`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -376,10 +376,10 @@ int scu_compare_usize(const void* a, const void* b);
 int scu_compare_usize_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUf32` values.
+ * @brief Compares two specified `Scuf32` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUf32`, or if either `*a` or `*b` is NaN.
+ * `Scuf32`, or if either `*a` or `*b` is NaN.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -389,10 +389,10 @@ int scu_compare_usize_rev(const void* a, const void* b);
 int scu_compare_f32(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUf32` values in reverse order.
+ * @brief Compares two specified `Scuf32` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUf32`, or if either `*a` or `*b` is NaN.
+ * `Scuf32`, or if either `*a` or `*b` is NaN.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -402,10 +402,10 @@ int scu_compare_f32(const void* a, const void* b);
 int scu_compare_f32_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUf64` values.
+ * @brief Compares two specified `Scuf64` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUf64`, or if either `*a` or `*b` is NaN.
+ * `Scuf64`, or if either `*a` or `*b` is NaN.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -415,10 +415,10 @@ int scu_compare_f32_rev(const void* a, const void* b);
 int scu_compare_f64(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUf64` values in reverse order.
+ * @brief Compares two specified `Scuf64` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUf64`, or if either `*a` or `*b` is NaN.
+ * `Scuf64`, or if either `*a` or `*b` is NaN.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -454,10 +454,10 @@ int scu_compare_char(const void* a, const void* b);
 int scu_compare_char_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUchar8` values.
+ * @brief Compares two specified `Scuchar8` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUchar8`.
+ * `Scuchar8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -467,10 +467,10 @@ int scu_compare_char_rev(const void* a, const void* b);
 int scu_compare_char8(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUchar8` values in reverse order.
+ * @brief Compares two specified `Scuchar8` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUchar8`.
+ * `Scuchar8`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -480,10 +480,10 @@ int scu_compare_char8(const void* a, const void* b);
 int scu_compare_char8_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUchar16` values.
+ * @brief Compares two specified `Scuchar16` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUchar16`.
+ * `Scuchar16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -493,10 +493,10 @@ int scu_compare_char8_rev(const void* a, const void* b);
 int scu_compare_char16(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUchar16` values in reverse order.
+ * @brief Compares two specified `Scuchar16` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUchar16`.
+ * `Scuchar16`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -506,10 +506,10 @@ int scu_compare_char16(const void* a, const void* b);
 int scu_compare_char16_rev(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUchar32` values.
+ * @brief Compares two specified `Scuchar32` values.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUchar32`.
+ * `Scuchar32`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.
@@ -519,10 +519,10 @@ int scu_compare_char16_rev(const void* a, const void* b);
 int scu_compare_char32(const void* a, const void* b);
 
 /**
- * @brief Compares two specified `SCUchar32` values in reverse order.
+ * @brief Compares two specified `Scuchar32` values in reverse order.
  *
  * @warning The behavior is undefined if `a` or `b` is not a pointer to an
- * `SCUchar32`.
+ * `Scuchar32`.
  *
  * @param[in] a A pointer to the first value.
  * @param[in] b A pointer to the second value.

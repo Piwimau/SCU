@@ -2,7 +2,7 @@
 #define SCU_ERROR_H
 
 /** @brief Represents an error code used to signal success or failure. */
-typedef enum SCUError {
+typedef enum ScuError {
 
     /** @brief Indicates that no error occurred. */
     SCU_ERROR_NONE,
@@ -59,7 +59,7 @@ typedef enum SCUError {
     /** @brief Indicates that an error occurred while measuring some time. */
     SCU_ERROR_TIMING_FAILED
 
-} SCUError;
+} ScuError;
 
 /**
  * @brief Prints a diagnostic message to the standard error stream and

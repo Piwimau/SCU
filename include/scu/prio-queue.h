@@ -7,7 +7,7 @@
 #include "scu/types.h"
 
 /** @brief Represents a collection of elements and associated priorities. */
-typedef struct SCUPrioQueue SCUPrioQueue;
+typedef struct ScuPrioQueue ScuPrioQueue;
 
 /**
  * @brief Represents an iterator for a priority queue.
@@ -16,18 +16,18 @@ typedef struct SCUPrioQueue SCUPrioQueue;
  * detail and should not be relied upon. Most importantly, the behavior is
  * undefined if its fields are accessed directly.
  */
-typedef struct SCUPrioQueueIter {
+typedef struct ScuPrioQueueIter {
 
     /** @brief The priority queue being iterated over. */
-    SCUPrioQueue* prioQueue;
+    ScuPrioQueue* prioQueue;
 
     /** @brief The current index within the priority queue. */
-    SCUisize index;
+    Scuisize index;
 
-} SCUPrioQueueIter;
+} ScuPrioQueueIter;
 
 /** @brief Represents an entry in a priority queue. */
-typedef struct SCUPrioQueueEntry {
+typedef struct ScuPrioQueueEntry {
 
     /** @brief The element of the entry. */
     void* elem;
@@ -35,7 +35,7 @@ typedef struct SCUPrioQueueEntry {
     /** @brief The priority of the entry. */
     void* prio;
 
-} SCUPrioQueueEntry;
+} ScuPrioQueueEntry;
 
 /**
  * @brief Allocates and initializes a new priority queue with specified element
@@ -53,10 +53,10 @@ typedef struct SCUPrioQueueEntry {
  * @return A pointer to the new priority queue, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUPrioQueue* scu_prio_queue_new(
-    SCUisize elemSize,
-    SCUisize prioSize,
-    SCUCompareFunc prioCmpFunc
+ScuPrioQueue* scu_prio_queue_new(
+    Scuisize elemSize,
+    Scuisize prioSize,
+    ScuCompareFunc prioCmpFunc
 );
 
 /**
@@ -75,11 +75,11 @@ SCUPrioQueue* scu_prio_queue_new(
  * @return A pointer to the new priority queue, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUPrioQueue* scu_prio_queue_new_with_capacity(
-    SCUisize elemSize,
-    SCUisize prioSize,
-    SCUisize capacity,
-    SCUCompareFunc prioCmpFunc
+ScuPrioQueue* scu_prio_queue_new_with_capacity(
+    Scuisize elemSize,
+    Scuisize prioSize,
+    Scuisize capacity,
+    ScuCompareFunc prioCmpFunc
 );
 
 /**
@@ -94,7 +94,7 @@ SCUPrioQueue* scu_prio_queue_new_with_capacity(
  * @return A pointer to the cloned priority queue, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUPrioQueue* scu_prio_queue_clone(const SCUPrioQueue* prioQueue);
+ScuPrioQueue* scu_prio_queue_clone(const ScuPrioQueue* prioQueue);
 
 /**
  * @brief Returns the capacity of a specified priority queue, i.e., the maximum
@@ -107,7 +107,7 @@ SCUPrioQueue* scu_prio_queue_clone(const SCUPrioQueue* prioQueue);
  * @param[in] prioQueue The priority queue to examine.
  * @return The capacity of the specified priority queue.
  */
-SCUisize scu_prio_queue_capacity(const SCUPrioQueue* prioQueue);
+Scuisize scu_prio_queue_capacity(const ScuPrioQueue* prioQueue);
 
 /**
  * @brief Returns the number of elements stored in a specified priority queue.
@@ -115,7 +115,7 @@ SCUisize scu_prio_queue_capacity(const SCUPrioQueue* prioQueue);
  * @param[in] prioQueue The priority queue to examine.
  * @return The number of elements stored in the specified priority queue.
  */
-SCUisize scu_prio_queue_count(const SCUPrioQueue* prioQueue);
+Scuisize scu_prio_queue_count(const ScuPrioQueue* prioQueue);
 
 /**
  * @brief Ensures that a specified priority queue has at least a specified
@@ -128,9 +128,9 @@ SCUisize scu_prio_queue_count(const SCUPrioQueue* prioQueue);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_prio_queue_ensure_capacity(
-    SCUPrioQueue* prioQueue,
-    SCUisize capacity
+ScuError scu_prio_queue_ensure_capacity(
+    ScuPrioQueue* prioQueue,
+    Scuisize capacity
 );
 
 /**
@@ -145,8 +145,8 @@ SCUError scu_prio_queue_ensure_capacity(
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_prio_queue_enqueue(
-    SCUPrioQueue* restrict prioQueue,
+ScuError scu_prio_queue_enqueue(
+    ScuPrioQueue* restrict prioQueue,
     const void* restrict elem,
     const void* restrict prio
 );
@@ -163,7 +163,7 @@ SCUError scu_prio_queue_enqueue(
  * @param[out]     prio      The priority of the dequeued element.
  */
 void scu_prio_queue_dequeue(
-    SCUPrioQueue* restrict prioQueue,
+    ScuPrioQueue* restrict prioQueue,
     void* restrict elem,
     void* restrict prio
 );
@@ -180,7 +180,7 @@ void scu_prio_queue_dequeue(
  * @return `true` if an element was successfully dequeued, otherwise `false`.
  */
 bool scu_prio_queue_try_dequeue(
-    SCUPrioQueue* restrict prioQueue,
+    ScuPrioQueue* restrict prioQueue,
     void* restrict elem,
     void* restrict prio
 );
@@ -201,7 +201,7 @@ bool scu_prio_queue_try_dequeue(
  *                       lowest priority.
  */
 void scu_prio_queue_peek_impl(
-    const SCUPrioQueue* restrict prioQueue,
+    const ScuPrioQueue* restrict prioQueue,
     void** restrict elem,
     void** restrict prio
 );
@@ -236,7 +236,7 @@ void scu_prio_queue_peek_impl(
  * @return `true` if an element was successfully retrieved, otherwise `false`.
  */
 bool scu_prio_queue_try_peek_impl(
-    const SCUPrioQueue* restrict prioQueue,
+    const ScuPrioQueue* restrict prioQueue,
     void** restrict elem,
     void** restrict prio
 );
@@ -269,7 +269,7 @@ bool scu_prio_queue_try_peek_impl(
  *
  * @param[in, out] prioQueue The priority queue to clear.
  */
-void scu_prio_queue_clear(SCUPrioQueue* prioQueue);
+void scu_prio_queue_clear(ScuPrioQueue* prioQueue);
 
 /**
  * @brief Trims the excess capacity of a specified priority queue to match its
@@ -281,7 +281,7 @@ void scu_prio_queue_clear(SCUPrioQueue* prioQueue);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_prio_queue_trim_excess(SCUPrioQueue* prioQueue);
+ScuError scu_prio_queue_trim_excess(ScuPrioQueue* prioQueue);
 
 /**
  * @brief Returns an iterator for a specified priority queue.
@@ -303,7 +303,7 @@ SCUError scu_prio_queue_trim_excess(SCUPrioQueue* prioQueue);
  * @param[in] prioQueue The priority queue to iterate over.
  * @return An iterator for the specified priority queue.
  */
-SCUPrioQueueIter scu_prio_queue_iter(const SCUPrioQueue* prioQueue);
+ScuPrioQueueIter scu_prio_queue_iter(const ScuPrioQueue* prioQueue);
 
 /**
  * @brief Advances a specified priority queue iterator to the next element.
@@ -313,7 +313,7 @@ SCUPrioQueueIter scu_prio_queue_iter(const SCUPrioQueue* prioQueue);
  * otherwise `false` (i.e., the priority queue does not contain any more
  * elements).
  */
-bool scu_prio_queue_iter_move_next(SCUPrioQueueIter* iter);
+bool scu_prio_queue_iter_move_next(ScuPrioQueueIter* iter);
 
 /**
  * @brief Returns the current element and its priority of a specified priority
@@ -322,7 +322,7 @@ bool scu_prio_queue_iter_move_next(SCUPrioQueueIter* iter);
  * @param[in] iter The iterator to examine.
  * @return An entry containing the current element and its priority.
  */
-SCUPrioQueueEntry scu_prio_queue_iter_current(const SCUPrioQueueIter* iter);
+ScuPrioQueueEntry scu_prio_queue_iter_current(const ScuPrioQueueIter* iter);
 
 /**
  * @brief Resets a specified priority queue iterator to its initial position.
@@ -334,7 +334,7 @@ SCUPrioQueueEntry scu_prio_queue_iter_current(const SCUPrioQueueIter* iter);
  *
  * @param[in, out] iter The iterator to reset.
  */
-void scu_prio_queue_iter_reset(SCUPrioQueueIter* iter);
+void scu_prio_queue_iter_reset(ScuPrioQueueIter* iter);
 
 /**
  * @brief Deallocates a specified priority queue.
@@ -352,7 +352,7 @@ void scu_prio_queue_iter_reset(SCUPrioQueueIter* iter);
  *
  * @param[in] prioQueue The priority queue to deallocate.
  */
-void scu_prio_queue_free(SCUPrioQueue* prioQueue);
+void scu_prio_queue_free(ScuPrioQueue* prioQueue);
 
 /**
  * @brief Iterates over each element and its priority in a specified priority
@@ -367,13 +367,13 @@ void scu_prio_queue_free(SCUPrioQueue* prioQueue);
  *
  * ```c
  * // E and P are the types of the elements and priorities, respectively.
- * SCUPrioQueue* prioQueue = scu_prio_queue_new(
+ * ScuPrioQueue* prioQueue = scu_prio_queue_new(
  *     SCU_SIZEOF(E),
  *     SCU_SIZEOF(P),
  *     ...
  * );
  * ...
- * SCUPrioQueueEntry entry;
+ * ScuPrioQueueEntry entry;
  * SCU_PRIO_QUEUE_FOREACH(entry, prioQueue) {
  *     // Do something with the element and its priority.
  *     E* elem = entry.elem;
@@ -382,7 +382,7 @@ void scu_prio_queue_free(SCUPrioQueue* prioQueue);
  * ```
  *
  * @note The variable `entry` must be declared manually before the loop. It must
- * be of type `SCUPrioQueueEntry`.
+ * be of type `ScuPrioQueueEntry`.
  *
  * Note that the order of iteration is explicitly unspecified and may not
  * necessarily correspond to the order of priorities. In particular, it is not
@@ -398,7 +398,7 @@ void scu_prio_queue_free(SCUPrioQueue* prioQueue);
  */
 #define SCU_PRIO_QUEUE_FOREACH(entry, prioQueue)                                     \
     for (                                                                            \
-        SCUPrioQueueIter SCU_XCONCAT(it, __LINE__) = scu_prio_queue_iter(prioQueue); \
+        ScuPrioQueueIter SCU_XCONCAT(it, __LINE__) = scu_prio_queue_iter(prioQueue); \
         scu_prio_queue_iter_move_next(&SCU_XCONCAT(it, __LINE__))                    \
             && (                                                                     \
                 (entry) = scu_prio_queue_iter_current(&SCU_XCONCAT(it, __LINE__)),   \

@@ -17,7 +17,7 @@
  * @return A pointer to an uninitialized block of memory of at least `size`
  * contiguous bytes, or `nullptr` on failure.
  */
-typedef void* SCUMallocFunc(void* context, SCUisize size);
+typedef void* ScuMallocFunc(void* context, Scuisize size);
 
 /**
  * @brief An allocator's calloc-like operation.
@@ -34,7 +34,7 @@ typedef void* SCUMallocFunc(void* context, SCUisize size);
  * @return A pointer to a zero-initialized block of memory of at least `count *
  * size` contiguous bytes, or `nullptr` on failure.
  */
-typedef void* SCUCallocFunc(void* context, SCUisize count, SCUisize size);
+typedef void* ScuCallocFunc(void* context, Scuisize count, Scuisize size);
 
 /**
  * @brief An allocator's realloc-like operation.
@@ -59,14 +59,14 @@ typedef void* SCUCallocFunc(void* context, SCUisize count, SCUisize size);
  * @return A pointer to the reallocated (and possibly moved) block of memory of
  * at least `newSize` bytes, or `nullptr` on failure.
  */
-typedef void* SCUReallocFunc(void* context, void* block, SCUisize newSize);
+typedef void* ScuReallocFunc(void* context, void* block, Scuisize newSize);
 
 /**
  * @brief An allocator's free-like operation.
  *
  * Implementations should behave like `free(block)`, i.e., deallocate a block of
- * memory previously allocated by a corresponding `SCUMallocFunc`,
- * `SCUCallocFunc` or `SCUReallocFunc`. It should accept a `nullptr`, in which
+ * memory previously allocated by a corresponding `ScuMallocFunc`,
+ * `ScuCallocFunc` or `ScuReallocFunc`. It should accept a `nullptr`, in which
  * case the function should simply do nothing.
  *
  * @param[in, out] context A user-provided context, which may be `nullptr` if
@@ -74,38 +74,38 @@ typedef void* SCUReallocFunc(void* context, void* block, SCUisize newSize);
  * @param[in]      block   A pointer to a previously allocated block of memory,
  *                         or a `nullptr`.
  */
-typedef void SCUFreeFunc(void* context, void* block);
+typedef void ScuFreeFunc(void* context, void* block);
 
 /** @brief Represents a custom allocator. */
-typedef struct SCUAllocator {
+typedef struct ScuAllocator {
 
     /**
      * @brief The allocator's malloc-like operation.
      *
-     * See the documentation of `SCUMallocFunc` for more information.
+     * See the documentation of `ScuMallocFunc` for more information.
      */
-    SCUMallocFunc* malloc;
+    ScuMallocFunc* malloc;
 
     /**
      * @brief The allocator's calloc-like operation.
      *
-     * See the documentation of `SCUCallocFunc` for more information.
+     * See the documentation of `ScuCallocFunc` for more information.
      */
-    SCUCallocFunc* calloc;
+    ScuCallocFunc* calloc;
 
     /**
      * @brief The allocator's realloc-like operation.
      *
-     * See the documentation of `SCUReallocFunc` for more information.
+     * See the documentation of `ScuReallocFunc` for more information.
      */
-    SCUReallocFunc* realloc;
+    ScuReallocFunc* realloc;
 
     /**
      * @brief The allocator's free-like operation.
      *
-     * See the documentation of `SCUFreeFunc` for more information.
+     * See the documentation of `ScuFreeFunc` for more information.
      */
-    SCUFreeFunc* free;
+    ScuFreeFunc* free;
 
     /**
      * @brief A user-provided context passed to the allocator's operations.
@@ -114,7 +114,7 @@ typedef struct SCUAllocator {
      */
     void* context;
 
-} SCUAllocator;
+} ScuAllocator;
 
 /**
  * @brief Returns the global allocator.
@@ -148,7 +148,7 @@ typedef struct SCUAllocator {
  *
  * @return The global allocator.
  */
-const SCUAllocator* scu_get_global_allocator();
+const ScuAllocator* scu_get_global_allocator();
 
 /**
  * @brief Sets the global allocator.
@@ -182,7 +182,7 @@ const SCUAllocator* scu_get_global_allocator();
  *                      global allocator relying on the C standard library will
  *                      be restored.
  */
-void scu_set_global_allocator(const SCUAllocator* allocator);
+void scu_set_global_allocator(const ScuAllocator* allocator);
 
 /**
  * @brief Allocates an uninitialized block of memory of at least `size`
@@ -193,7 +193,7 @@ void scu_set_global_allocator(const SCUAllocator* allocator);
  * `realloc()` and `free()`, or a custom one set using
  * `scu_set_global_allocator()`. Its behavior therefore depends on the internal
  * implementation of the allocator. Generally speaking, it is expected to behave
- * like `malloc(size)`. See the documentation of `SCUMallocFunc` for more
+ * like `malloc(size)`. See the documentation of `ScuMallocFunc` for more
  * information.
  *
  * @note This function is only thread-safe if the underlying allocator is.
@@ -206,7 +206,7 @@ void scu_set_global_allocator(const SCUAllocator* allocator);
  * contiguous bytes, or `nullptr` on failure.
  */
 [[nodiscard]]
-void* scu_malloc(SCUisize size);
+void* scu_malloc(Scuisize size);
 
 /**
  * @brief Allocates a zero-initialized block of memory of at least `count *
@@ -217,7 +217,7 @@ void* scu_malloc(SCUisize size);
  * `realloc()` and `free()`, or a custom one set using
  * `scu_set_global_allocator()`. Its behavior therefore depends on the internal
  * implementation of the allocator. Generally speaking, it is expected to behave
- * like `calloc(count, size)`. See the documentation of `SCUCallocFunc` for more
+ * like `calloc(count, size)`. See the documentation of `ScuCallocFunc` for more
  * information.
  *
  * @note This function is only thread-safe if the underlying allocator is.
@@ -231,7 +231,7 @@ void* scu_malloc(SCUisize size);
  * size` contiguous bytes, or `nullptr` on failure.
  */
 [[nodiscard]]
-void* scu_calloc(SCUisize count, SCUisize size);
+void* scu_calloc(Scuisize count, Scuisize size);
 
 /**
  * @brief Reallocates a block of memory to at least `newSize` contiguous bytes.
@@ -241,7 +241,7 @@ void* scu_calloc(SCUisize count, SCUisize size);
  * `malloc()`, `calloc()`, `realloc()` and `free()`, or a custom one set using
  * `scu_set_global_allocator()`. Its behavior therefore depends on the internal
  * implementation of the allocator. Generally speaking, it is expected to behave
- * like `malloc(newSize)`. See the documentation of `SCUReallocFunc` for more
+ * like `malloc(newSize)`. See the documentation of `ScuReallocFunc` for more
  * information.
  *
  * If `block` is not `nullptr`, this function uses the original allocator the
@@ -261,7 +261,7 @@ void* scu_calloc(SCUisize count, SCUisize size);
  * at least `newSize` contiguous bytes, or `nullptr` on failure.
  */
 [[nodiscard]]
-void* scu_realloc(void* block, SCUisize newSize);
+void* scu_realloc(void* block, Scuisize newSize);
 
 /**
  * @brief Deallocates a block of memory previously allocated by a call to

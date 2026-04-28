@@ -8,7 +8,7 @@ void scu_array_sort(
     void* array,
     isize count,
     isize elemSize,
-    SCUCompareFunc* cmpFunc
+    ScuCompareFunc* cmpFunc
 ) {
     SCU_ASSERT(count >= 0);
     SCU_ASSERT(elemSize > 0);

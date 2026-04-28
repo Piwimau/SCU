@@ -10,951 +10,951 @@
 #include "scu/assert.h"
 
 /** @brief Represents an unsigned integer for raw memory access. */
-typedef unsigned char SCUbyte;
+typedef unsigned char Scubyte;
 
 /** @brief Represents an 8-bit signed integer. */
-typedef int8_t SCUi8;
+typedef int8_t Scui8;
 
 /** @brief Represents a 8-bit unsigned integer. */
-typedef uint8_t SCUu8;
+typedef uint8_t Scuu8;
 
 /** @brief Represents a 16-bit signed integer. */
-typedef int16_t SCUi16;
+typedef int16_t Scui16;
 
 /** @brief Represents a 16-bit unsigned integer. */
-typedef uint16_t SCUu16;
+typedef uint16_t Scuu16;
 
 /** @brief Represents a 32-bit signed integer. */
-typedef int32_t SCUi32;
+typedef int32_t Scui32;
 
 /** @brief Represents a 32-bit unsigned integer. */
-typedef uint32_t SCUu32;
+typedef uint32_t Scuu32;
 
 /** @brief Represents a 64-bit signed integer. */
-typedef int64_t SCUi64;
+typedef int64_t Scui64;
 
 /** @brief Represents a 64-bit unsigned integer. */
-typedef uint64_t SCUu64;
+typedef uint64_t Scuu64;
 
 /** @brief Represents a signed integer capable of holding a pointer. */
-typedef intptr_t SCUiptr;
+typedef intptr_t Scuiptr;
 
 /** @brief Represents an unsigned integer capable of holding a pointer. */
-typedef uintptr_t SCUuptr;
+typedef uintptr_t Scuuptr;
 
 /** @brief Represents a signed integer for sizes, counts and indices. */
-typedef ptrdiff_t SCUisize;
+typedef ptrdiff_t Scuisize;
 
 /** @brief Represents an unsigned integer for sizes, counts and indices. */
-typedef size_t SCUusize;
+typedef size_t Scuusize;
 
 /** @brief Represents a 32-bit floating point number. */
-typedef float SCUf32;
+typedef float Scuf32;
 
 /** @brief Represents a 64-bit floating point number. */
-typedef double SCUf64;
+typedef double Scuf64;
 
 /** @brief Represents an unsigned integer used for UTF-8. */
-typedef unsigned char SCUchar8;
+typedef unsigned char Scuchar8;
 
 /** @brief Represents an unsigned integer used for UTF-16. */
-typedef char16_t SCUchar16;
+typedef char16_t Scuchar16;
 
 /** @brief Represents an unsigned integer used for UTF-32. */
-typedef char32_t SCUchar32;
+typedef char32_t Scuchar32;
 
-/** @brief The bit width of the `SCUbyte` type. */
+/** @brief The bit width of the `Scubyte` type. */
 #define SCU_BYTE_WIDTH UCHAR_WIDTH
 
-/** @brief The bit width of the `SCUi8` type. */
+/** @brief The bit width of the `Scui8` type. */
 #define SCU_I8_WIDTH INT8_WIDTH
 
-/** @brief The bit width of the `SCUu8` type. */
+/** @brief The bit width of the `Scuu8` type. */
 #define SCU_U8_WIDTH UINT8_WIDTH
 
-/** @brief The bit width of the `SCUi16` type. */
+/** @brief The bit width of the `Scui16` type. */
 #define SCU_I16_WIDTH INT16_WIDTH
 
-/** @brief The bit width of the `SCUu16` type. */
+/** @brief The bit width of the `Scuu16` type. */
 #define SCU_U16_WIDTH UINT16_WIDTH
 
-/** @brief The bit width of the `SCUi32` type. */
+/** @brief The bit width of the `Scui32` type. */
 #define SCU_I32_WIDTH INT32_WIDTH
 
-/** @brief The bit width of the `SCUu32` type. */
+/** @brief The bit width of the `Scuu32` type. */
 #define SCU_U32_WIDTH UINT32_WIDTH
 
-/** @brief The bit width of the `SCUi64` type. */
+/** @brief The bit width of the `Scui64` type. */
 #define SCU_I64_WIDTH INT64_WIDTH
 
-/** @brief The bit width of the `SCUu64` type. */
+/** @brief The bit width of the `Scuu64` type. */
 #define SCU_U64_WIDTH UINT64_WIDTH
 
 #ifdef INTPTR_WIDTH
-    /** @brief The bit width of the `SCUiptr` type. */
+    /** @brief The bit width of the `Scuiptr` type. */
     #define SCU_IPTR_WIDTH INTPTR_WIDTH
 #elif INTPTR_MAX == INT32_MAX
-    /** @brief The bit width of the `SCUiptr` type. */
+    /** @brief The bit width of the `Scuiptr` type. */
     #define SCU_IPTR_WIDTH 32
 #elif INTPTR_MAX == INT64_MAX
-    /** @brief The bit width of the `SCUiptr` type. */
+    /** @brief The bit width of the `Scuiptr` type. */
     #define SCU_IPTR_WIDTH 64
 #else
     #error "Unexpected intptr_t width."
 #endif
 
 #ifdef UINTPTR_WIDTH
-    /** @brief The bit width of the `SCUuptr` type. */
+    /** @brief The bit width of the `Scuuptr` type. */
     #define SCU_UPTR_WIDTH UINTPTR_WIDTH
 #elif UINTPTR_MAX == UINT32_MAX
-    /** @brief The bit width of the `SCUuptr` type. */
+    /** @brief The bit width of the `Scuuptr` type. */
     #define SCU_UPTR_WIDTH 32
 #elif UINTPTR_MAX == UINT64_MAX
-    /** @brief The bit width of the `SCUuptr` type. */
+    /** @brief The bit width of the `Scuuptr` type. */
     #define SCU_UPTR_WIDTH 64
 #else
     #error "Unexpected uintptr_t width."
 #endif
 
 #ifdef PTRDIFF_WIDTH
-    /** @brief The bit width of the `SCUisize` type. */
+    /** @brief The bit width of the `Scuisize` type. */
     #define SCU_ISIZE_WIDTH PTRDIFF_WIDTH
 #elif PTRDIFF_MAX == INT32_MAX
-    /** @brief The bit width of the `SCUisize` type. */
+    /** @brief The bit width of the `Scuisize` type. */
     #define SCU_ISIZE_WIDTH 32
 #elif PTRDIFF_MAX == INT64_MAX
-    /** @brief The bit width of the `SCUisize` type. */
+    /** @brief The bit width of the `Scuisize` type. */
     #define SCU_ISIZE_WIDTH 64
 #else
     #error "Unexpected ptrdiff_t width."
 #endif
 
 #ifdef SIZE_WIDTH
-    /** @brief The bit width of the `SCUusize` type. */
+    /** @brief The bit width of the `Scuusize` type. */
     #define SCU_USIZE_WIDTH SIZE_WIDTH
 #elif SIZE_MAX == UINT32_MAX
-    /** @brief The bit width of the `SCUusize` type. */
+    /** @brief The bit width of the `Scuusize` type. */
     #define SCU_USIZE_WIDTH 32
 #elif SIZE_MAX == UINT64_MAX
-    /** @brief The bit width of the `SCUusize` type. */
+    /** @brief The bit width of the `Scuusize` type. */
     #define SCU_USIZE_WIDTH 64
 #else
     #error "Unexpected size_t width."
 #endif
 
-/** @brief The bit width of the `SCUf32` type. */
+/** @brief The bit width of the `Scuf32` type. */
 #define SCU_F32_WIDTH 32
 
-/** @brief The bit width of the `SCUf64` type. */
+/** @brief The bit width of the `Scuf64` type. */
 #define SCU_F64_WIDTH 64
 
-/** @brief The bit width of the `SCUchar8` type. */
+/** @brief The bit width of the `Scuchar8` type. */
 #define SCU_CHAR8_WIDTH SCU_BYTE_WIDTH
 
-/** @brief The bit width of the `SCUchar16` type. */
+/** @brief The bit width of the `Scuchar16` type. */
 #define SCU_CHAR16_WIDTH UINT_LEAST16_WIDTH
 
-/** @brief The bit width of the `SCUchar32` type. */
+/** @brief The bit width of the `Scuchar32` type. */
 #define SCU_CHAR32_WIDTH UINT_LEAST32_WIDTH
 
-/** @brief The minimum value of the `SCUbyte` type. */
+/** @brief The minimum value of the `Scubyte` type. */
 #define SCU_BYTE_MIN 0
 
-/** @brief The minimum value of the `SCUi8` type. */
+/** @brief The minimum value of the `Scui8` type. */
 #define SCU_I8_MIN INT8_MIN
 
-/** @brief The minimum value of the `SCUu8` type. */
+/** @brief The minimum value of the `Scuu8` type. */
 #define SCU_U8_MIN 0
 
-/** @brief The minimum value of the `SCUi16` type. */
+/** @brief The minimum value of the `Scui16` type. */
 #define SCU_I16_MIN INT16_MIN
 
-/** @brief The minimum value of the `SCUu16` type. */
+/** @brief The minimum value of the `Scuu16` type. */
 #define SCU_U16_MIN 0
 
-/** @brief The minimum value of the `SCUi32` type. */
+/** @brief The minimum value of the `Scui32` type. */
 #define SCU_I32_MIN INT32_MIN
 
-/** @brief The minimum value of the `SCUu32` type. */
+/** @brief The minimum value of the `Scuu32` type. */
 #define SCU_U32_MIN 0
 
-/** @brief The minimum value of the `SCUi64` type. */
+/** @brief The minimum value of the `Scui64` type. */
 #define SCU_I64_MIN INT64_MIN
 
-/** @brief The minimum value of the `SCUu64` type. */
+/** @brief The minimum value of the `Scuu64` type. */
 #define SCU_U64_MIN 0
 
-/** @brief The minimum value of the `SCUiptr` type. */
+/** @brief The minimum value of the `Scuiptr` type. */
 #define SCU_IPTR_MIN INTPTR_MIN
 
-/** @brief The minimum value of the `SCUuptr` type. */
+/** @brief The minimum value of the `Scuuptr` type. */
 #define SCU_UPTR_MIN UINTPTR_MIN
 
-/** @brief The minimum value of the `SCUisize` type. */
+/** @brief The minimum value of the `Scuisize` type. */
 #define SCU_ISIZE_MIN PTRDIFF_MIN
 
-/** @brief The minimum value of the `SCUusize` type. */
+/** @brief The minimum value of the `Scuusize` type. */
 #define SCU_USIZE_MIN 0
 
-/** @brief The minimum normalized positive value of the `SCUf32` type. */
+/** @brief The minimum normalized positive value of the `Scuf32` type. */
 #define SCU_F32_MIN FLT_MIN
 
-/** @brief The minimum positive value of the `SCUf32` type. */
+/** @brief The minimum positive value of the `Scuf32` type. */
 #define SCU_F32_TRUE_MIN FLT_TRUE_MIN
 
-/** @brief The lowest (most negative) value of the `SCUf32` type. */
+/** @brief The lowest (most negative) value of the `Scuf32` type. */
 #define SCU_F32_LOWEST (-FLT_MAX)
 
 /**
  * @brief The absolute difference between one and the next value representable
- * by the `SCUf32` type.
+ * by the `Scuf32` type.
  */
 #define SCU_F32_EPSILON FLT_EPSILON
 
-/** @brief The minimum normalized positive value of the `SCUf64` type. */
+/** @brief The minimum normalized positive value of the `Scuf64` type. */
 #define SCU_F64_MIN DBL_MIN
 
-/** @brief The minimum positive value of the `SCUf64` type. */
+/** @brief The minimum positive value of the `Scuf64` type. */
 #define SCU_F64_TRUE_MIN DBL_TRUE_MIN
 
-/** @brief The lowest (most negative) value of the `SCUf64` type. */
+/** @brief The lowest (most negative) value of the `Scuf64` type. */
 #define SCU_F64_LOWEST (-DBL_MAX)
 
 /**
  * @brief The absolute difference between one and the next value representable
- * by the `SCUf64` type.
+ * by the `Scuf64` type.
  */
 #define SCU_F64_EPSILON DBL_EPSILON
 
-/** @brief The minimum value of the `SCUchar8` type. */
+/** @brief The minimum value of the `Scuchar8` type. */
 #define SCU_CHAR8_MIN SCU_BYTE_MIN
 
-/** @brief The minimum value of the `SCUchar16` type. */
+/** @brief The minimum value of the `Scuchar16` type. */
 #define SCU_CHAR16_MIN 0
 
-/** @brief The minimum value of the `SCUchar32` type. */
+/** @brief The minimum value of the `Scuchar32` type. */
 #define SCU_CHAR32_MIN 0
 
-/** @brief The maximum value of the `SCUbyte` type. */
+/** @brief The maximum value of the `Scubyte` type. */
 #define SCU_BYTE_MAX UCHAR_MAX
 
-/** @brief The maximum value of the `SCUi8` type. */
+/** @brief The maximum value of the `Scui8` type. */
 #define SCU_I8_MAX INT8_MAX
 
-/** @brief The maximum value of the `SCUu8` type. */
+/** @brief The maximum value of the `Scuu8` type. */
 #define SCU_U8_MAX UINT8_MAX
 
-/** @brief The maximum value of the `SCUi16` type. */
+/** @brief The maximum value of the `Scui16` type. */
 #define SCU_I16_MAX INT16_MAX
 
-/** @brief The maximum value of the `SCUu16` type. */
+/** @brief The maximum value of the `Scuu16` type. */
 #define SCU_U16_MAX UINT16_MAX
 
-/** @brief The maximum value of the `SCUi32` type. */
+/** @brief The maximum value of the `Scui32` type. */
 #define SCU_I32_MAX INT32_MAX
 
-/** @brief The maximum value of the `SCUu32` type. */
+/** @brief The maximum value of the `Scuu32` type. */
 #define SCU_U32_MAX UINT32_MAX
 
-/** @brief The maximum value of the `SCUi64` type. */
+/** @brief The maximum value of the `Scui64` type. */
 #define SCU_I64_MAX INT64_MAX
 
-/** @brief The maximum value of the `SCUu64` type. */
+/** @brief The maximum value of the `Scuu64` type. */
 #define SCU_U64_MAX UINT64_MAX
 
-/** @brief The maximum value of the `SCUiptr` type. */
+/** @brief The maximum value of the `Scuiptr` type. */
 #define SCU_IPTR_MAX INTPTR_MAX
 
-/** @brief The maximum value of the `SCUuptr` type. */
+/** @brief The maximum value of the `Scuuptr` type. */
 #define SCU_UPTR_MAX UINTPTR_MAX
 
-/** @brief The maximum value of the `SCUisize` type. */
+/** @brief The maximum value of the `Scuisize` type. */
 #define SCU_ISIZE_MAX PTRDIFF_MAX
 
-/** @brief The maximum value of the `SCUusize` type. */
+/** @brief The maximum value of the `Scuusize` type. */
 #define SCU_USIZE_MAX SIZE_MAX
 
-/** @brief The maximum value of the `SCUf32` type. */
+/** @brief The maximum value of the `Scuf32` type. */
 #define SCU_F32_MAX FLT_MAX
 
-/** @brief The maximum value of the `SCUf64` type. */
+/** @brief The maximum value of the `Scuf64` type. */
 #define SCU_F64_MAX DBL_MAX
 
-/** @brief The maximum value of the `SCUchar8` type. */
+/** @brief The maximum value of the `Scuchar8` type. */
 #define SCU_CHAR8_MAX SCU_BYTE_MAX
 
-/** @brief The maximum value of the `SCUchar16` type. */
+/** @brief The maximum value of the `Scuchar16` type. */
 #define SCU_CHAR16_MAX UINT_LEAST16_MAX
 
-/** @brief The maximum value of the `SCUchar32` type. */
+/** @brief The maximum value of the `Scuchar32` type. */
 #define SCU_CHAR32_MAX UINT_LEAST32_MAX
 
 /**
- * @brief The format specifier for scanning an `SCUbyte` value in octal
+ * @brief The format specifier for scanning an `Scubyte` value in octal
  * representation.
  */
 #define SCU_BYTE_SCNO "hho"
 
 /**
- * @brief The format specifier for scanning an `SCUbyte` value in decimal
+ * @brief The format specifier for scanning an `Scubyte` value in decimal
  * representation.
  */
 #define SCU_BYTE_SCNU "hhu"
 
 /**
- * @brief The format specifier for scanning an `SCUbyte` value in hexadecimal
+ * @brief The format specifier for scanning an `Scubyte` value in hexadecimal
  * representation.
  */
 #define SCU_BYTE_SCNX "hhX"
 
 /**
- * @brief The format specifier for scanning an `SCUi8` value in decimal
+ * @brief The format specifier for scanning an `Scui8` value in decimal
  * representation.
  */
 #define SCU_I8_SCND SCNd8
 
 /**
- * @brief The format specifier for scanning an `SCUi8` value in octal, decimal
+ * @brief The format specifier for scanning an `Scui8` value in octal, decimal
  * or hexadecimal representation.
  */
 #define SCU_I8_SCNI SCNi8
 
 /**
- * @brief The format specifier for scanning an `SCUu8` value in octal
+ * @brief The format specifier for scanning an `Scuu8` value in octal
  * representation.
  */
 #define SCU_U8_SCNO SCNo8
 
 /**
- * @brief The format specifier for scanning an `SCUu8` value in decimal
+ * @brief The format specifier for scanning an `Scuu8` value in decimal
  * representation.
  */
 #define SCU_U8_SCNU SCNu8
 
 /**
- * @brief The format specifier for scanning an `SCUu8` value in hexadecimal
+ * @brief The format specifier for scanning an `Scuu8` value in hexadecimal
  * representation.
  */
 #define SCU_U8_SCNX SCNx8
 
 /**
- * @brief The format specifier for scanning an `SCUi16` value in decimal
+ * @brief The format specifier for scanning an `Scui16` value in decimal
  * representation.
  */
 #define SCU_I16_SCND SCNd16
 
 /**
- * @brief The format specifier for scanning an `SCUi16` value in octal, decimal
+ * @brief The format specifier for scanning an `Scui16` value in octal, decimal
  * or hexadecimal representation.
  */
 #define SCU_I16_SCNI SCNi16
 
 /**
- * @brief The format specifier for scanning an `SCUu16` value in octal
+ * @brief The format specifier for scanning an `Scuu16` value in octal
  * representation.
  */
 #define SCU_U16_SCNO SCNo16
 
 /**
- * @brief The format specifier for scanning an `SCUu16` value in decimal
+ * @brief The format specifier for scanning an `Scuu16` value in decimal
  * representation.
  */
 #define SCU_U16_SCNU SCNu16
 
 /**
- * @brief The format specifier for scanning an `SCUu16` value in hexadecimal
+ * @brief The format specifier for scanning an `Scuu16` value in hexadecimal
  * representation.
  */
 #define SCU_U16_SCNX SCNx16
 
 /**
- * @brief The format specifier for scanning an `SCUi32` value in decimal
+ * @brief The format specifier for scanning an `Scui32` value in decimal
  * representation.
  */
 #define SCU_I32_SCND SCNd32
 
 /**
- * @brief The format specifier for scanning an `SCUi32` value in octal, decimal
+ * @brief The format specifier for scanning an `Scui32` value in octal, decimal
  * or hexadecimal representation.
  */
 #define SCU_I32_SCNI SCNi32
 
 /**
- * @brief The format specifier for scanning an `SCUu32` value in octal
+ * @brief The format specifier for scanning an `Scuu32` value in octal
  * representation.
  */
 #define SCU_U32_SCNO SCNo32
 
 /**
- * @brief The format specifier for scanning an `SCUu32` value in decimal
+ * @brief The format specifier for scanning an `Scuu32` value in decimal
  * representation.
  */
 #define SCU_U32_SCNU SCNu32
 
 /**
- * @brief The format specifier for scanning an `SCUu32` value in hexadecimal
+ * @brief The format specifier for scanning an `Scuu32` value in hexadecimal
  * representation.
  */
 #define SCU_U32_SCNX SCNx32
 
 /**
- * @brief The format specifier for scanning an `SCUi64` value in decimal
+ * @brief The format specifier for scanning an `Scui64` value in decimal
  * representation.
  */
 #define SCU_I64_SCND SCNd64
 
 /**
- * @brief The format specifier for scanning an `SCUi64` value in octal, decimal
+ * @brief The format specifier for scanning an `Scui64` value in octal, decimal
  * or hexadecimal representation.
  */
 #define SCU_I64_SCNI SCNi64
 
 /**
- * @brief The format specifier for scanning an `SCUu64` value in octal
+ * @brief The format specifier for scanning an `Scuu64` value in octal
  * representation.
  */
 #define SCU_U64_SCNO SCNo64
 
 /**
- * @brief The format specifier for scanning an `SCUu64` value in decimal
+ * @brief The format specifier for scanning an `Scuu64` value in decimal
  * representation.
  */
 #define SCU_U64_SCNU SCNu64
 
 /**
- * @brief The format specifier for scanning an `SCUu64` value in hexadecimal
+ * @brief The format specifier for scanning an `Scuu64` value in hexadecimal
  * representation.
  */
 #define SCU_U64_SCNX SCNx64
 
 /**
- * @brief The format specifier for scanning an `SCUiptr` value in decimal
+ * @brief The format specifier for scanning an `Scuiptr` value in decimal
  * representation.
  */
 #define SCU_IPTR_SCND SCNdPTR
 
 /**
- * @brief The format specifier for scanning an `SCUiptr` value in octal,
+ * @brief The format specifier for scanning an `Scuiptr` value in octal,
  * decimal or hexadecimal representation.
  */
 #define SCU_IPTR_SCNI SCNiPTR
 
 /**
- * @brief The format specifier for scanning an `SCUuptr` value in octal
+ * @brief The format specifier for scanning an `Scuuptr` value in octal
  * representation.
  */
 #define SCU_UPTR_SCNO SCNoPTR
 
 /**
- * @brief The format specifier for scanning an `SCUuptr` value in decimal
+ * @brief The format specifier for scanning an `Scuuptr` value in decimal
  * representation.
  */
 #define SCU_UPTR_SCNU SCNuPTR
 
 /**
- * @brief The format specifier for scanning an `SCUuptr` value in hexadecimal
+ * @brief The format specifier for scanning an `Scuuptr` value in hexadecimal
  * representation.
  */
 #define SCU_UPTR_SCNX SCNxPTR
 
 /**
- * @brief The format specifier for scanning an `SCUisize` value in decimal
+ * @brief The format specifier for scanning an `Scuisize` value in decimal
  * representation.
  */
 #define SCU_ISIZE_SCND "td"
 
 /**
- * @brief The format specifier for scanning an `SCUisize` value in octal,
+ * @brief The format specifier for scanning an `Scuisize` value in octal,
  * decimal or hexadecimal representation.
  */
 #define SCU_ISIZE_SCNI "ti"
 
 /**
- * @brief The format specifier for scanning an `SCUisize` value for the number
+ * @brief The format specifier for scanning an `Scuisize` value for the number
  * of bytes read or written so far.
  */
 #define SCU_ISIZE_SCNN "tn"
 
 /**
- * @brief The format specifier for scanning an `SCUusize` value in octal
+ * @brief The format specifier for scanning an `Scuusize` value in octal
  * representation.
  */
 #define SCU_USIZE_SCNO "zo"
 
 /**
- * @brief The format specifier for scanning an `SCUusize` value in decimal
+ * @brief The format specifier for scanning an `Scuusize` value in decimal
  * representation.
  */
 #define SCU_USIZE_SCNU "zu"
 
 /**
- * @brief The format specifier for scanning an `SCUusize` value in hexadecimal
+ * @brief The format specifier for scanning an `Scuusize` value in hexadecimal
  * representation.
  */
 #define SCU_USIZE_SCNX "zX"
 
 /**
- * @brief The format specifier for scanning an `SCUusize` value for the number
+ * @brief The format specifier for scanning an `Scuusize` value for the number
  * bytes read or written so far.
  */
 #define SCU_USIZE_SCNN "zn"
 
 /**
- * @brief The format specifier for scanning an `SCUf32` value in decimal,
+ * @brief The format specifier for scanning an `Scuf32` value in decimal,
  * decimal exponent or hexadecimal exponent representation.
  */
 #define SCU_F32_SCNA "A"
 
 /**
- * @brief The format specifier for scanning an `SCUf32` value in decimal,
+ * @brief The format specifier for scanning an `Scuf32` value in decimal,
  * decimal exponent or hexadecimal exponent representation.
  */
 #define SCU_F32_SCNE "E"
 
 /**
- * @brief The format specifier for scanning an `SCUf32` value in decimal,
+ * @brief The format specifier for scanning an `Scuf32` value in decimal,
  * decimal exponent or hexadecimal exponent representation.
  */
 #define SCU_F32_SCNF "F"
 
 /**
- * @brief The format specifier for scanning an `SCUf32` value in decimal,
+ * @brief The format specifier for scanning an `Scuf32` value in decimal,
  * decimal exponent or hexadecimal exponent representation.
  */
 #define SCU_F32_SCNG "G"
 
 /**
- * @brief The format specifier for scanning an `SCUf64` value in decimal,
+ * @brief The format specifier for scanning an `Scuf64` value in decimal,
  * decimal exponent or hexadecimal exponent representation.
  */
 #define SCU_F64_SCNA "lA"
 
 /**
- * @brief The format specifier for scanning an `SCUf64` value in decimal,
+ * @brief The format specifier for scanning an `Scuf64` value in decimal,
  * decimal exponent or hexadecimal exponent representation.
  */
 #define SCU_F64_SCNE "lE"
 
 /**
- * @brief The format specifier for scanning an `SCUf64` value in decimal,
+ * @brief The format specifier for scanning an `Scuf64` value in decimal,
  * decimal exponent or hexadecimal exponent representation.
  */
 #define SCU_F64_SCNF "lF"
 
 /**
- * @brief The format specifier for scanning an `SCUf64` value in decimal,
+ * @brief The format specifier for scanning an `Scuf64` value in decimal,
  * decimal exponent or hexadecimal exponent representation.
  */
 #define SCU_F64_SCNG "lG"
 
 /**
- * @brief The format specifier for scanning an `SCUchar8` value in octal
+ * @brief The format specifier for scanning an `Scuchar8` value in octal
  * representation.
  */
 #define SCU_CHAR8_SCNO SCU_BYTE_SCNO
 
 /**
- * @brief The format specifier for scanning an `SCUchar8` value in decimal
+ * @brief The format specifier for scanning an `Scuchar8` value in decimal
  * representation.
  */
 #define SCU_CHAR8_SCNU SCU_BYTE_SCNU
 
 /**
- * @brief The format specifier for scanning an `SCUchar8` value in hexadecimal
+ * @brief The format specifier for scanning an `Scuchar8` value in hexadecimal
  * representation.
  */
 #define SCU_CHAR8_SCNX SCU_BYTE_SCNX
 
 /**
- * @brief The format specifier for scanning an `SCUchar16` value in octal
+ * @brief The format specifier for scanning an `Scuchar16` value in octal
  * representation.
  */
 #define SCU_CHAR16_SCNO SCNoLEAST16
 
 /**
- * @brief The format specifier for scanning an `SCUchar16` value in decimal
+ * @brief The format specifier for scanning an `Scuchar16` value in decimal
  * representation.
  */
 #define SCU_CHAR16_SCNU SCNuLEAST16
 
 /**
- * @brief The format specifier for scanning an `SCUchar16` value in hexadecimal
+ * @brief The format specifier for scanning an `Scuchar16` value in hexadecimal
  * representation.
  */
 #define SCU_CHAR16_SCNX SCNxLEAST16
 
 /**
- * @brief The format specifier for scanning an `SCUchar32` value in octal
+ * @brief The format specifier for scanning an `Scuchar32` value in octal
  * representation.
  */
 #define SCU_CHAR32_SCNO SCNoLEAST32
 
 /**
- * @brief The format specifier for scanning an `SCUchar32` value in decimal
+ * @brief The format specifier for scanning an `Scuchar32` value in decimal
  * representation.
  */
 #define SCU_CHAR32_SCNU SCNuLEAST32
 
 /**
- * @brief The format specifier for scanning an `SCUchar32` value in hexadecimal
+ * @brief The format specifier for scanning an `Scuchar32` value in hexadecimal
  * representation.
  */
 #define SCU_CHAR32_SCNX SCNxLEAST32
 
 /**
- * @brief The format specifier for printing an `SCUbyte` value in octal
+ * @brief The format specifier for printing an `Scubyte` value in octal
  * representation.
  */
 #define SCU_BYTE_PRIO "hho"
 
 /**
- * @brief The format specifier for printing an `SCUbyte` value in decimal
+ * @brief The format specifier for printing an `Scubyte` value in decimal
  * representation.
  */
 #define SCU_BYTE_PRIU "hhu"
 
 /**
- * @brief The format specifier for printing an `SCUbyte` value in hexadecimal
+ * @brief The format specifier for printing an `Scubyte` value in hexadecimal
  * representation.
  */
 #define SCU_BYTE_PRIX "hhX"
 
 /**
- * @brief The format specifier for printing an `SCUi8` value in decimal
+ * @brief The format specifier for printing an `Scui8` value in decimal
  * representation.
  */
 #define SCU_I8_PRID PRId8
 
 /**
- * @brief The format specifier for printing an `SCUi8` value in decimal
+ * @brief The format specifier for printing an `Scui8` value in decimal
  * representation.
  */
 #define SCU_I8_PRII PRIi8
 
 /**
- * @brief The format specifier for printing an `SCUu8` value in octal
+ * @brief The format specifier for printing an `Scuu8` value in octal
  * representation.
  */
 #define SCU_U8_PRIO PRIo8
 
 /**
- * @brief The format specifier for printing an `SCUu8` value in decimal
+ * @brief The format specifier for printing an `Scuu8` value in decimal
  * representation.
  */
 #define SCU_U8_PRIU PRIu8
 
 /**
- * @brief The format specifier for printing an `SCUu8` value in hexadecimal
+ * @brief The format specifier for printing an `Scuu8` value in hexadecimal
  * representation.
  */
 #define SCU_U8_PRIX PRIX8
 
 /**
- * @brief The format specifier for printing an `SCUi16` value in decimal
+ * @brief The format specifier for printing an `Scui16` value in decimal
  * representation.
  */
 #define SCU_I16_PRID PRId16
 
 /**
- * @brief The format specifier for printing an `SCUi16` value in decimal
+ * @brief The format specifier for printing an `Scui16` value in decimal
  * representation.
  */
 #define SCU_I16_PRII PRIi16
 
 /**
- * @brief The format specifier for printing an `SCUu16` value in octal
+ * @brief The format specifier for printing an `Scuu16` value in octal
  * representation.
  */
 #define SCU_U16_PRIO PRIo16
 
 /**
- * @brief The format specifier for printing an `SCUu16` value in decimal
+ * @brief The format specifier for printing an `Scuu16` value in decimal
  * representation.
  */
 #define SCU_U16_PRIU PRIu16
 
 /**
- * @brief The format specifier for printing an `SCUu16` value in hexadecimal
+ * @brief The format specifier for printing an `Scuu16` value in hexadecimal
  * representation.
  */
 #define SCU_U16_PRIX PRIX16
 
 /**
- * @brief The format specifier for printing an `SCUi32` value in decimal
+ * @brief The format specifier for printing an `Scui32` value in decimal
  * representation.
  */
 #define SCU_I32_PRID PRId32
 
 /**
- * @brief The format specifier for printing an `SCUi32` value in decimal
+ * @brief The format specifier for printing an `Scui32` value in decimal
  * representation.
  */
 #define SCU_I32_PRII PRIi32
 
 /**
- * @brief The format specifier for printing an `SCUu32` value in octal
+ * @brief The format specifier for printing an `Scuu32` value in octal
  * representation.
  */
 #define SCU_U32_PRIO PRIo32
 
 /**
- * @brief The format specifier for printing an `SCUu32` value in decimal
+ * @brief The format specifier for printing an `Scuu32` value in decimal
  * representation.
  */
 #define SCU_U32_PRIU PRIu32
 
 /**
- * @brief The format specifier for printing an `SCUu32` value in hexadecimal
+ * @brief The format specifier for printing an `Scuu32` value in hexadecimal
  * representation.
  */
 #define SCU_U32_PRIX PRIX32
 
 /**
- * @brief The format specifier for printing an `SCUi64` value in decimal
+ * @brief The format specifier for printing an `Scui64` value in decimal
  * representation.
  */
 #define SCU_I64_PRID PRId64
 
 /**
- * @brief The format specifier for printing an `SCUi64` value in decimal
+ * @brief The format specifier for printing an `Scui64` value in decimal
  * representation.
  */
 #define SCU_I64_PRII PRIi64
 
 /**
- * @brief The format specifier for printing an `SCUu64` value in octal
+ * @brief The format specifier for printing an `Scuu64` value in octal
  * representation.
  */
 #define SCU_U64_PRIO PRIo64
 
 /**
- * @brief The format specifier for printing an `SCUu64` value in decimal
+ * @brief The format specifier for printing an `Scuu64` value in decimal
  * representation.
  */
 #define SCU_U64_PRIU PRIu64
 
 /**
- * @brief The format specifier for printing an `SCUu64` value in hexadecimal
+ * @brief The format specifier for printing an `Scuu64` value in hexadecimal
  * representation.
  */
 #define SCU_U64_PRIX PRIX64
 
 /**
- * @brief The format specifier for printing an `SCUiptr` value in decimal
+ * @brief The format specifier for printing an `Scuiptr` value in decimal
  * representation.
  */
 #define SCU_IPTR_PRID PRIdPTR
 
 /**
- * @brief The format specifier for printing an `SCUiptr` value in decimal
+ * @brief The format specifier for printing an `Scuiptr` value in decimal
  * representation.
  */
 #define SCU_IPTR_PRII PRIiPTR
 
 /**
- * @brief The format specifier for printing an `SCUuptr` value in octal
+ * @brief The format specifier for printing an `Scuuptr` value in octal
  * representation.
  */
 #define SCU_UPTR_PRIO PRIoPTR
 
 /**
- * @brief The format specifier for printing an `SCUuptr` value in decimal
+ * @brief The format specifier for printing an `Scuuptr` value in decimal
  * representation.
  */
 #define SCU_UPTR_PRIU PRIuPTR
 
 /**
- * @brief The format specifier for printing an `SCUuptr` value in hexadecimal
+ * @brief The format specifier for printing an `Scuuptr` value in hexadecimal
  * representation.
  */
 #define SCU_UPTR_PRIX PRIXPTR
 
 /**
- * @brief The format specifier for printing an `SCUisize` value in decimal
+ * @brief The format specifier for printing an `Scuisize` value in decimal
  * representation.
  */
 #define SCU_ISIZE_PRID "td"
 
 /**
- * @brief The format specifier for printing an `SCUisize` value in decimal
+ * @brief The format specifier for printing an `Scuisize` value in decimal
  * representation.
  */
 #define SCU_ISIZE_PRII "ti"
 
 /**
- * @brief The format specifier for printing an `SCUusize` value in octal
+ * @brief The format specifier for printing an `Scuusize` value in octal
  * representation.
  */
 #define SCU_USIZE_PRIO "zo"
 
 /**
- * @brief The format specifier for printing an `SCUusize` value in decimal
+ * @brief The format specifier for printing an `Scuusize` value in decimal
  * representation.
  */
 #define SCU_USIZE_PRIU "zu"
 
 /**
- * @brief The format specifier for printing an `SCUusize` value in hexadecimal
+ * @brief The format specifier for printing an `Scuusize` value in hexadecimal
  * representation.
  */
 #define SCU_USIZE_PRIX "zX"
 
 /**
- * @brief The format specifier for printing an `SCUf32` value in hexadecimal
+ * @brief The format specifier for printing an `Scuf32` value in hexadecimal
  * exponent representation.
  */
 #define SCU_F32_PRIA "A"
 
 /**
- * @brief The format specifier for printing an `SCUf32` value in decimal
+ * @brief The format specifier for printing an `Scuf32` value in decimal
  * exponent representation.
  */
 #define SCU_F32_PRIE "E"
 
 /**
- * @brief The format specifier for printing an `SCUf32` value in decimal
+ * @brief The format specifier for printing an `Scuf32` value in decimal
  * representation.
  */
 #define SCU_F32_PRIF "F"
 
 /**
- * @brief The format specifier for printing an `SCUf32` value in decimal
+ * @brief The format specifier for printing an `Scuf32` value in decimal
  * or decimal exponent representation.
  */
 #define SCU_F32_PRIG "G"
 
 /**
- * @brief The format specifier for printing an `SCUf64` value in hexadecimal
+ * @brief The format specifier for printing an `Scuf64` value in hexadecimal
  * exponent representation.
  */
 #define SCU_F64_PRIA "lA"
 
 /**
- * @brief The format specifier for printing an `SCUf64` value in decimal
+ * @brief The format specifier for printing an `Scuf64` value in decimal
  * exponent representation.
  */
 #define SCU_F64_PRIE "lE"
 
 /**
- * @brief The format specifier for printing an `SCUf64` value in decimal
+ * @brief The format specifier for printing an `Scuf64` value in decimal
  * representation.
  */
 #define SCU_F64_PRIF "lF"
 
 /**
- * @brief The format specifier for printing an `SCUf64` value in decimal
+ * @brief The format specifier for printing an `Scuf64` value in decimal
  * or decimal exponent representation.
  */
 #define SCU_F64_PRIG "lG"
 
 /**
- * @brief The format specifier for printing an `SCUchar8` value in octal
+ * @brief The format specifier for printing an `Scuchar8` value in octal
  * representation.
  */
 #define SCU_CHAR8_PRIO SCU_BYTE_PRIO
 
 /**
- * @brief The format specifier for printing an `SCUchar8` value in decimal
+ * @brief The format specifier for printing an `Scuchar8` value in decimal
  * representation.
  */
 #define SCU_CHAR8_PRIU SCU_BYTE_PRIU
 
 /**
- * @brief The format specifier for printing an `SCUchar8` value in hexadecimal
+ * @brief The format specifier for printing an `Scuchar8` value in hexadecimal
  * representation.
  */
 #define SCU_CHAR8_PRIX SCU_BYTE_PRIX
 
 /**
- * @brief The format specifier for printing an `SCUchar16` value in octal
+ * @brief The format specifier for printing an `Scuchar16` value in octal
  * representation.
  */
 #define SCU_CHAR16_PRIO PRIoLEAST16
 
 /**
- * @brief The format specifier for printing an `SCUchar16` value in decimal
+ * @brief The format specifier for printing an `Scuchar16` value in decimal
  * representation.
  */
 #define SCU_CHAR16_PRIU PRIuLEAST16
 
 /**
- * @brief The format specifier for printing an `SCUchar16` value in hexadecimal
+ * @brief The format specifier for printing an `Scuchar16` value in hexadecimal
  * representation.
  */
 #define SCU_CHAR16_PRIX PRIXLEAST16
 
 /**
- * @brief The format specifier for printing an `SCUchar32` value in octal
+ * @brief The format specifier for printing an `Scuchar32` value in octal
  * representation.
  */
 #define SCU_CHAR32_PRIO PRIoLEAST32
 
 /**
- * @brief The format specifier for printing an `SCUchar32` value in decimal
+ * @brief The format specifier for printing an `Scuchar32` value in decimal
  * representation.
  */
 #define SCU_CHAR32_PRIU PRIuLEAST32
 
 /**
- * @brief The format specifier for printing an `SCUchar32` value in hexadecimal
+ * @brief The format specifier for printing an `Scuchar32` value in hexadecimal
  * representation.
  */
 #define SCU_CHAR32_PRIX PRIXLEAST32
 
 #ifdef SCU_SHORT_ALIASES
     /** @brief Represents an unsigned integer for raw memory access. */
-    typedef SCUbyte byte;
+    typedef Scubyte byte;
 
     /** @brief Represents an 8-bit signed integer. */
-    typedef SCUi8 i8;
+    typedef Scui8 i8;
 
     /** @brief Represents a 8-bit unsigned integer. */
-    typedef SCUu8 u8;
+    typedef Scuu8 u8;
 
     /** @brief Represents a 16-bit signed integer. */
-    typedef SCUi16 i16;
+    typedef Scui16 i16;
 
     /** @brief Represents a 16-bit unsigned integer. */
-    typedef SCUu16 u16;
+    typedef Scuu16 u16;
 
     /** @brief Represents a 32-bit signed integer. */
-    typedef SCUi32 i32;
+    typedef Scui32 i32;
 
     /** @brief Represents a 32-bit unsigned integer. */
-    typedef SCUu32 u32;
+    typedef Scuu32 u32;
 
     /** @brief Represents a 64-bit signed integer. */
-    typedef SCUi64 i64;
+    typedef Scui64 i64;
 
     /** @brief Represents a 64-bit unsigned integer. */
-    typedef SCUu64 u64;
+    typedef Scuu64 u64;
 
     /** @brief Represents a signed integer capable of holding a pointer. */
-    typedef SCUiptr iptr;
+    typedef Scuiptr iptr;
 
     /** @brief Represents an unsigned integer capable of holding a pointer. */
-    typedef SCUuptr uptr;
+    typedef Scuuptr uptr;
 
     /** @brief Represents a signed integer for sizes, counts and indices. */
-    typedef SCUisize isize;
+    typedef Scuisize isize;
 
     /** @brief Represents an unsigned integer for sizes, counts and indices. */
-    typedef SCUusize usize;
+    typedef Scuusize usize;
 
     /** @brief Represents a 32-bit floating point number. */
-    typedef SCUf32 f32;
+    typedef Scuf32 f32;
 
     /** @brief Represents a 64-bit floating point number. */
-    typedef SCUf64 f64;
+    typedef Scuf64 f64;
 
     /** @brief Represents an unsigned integer used for UTF-8. */
-    typedef SCUchar8 char8;
+    typedef Scuchar8 char8;
 
     /** @brief Represents an unsigned integer used for UTF-16. */
-    typedef SCUchar16 char16;
+    typedef Scuchar16 char16;
 
     /** @brief Represents an unsigned integer used for UTF-32. */
-    typedef SCUchar32 char32;
+    typedef Scuchar32 char32;
 
     /** @brief The bit width of the `byte` type. */
     #define BYTE_WIDTH SCU_BYTE_WIDTH

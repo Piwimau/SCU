@@ -16,7 +16,7 @@
  * @param[in] s The null-terminated byte string to examine.
  * @return The number of bytes in `s`, excluding the terminating null byte.
  */
-SCUisize scu_strlen(const char* s);
+Scuisize scu_strlen(const char* s);
 
 /**
  * @brief Returns the length of a byte string, or `count` if no null byte is
@@ -37,7 +37,7 @@ SCUisize scu_strlen(const char* s);
  * @return The number of bytes in `s`, excluding the terminating null byte, or
  * `count` if no null byte is found within the first `count` bytes.
  */
-SCUisize scu_strnlen(const char* s, SCUisize count);
+Scuisize scu_strnlen(const char* s, Scuisize count);
 
 /**
  * @brief Compares two null-terminated byte strings lexicographically.
@@ -79,7 +79,7 @@ int scu_strcmp(const char* left, const char* right);
  * order, zero if they compare equal or if `count` is zero, or a positive value
  * if `left` appears after `right`.
  */
-int scu_strncmp(const char* left, const char* right, SCUisize count);
+int scu_strncmp(const char* left, const char* right, Scuisize count);
 
 /**
  * @brief Returns the index of the first occurrence of a byte in a
@@ -95,7 +95,7 @@ int scu_strncmp(const char* left, const char* right, SCUisize count);
  * @return The zero-based index of the first occurrence of `c` in `s`, or `-1`
  * if `c` is not found.
  */
-SCUisize scu_str_index_of_byte(const char* s, char c);
+Scuisize scu_str_index_of_byte(const char* s, char c);
 
 /**
  * @brief Returns the index of the first occurrence of a substring in a
@@ -119,7 +119,7 @@ SCUisize scu_str_index_of_byte(const char* s, char c);
  * @return The zero-based index of the first occurrence of `other` in `s`, or
  * `-1` if `other` is not found.
  */
-SCUisize scu_str_index_of_str(const char* s, const char* other);
+Scuisize scu_str_index_of_str(const char* s, const char* other);
 
 /**
  * @brief Returns the index of the first occurrence of a byte or substring in a
@@ -161,7 +161,7 @@ SCUisize scu_str_index_of_str(const char* s, const char* other);
  * @return The zero-based index of the last occurrence of `c` in `s`, or `-1` if
  * `c` is not found.
  */
-SCUisize scu_str_last_index_of_byte(const char* s, char c);
+Scuisize scu_str_last_index_of_byte(const char* s, char c);
 
 /**
  * @brief Returns the index of the last occurrence of a substring in a
@@ -186,7 +186,7 @@ SCUisize scu_str_last_index_of_byte(const char* s, char c);
  * @return The zero-based index of the last occurrence of `other` in `s`, or
  * `-1` if `other` is not found.
  */
-SCUisize scu_str_last_index_of_str(const char* s, const char* other);
+Scuisize scu_str_last_index_of_str(const char* s, const char* other);
 
 /**
  * @brief Returns the index of the last occurrence of a byte or substring in a
@@ -232,7 +232,7 @@ SCUisize scu_str_last_index_of_str(const char* s, const char* other);
  * @return The zero-based index of the first occurrence of any byte from `anyOf`
  * in `s`, or `-1` if no such byte is found.
  */
-SCUisize scu_str_index_of_any(const char* s, const char* anyOf);
+Scuisize scu_str_index_of_any(const char* s, const char* anyOf);
 
 /**
  * @brief Returns the index of the last occurrence of any byte from a
@@ -252,7 +252,7 @@ SCUisize scu_str_index_of_any(const char* s, const char* anyOf);
  * @return The zero-based index of the last occurrence of any byte from `anyOf`
  * in `s`, or `-1` if no such byte is found.
  */
-SCUisize scu_str_last_index_of_any(const char* s, const char* anyOf);
+Scuisize scu_str_last_index_of_any(const char* s, const char* anyOf);
 
 /**
  * @brief Returns the index of the first occurrence of any byte within an
@@ -270,7 +270,7 @@ SCUisize scu_str_last_index_of_any(const char* s, const char* anyOf);
  * @return The zero-based index of the first occurrence of any byte within the
  * inclusive range in `s`, or `-1` if no such byte is found.
  */
-SCUisize scu_str_index_in_range(
+Scuisize scu_str_index_in_range(
     const char* s,
     char lowInclusive,
     char highInclusive
@@ -292,7 +292,7 @@ SCUisize scu_str_index_in_range(
  * @return The zero-based index of the last occurrence of any byte within the
  * inclusive range in `s`, or `-1` if no such byte is found.
  */
-SCUisize scu_str_last_index_in_range(
+Scuisize scu_str_last_index_in_range(
     const char* s,
     char lowInclusive,
     char highInclusive
@@ -469,7 +469,7 @@ char* scu_strdup(const char* src);
  * null-terminated byte string, or `nullptr` on failure.
  */
 [[nodiscard]]
-char* scu_strndup(const char* src, SCUisize count);
+char* scu_strndup(const char* src, Scuisize count);
 
 /**
  * @brief Copies at most `min(size - 1, count)` bytes from a null-terminated
@@ -504,11 +504,11 @@ char* scu_strndup(const char* src, SCUisize count);
  * @return The number of bytes copied from `src` to `dest`, excluding the
  * terminating null byte.
  */
-SCUisize scu_strncpy(
+Scuisize scu_strncpy(
     char* restrict dest,
-    SCUisize size,
+    Scuisize size,
     const char* restrict src,
-    SCUisize count
+    Scuisize count
 );
 
 /**
@@ -543,11 +543,11 @@ SCUisize scu_strncpy(
  * @return The number of bytes appended from `src` to `dest`, excluding the
  * terminating null byte.
  */
-SCUisize scu_strncat(
+Scuisize scu_strncat(
     char* restrict dest,
-    SCUisize size,
+    Scuisize size,
     const char* restrict src,
-    SCUisize count
+    Scuisize count
 );
 
 #endif

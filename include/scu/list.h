@@ -20,7 +20,7 @@
  * @return A pointer to the new list, or `nullptr` on failure.
  */
 [[nodiscard]]
-void* scu_list_new(SCUisize elemSize);
+void* scu_list_new(Scuisize elemSize);
 
 /**
  * @brief Allocates and initializes a new list with a specified element size
@@ -38,7 +38,7 @@ void* scu_list_new(SCUisize elemSize);
  * @return A pointer to the new list, or `nullptr` on failure.
  */
 [[nodiscard]]
-void* scu_list_new_with_capacity(SCUisize elemSize, SCUisize capacity);
+void* scu_list_new_with_capacity(Scuisize elemSize, Scuisize capacity);
 
 /**
  * @brief Creates a shallow copy of a specified list.
@@ -72,7 +72,7 @@ void* scu_list_clone(const void* list);
  * @param[in] list The list to examine.
  * @return The capacity of the specified list.
  */
-SCUisize scu_list_capacity(const void* list);
+Scuisize scu_list_capacity(const void* list);
 
 /**
  * @brief Returns the number of elements in a specified list.
@@ -80,7 +80,7 @@ SCUisize scu_list_capacity(const void* list);
  * @param[in] list The list to examine.
  * @return The number of elements in the specified list.
  */
-SCUisize scu_list_count(const void* list);
+Scuisize scu_list_count(const void* list);
 
 /**
  * @brief Ensures that a specified list has at least a specified capacity.
@@ -106,7 +106,7 @@ SCUisize scu_list_count(const void* list);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_list_ensure_capacity_impl(void** list, SCUisize capacity);
+ScuError scu_list_ensure_capacity_impl(void** list, Scuisize capacity);
 
 /**
  * @brief Ensures that a specified list has at least a specified capacity.
@@ -157,7 +157,7 @@ SCUError scu_list_ensure_capacity_impl(void** list, SCUisize capacity);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_list_add_impl(void** restrict list, const void* restrict elem);
+ScuError scu_list_add_impl(void** restrict list, const void* restrict elem);
 
 /**
  * @brief Adds a new element to the end of a specified list.
@@ -215,9 +215,9 @@ SCUError scu_list_add_impl(void** restrict list, const void* restrict elem);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_list_insert_at_impl(
+ScuError scu_list_insert_at_impl(
     void** restrict list,
-    SCUisize index,
+    Scuisize index,
     const void* restrict elem
 );
 
@@ -273,7 +273,7 @@ SCUError scu_list_insert_at_impl(
  * @param[in, out] list  The list to remove the element from.
  * @param[in]      index The index of the element to remove.
  */
-void scu_list_remove_at(void* list, SCUisize index);
+void scu_list_remove_at(void* list, Scuisize index);
 
 /**
  * @brief Clears all elements from a specified list.
@@ -317,7 +317,7 @@ void scu_list_clear(void* list);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_list_trim_excess_impl(void** list);
+ScuError scu_list_trim_excess_impl(void** list);
 
 /**
  * @brief Trims the excess capacity of a specified list to match its current
@@ -359,7 +359,7 @@ SCUError scu_list_trim_excess_impl(void** list);
  * @param[in]      cmpFunc A comparison function used to determine the order of
  *                         the elements.
  */
-void scu_list_sort(void* list, SCUCompareFunc* cmpFunc);
+void scu_list_sort(void* list, ScuCompareFunc* cmpFunc);
 
 /**
  * @brief Deallocates a specified list.

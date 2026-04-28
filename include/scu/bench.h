@@ -6,48 +6,48 @@
 #include "scu/types.h"
 
 /** @brief Represents the statistics of a benchmark. */
-typedef struct SCUBenchStats {
+typedef struct ScuBenchStats {
 
     /**
      * @brief The minimum time taken for a single iteration (in nanoseconds).
      */
-    SCUi64 minNs;
+    Scui64 minNs;
 
     /**
      * @brief The maximum time taken for a single iteration (in nanoseconds).
      */
-    SCUi64 maxNs;
+    Scui64 maxNs;
 
     /** @brief The mean time taken for a single iteration (in nanoseconds). */
-    SCUf64 meanNs;
+    Scuf64 meanNs;
 
     /** @brief The median time taken for a single iteration (in nanoseconds). */
-    SCUf64 medianNs;
+    Scuf64 medianNs;
 
     /**
      * @brief The standard deviation of the time taken for a single iteration
      * (in nanoseconds).
      */
-    SCUf64 stdDevNs;
+    Scuf64 stdDevNs;
 
-} SCUBenchStats;
+} ScuBenchStats;
 
 /** @brief Represents a result of a benchmark. */
-typedef struct SCUBenchResult {
+typedef struct ScuBenchResult {
 
     /** @brief The wall time statistics. */
-    SCUBenchStats wall;
+    ScuBenchStats wall;
 
     /** @brief The CPU time statistics. */
-    SCUBenchStats cpu;
+    ScuBenchStats cpu;
 
     /** @brief The number of iterations performed. */
-    SCUisize iterations;
+    Scuisize iterations;
 
     /** @brief An error code indicating whether the benchmark was successful. */
-    SCUError error;
+    ScuError error;
 
-} SCUBenchResult;
+} ScuBenchResult;
 
 /**
  * @brief Represents a context for a benchmark.
@@ -57,36 +57,36 @@ typedef struct SCUBenchResult {
  * may change without notice. Most importantly, the behavior is undefined if its
  * fields are accessed directly.
  */
-typedef struct SCUBenchCtx {
+typedef struct ScuBenchCtx {
 
     /** @brief The timing mode for measuring CPU time. */
-    SCUTimingMode timingMode;
+    ScuTimingMode timingMode;
 
     /** @brief The timing result for the current iteration. */
-    SCUTimingResult timingResult;
+    ScuTimingResult timingResult;
 
     /** @brief The wall time samples (in nanoseconds). */
-    SCUi64* wallSamples;
+    Scui64* wallSamples;
 
     /** @brief The CPU time samples (in nanoseconds). */
-    SCUi64* cpuSamples;
+    Scui64* cpuSamples;
 
     /** @brief The number of warmup iterations. */
-    SCUisize warmup;
+    Scuisize warmup;
 
     /** @brief The number of iterations to perform (after warmup). */
-    SCUisize iterations;
+    Scuisize iterations;
 
     /** @brief The current iteration. */
-    SCUisize iteration;
+    Scuisize iteration;
 
     /** @brief An error code indicating whether the benchmark was successful. */
-    SCUError error;
+    ScuError error;
 
     /** @brief A pointer for storing the result of the benchmark. */
-    SCUBenchResult* benchResult;
+    ScuBenchResult* benchResult;
 
-} SCUBenchCtx;
+} ScuBenchCtx;
 
 /**
  * @brief Allocates and initializes a new benchmark context.
@@ -107,11 +107,11 @@ typedef struct SCUBenchCtx {
  * @return A new benchmark context.
  */
 [[nodiscard]]
-SCUBenchCtx scu_bench_ctx_new(
-    SCUTimingMode timingMode,
-    SCUisize warmup,
-    SCUisize iterations,
-    SCUBenchResult* benchResult
+ScuBenchCtx scu_bench_ctx_new(
+    ScuTimingMode timingMode,
+    Scuisize warmup,
+    Scuisize iterations,
+    ScuBenchResult* benchResult
 );
 
 /**
@@ -124,7 +124,7 @@ SCUBenchCtx scu_bench_ctx_new(
  * @return `true` if the specified benchmark is still running, otherwise
  * `false`.
  */
-bool scu_bench_ctx_is_running(SCUBenchCtx* ctx);
+bool scu_bench_ctx_is_running(ScuBenchCtx* ctx);
 
 /**
  * @brief Advances a specified benchmark to the next iteration.
@@ -134,7 +134,7 @@ bool scu_bench_ctx_is_running(SCUBenchCtx* ctx);
  *
  * @param[in, out] ctx The benchmark context to advance.
  */
-void scu_bench_ctx_advance(SCUBenchCtx* ctx);
+void scu_bench_ctx_advance(ScuBenchCtx* ctx);
 
 /**
  * @brief Benchmarks a block of code.
@@ -147,7 +147,7 @@ void scu_bench_ctx_advance(SCUBenchCtx* ctx);
  * The following example demonstrates the basic usage of this macro:
  *
  * ```c
- * SCUBenchResult result;
+ * ScuBenchResult result;
  * SCU_BENCH(SCU_TIMING_MODE_PROCESS, 10, 100, &result) {
  *     // Some code to be benchmarked...
  * }
@@ -185,7 +185,7 @@ void scu_bench_ctx_advance(SCUBenchCtx* ctx);
  */
 #define SCU_BENCH(mode, warmup, iterations, result)       \
     for (                                                 \
-        SCUBenchCtx scuCtx = scu_bench_ctx_new(           \
+        ScuBenchCtx scuCtx = scu_bench_ctx_new(           \
             (mode),                                       \
             (warmup),                                     \
             (iterations),                                 \

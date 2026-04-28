@@ -5,7 +5,7 @@
 #include "scu/memory.h"
 #include "scu/stack.h"
 
-struct SCUStack {
+struct ScuStack {
 
     /** @brief The size of each element (in bytes). */
     isize elemSize;
@@ -36,15 +36,15 @@ static constexpr isize SCU_DEFAULT_CAPACITY = 8;
 static constexpr isize SCU_GROWTH_FACTOR = 2;
 
 [[nodiscard]]
-SCUStack* scu_stack_new(isize elemSize) {
+ScuStack* scu_stack_new(isize elemSize) {
     return scu_stack_new_with_capacity(elemSize, SCU_DEFAULT_CAPACITY);
 }
 
 [[nodiscard]]
-SCUStack* scu_stack_new_with_capacity(isize elemSize, isize capacity) {
+ScuStack* scu_stack_new_with_capacity(isize elemSize, isize capacity) {
     SCU_ASSERT(elemSize > 0);
     SCU_ASSERT(capacity >= 0);
-    SCUStack* stack = scu_malloc(SCU_SIZEOF(SCUStack));
+    ScuStack* stack = scu_malloc(SCU_SIZEOF(ScuStack));
     if (stack == nullptr) {
         return nullptr;
     }
@@ -65,9 +65,9 @@ SCUStack* scu_stack_new_with_capacity(isize elemSize, isize capacity) {
 }
 
 [[nodiscard]]
-SCUStack* scu_stack_clone(const SCUStack* stack) {
+ScuStack* scu_stack_clone(const ScuStack* stack) {
     SCU_ASSERT(stack != nullptr);
-    SCUStack* clone = scu_malloc(SCU_SIZEOF(SCUStack));
+    ScuStack* clone = scu_malloc(SCU_SIZEOF(ScuStack));
     if (clone == nullptr) {
         return nullptr;
     }
@@ -88,17 +88,17 @@ SCUStack* scu_stack_clone(const SCUStack* stack) {
     return clone;
 }
 
-isize scu_stack_capacity(const SCUStack* stack) {
+isize scu_stack_capacity(const ScuStack* stack) {
     SCU_ASSERT(stack != nullptr);
     return stack->capacity;
 }
 
-isize scu_stack_count(const SCUStack* stack) {
+isize scu_stack_count(const ScuStack* stack) {
     SCU_ASSERT(stack != nullptr);
     return stack->count;
 }
 
-SCUError scu_stack_ensure_capacity(SCUStack* stack, isize capacity) {
+ScuError scu_stack_ensure_capacity(ScuStack* stack, isize capacity) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(capacity >= 0);
     if (stack->capacity < capacity) {
@@ -116,10 +116,10 @@ SCUError scu_stack_ensure_capacity(SCUStack* stack, isize capacity) {
     return SCU_ERROR_NONE;
 }
 
-SCUError scu_stack_push(SCUStack* restrict stack, const void* restrict elem) {
+ScuError scu_stack_push(ScuStack* restrict stack, const void* restrict elem) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(elem != nullptr);
-    SCUError error = scu_stack_ensure_capacity(stack, stack->count + 1);
+    ScuError error = scu_stack_ensure_capacity(stack, stack->count + 1);
     if (error != SCU_ERROR_NONE) {
         return error;
     }
@@ -132,7 +132,7 @@ SCUError scu_stack_push(SCUStack* restrict stack, const void* restrict elem) {
     return SCU_ERROR_NONE;
 }
 
-void scu_stack_pop(SCUStack* restrict stack, void* restrict elem) {
+void scu_stack_pop(ScuStack* restrict stack, void* restrict elem) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(stack->count > 0);
     SCU_ASSERT(elem != nullptr);
@@ -144,7 +144,7 @@ void scu_stack_pop(SCUStack* restrict stack, void* restrict elem) {
     );
 }
 
-bool scu_stack_try_pop(SCUStack* restrict stack, void* restrict elem) {
+bool scu_stack_try_pop(ScuStack* restrict stack, void* restrict elem) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(elem != nullptr);
     if (stack->count == 0) {
@@ -159,7 +159,7 @@ bool scu_stack_try_pop(SCUStack* restrict stack, void* restrict elem) {
     return true;
 }
 
-void scu_stack_peek_impl(const SCUStack* restrict stack, void** restrict elem) {
+void scu_stack_peek_impl(const ScuStack* restrict stack, void** restrict elem) {
     SCU_ASSERT(stack != nullptr);
     SCU_ASSERT(stack->count > 0);
     SCU_ASSERT(elem != nullptr);
@@ -167,7 +167,7 @@ void scu_stack_peek_impl(const SCUStack* restrict stack, void** restrict elem) {
 }
 
 bool scu_stack_try_peek_impl(
-    const SCUStack* restrict stack,
+    const ScuStack* restrict stack,
     void** restrict elem
 ) {
     SCU_ASSERT(stack != nullptr);
@@ -180,12 +180,12 @@ bool scu_stack_try_peek_impl(
     return true;
 }
 
-void scu_stack_clear(SCUStack* stack) {
+void scu_stack_clear(ScuStack* stack) {
     SCU_ASSERT(stack != nullptr);
     stack->count = 0;
 }
 
-SCUError scu_stack_trim_excess(SCUStack* stack) {
+ScuError scu_stack_trim_excess(ScuStack* stack) {
     SCU_ASSERT(stack != nullptr);
     if (stack->capacity > stack->count) {
         if (stack->count == 0) {
@@ -208,18 +208,18 @@ SCUError scu_stack_trim_excess(SCUStack* stack) {
     return SCU_ERROR_NONE;
 }
 
-SCUStackIter scu_stack_iter(const SCUStack* stack) {
+ScuStackIter scu_stack_iter(const ScuStack* stack) {
     SCU_ASSERT(stack != nullptr);
-    return (SCUStackIter) {
-        .stack = SCU_CONST_CAST(SCUStack*, stack),
+    return (ScuStackIter) {
+        .stack = SCU_CONST_CAST(ScuStack*, stack),
         .index = stack->count
     };
 }
 
-bool scu_stack_iter_move_next(SCUStackIter* iter) {
+bool scu_stack_iter_move_next(ScuStackIter* iter) {
     SCU_ASSERT(iter != nullptr);
     SCU_ASSERT(iter->stack != nullptr);
-    SCUStack* stack = iter->stack;
+    ScuStack* stack = iter->stack;
     isize index = iter->index;
     SCU_ASSERT((index >= 0) && (index <= stack->count));
     if (stack->count == 0) {
@@ -235,23 +235,23 @@ bool scu_stack_iter_move_next(SCUStackIter* iter) {
     return false;
 }
 
-void* scu_stack_iter_current(const SCUStackIter* iter) {
+void* scu_stack_iter_current(const ScuStackIter* iter) {
     SCU_ASSERT(iter != nullptr);
     SCU_ASSERT(iter->stack != nullptr);
-    SCUStack* stack = iter->stack;
+    ScuStack* stack = iter->stack;
     isize index = iter->index;
     SCU_ASSERT((index >= 0) && (index < stack->count));
     return stack->data + (stack->elemSize * index);
 }
 
-void scu_stack_iter_reset(SCUStackIter* iter) {
+void scu_stack_iter_reset(ScuStackIter* iter) {
     SCU_ASSERT(iter != nullptr);
     SCU_ASSERT(iter->stack != nullptr);
     SCU_ASSERT((iter->index >= 0) && (iter->index <= iter->stack->count));
     iter->index = iter->stack->count;
 }
 
-void scu_stack_free(SCUStack* stack) {
+void scu_stack_free(ScuStack* stack) {
     if (stack != nullptr) {
         scu_free(stack->data);
         stack->data = nullptr;

@@ -7,7 +7,7 @@
 #include "scu/memory.h"
 #include "scu/prio-queue.h"
 
-struct SCUPrioQueue {
+struct ScuPrioQueue {
 
     /** @brief The size of each element (in bytes). */
     isize elemSize;
@@ -28,7 +28,7 @@ struct SCUPrioQueue {
     isize count;
 
     /** @brief A function used for comparing priorities. */
-    SCUCompareFunc* prioCmpFunc;
+    ScuCompareFunc* prioCmpFunc;
 
     /**
      * @brief The nodes storing the elements and their priorities.
@@ -50,10 +50,10 @@ static constexpr isize SCU_GROWTH_FACTOR = 2;
 static constexpr isize SCU_HEAP_ARITY = 4;
 
 [[nodiscard]]
-SCUPrioQueue* scu_prio_queue_new(
+ScuPrioQueue* scu_prio_queue_new(
     isize elemSize,
     isize prioSize,
-    SCUCompareFunc prioCmpFunc
+    ScuCompareFunc prioCmpFunc
 ) {
     return scu_prio_queue_new_with_capacity(
         elemSize,
@@ -81,17 +81,17 @@ static inline isize scu_align_up(isize value, isize alignment) {
 }
 
 [[nodiscard]]
-SCUPrioQueue* scu_prio_queue_new_with_capacity(
+ScuPrioQueue* scu_prio_queue_new_with_capacity(
     isize elemSize,
     isize prioSize,
     isize capacity,
-    SCUCompareFunc prioCmpFunc
+    ScuCompareFunc prioCmpFunc
 ) {
     SCU_ASSERT(elemSize > 0);
     SCU_ASSERT(prioSize > 0);
     SCU_ASSERT(capacity >= 0);
     SCU_ASSERT(prioCmpFunc != nullptr);
-    SCUPrioQueue* prioQueue = scu_malloc(SCU_SIZEOF(SCUPrioQueue));
+    ScuPrioQueue* prioQueue = scu_malloc(SCU_SIZEOF(ScuPrioQueue));
     if (prioQueue == nullptr) {
         return nullptr;
     }
@@ -119,9 +119,9 @@ SCUPrioQueue* scu_prio_queue_new_with_capacity(
 }
 
 [[nodiscard]]
-SCUPrioQueue* scu_prio_queue_clone(const SCUPrioQueue* prioQueue) {
+ScuPrioQueue* scu_prio_queue_clone(const ScuPrioQueue* prioQueue) {
     SCU_ASSERT(prioQueue != nullptr);
-    SCUPrioQueue* clone = scu_malloc(SCU_SIZEOF(SCUPrioQueue));
+    ScuPrioQueue* clone = scu_malloc(SCU_SIZEOF(ScuPrioQueue));
     if (clone == nullptr) {
         return nullptr;
     }
@@ -150,18 +150,18 @@ SCUPrioQueue* scu_prio_queue_clone(const SCUPrioQueue* prioQueue) {
     return clone;
 }
 
-isize scu_prio_queue_capacity(const SCUPrioQueue* prioQueue) {
+isize scu_prio_queue_capacity(const ScuPrioQueue* prioQueue) {
     SCU_ASSERT(prioQueue != nullptr);
     return prioQueue->capacity;
 }
 
-isize scu_prio_queue_count(const SCUPrioQueue* prioQueue) {
+isize scu_prio_queue_count(const ScuPrioQueue* prioQueue) {
     SCU_ASSERT(prioQueue != nullptr);
     return prioQueue->count;
 }
 
-SCUError scu_prio_queue_ensure_capacity(
-    SCUPrioQueue* prioQueue,
+ScuError scu_prio_queue_ensure_capacity(
+    ScuPrioQueue* prioQueue,
     isize capacity
 ) {
     SCU_ASSERT(prioQueue != nullptr);
@@ -191,7 +191,7 @@ SCUError scu_prio_queue_ensure_capacity(
  * @param[in] index     The index of the node to retrieve the priority of.
  * @return A pointer to the priority of the node at the specified index.
  */
-static inline byte* scu_node_prio(const SCUPrioQueue* prioQueue, isize index) {
+static inline byte* scu_node_prio(const ScuPrioQueue* prioQueue, isize index) {
     SCU_ASSERT(prioQueue != nullptr);
     SCU_ASSERT((index >= 0) && (index < prioQueue->capacity));
     return prioQueue->nodes + (index * prioQueue->nodeSize);
@@ -204,22 +204,22 @@ static inline byte* scu_node_prio(const SCUPrioQueue* prioQueue, isize index) {
  * @param[in] index     The index of the node to retrieve the element of.
  * @return A pointer to the element of the node at the specified index.
  */
-static inline byte* scu_node_elem(const SCUPrioQueue* prioQueue, isize index) {
+static inline byte* scu_node_elem(const ScuPrioQueue* prioQueue, isize index) {
     SCU_ASSERT(prioQueue != nullptr);
     SCU_ASSERT((index >= 0) && (index < prioQueue->capacity));
     return prioQueue->nodes + (index * prioQueue->nodeSize)
         + prioQueue->elemOffset;
 }
 
-SCUError scu_prio_queue_enqueue(
-    SCUPrioQueue* restrict prioQueue,
+ScuError scu_prio_queue_enqueue(
+    ScuPrioQueue* restrict prioQueue,
     const void* restrict elem,
     const void* restrict prio
 ) {
     SCU_ASSERT(prioQueue != nullptr);
     SCU_ASSERT(elem != nullptr);
     SCU_ASSERT(prio != nullptr);
-    SCUError error = scu_prio_queue_ensure_capacity(
+    ScuError error = scu_prio_queue_ensure_capacity(
         prioQueue,
         prioQueue->count + 1
     );
@@ -244,7 +244,7 @@ SCUError scu_prio_queue_enqueue(
 }
 
 void scu_prio_queue_dequeue(
-    SCUPrioQueue* restrict prioQueue,
+    ScuPrioQueue* restrict prioQueue,
     void* restrict elem,
     void* restrict prio
 ) {
@@ -254,7 +254,7 @@ void scu_prio_queue_dequeue(
 }
 
 bool scu_prio_queue_try_dequeue(
-    SCUPrioQueue* restrict prioQueue,
+    ScuPrioQueue* restrict prioQueue,
     void* restrict elem,
     void* restrict prio
 ) {
@@ -304,7 +304,7 @@ bool scu_prio_queue_try_dequeue(
 }
 
 void scu_prio_queue_peek_impl(
-    const SCUPrioQueue* restrict prioQueue,
+    const ScuPrioQueue* restrict prioQueue,
     void** restrict elem,
     void** restrict prio
 ) {
@@ -314,7 +314,7 @@ void scu_prio_queue_peek_impl(
 }
 
 bool scu_prio_queue_try_peek_impl(
-    const SCUPrioQueue* restrict prioQueue,
+    const ScuPrioQueue* restrict prioQueue,
     void** restrict elem,
     void** restrict prio
 ) {
@@ -331,12 +331,12 @@ bool scu_prio_queue_try_peek_impl(
     return true;
 }
 
-void scu_prio_queue_clear(SCUPrioQueue* prioQueue) {
+void scu_prio_queue_clear(ScuPrioQueue* prioQueue) {
     SCU_ASSERT(prioQueue != nullptr);
     prioQueue->count = 0;
 }
 
-SCUError scu_prio_queue_trim_excess(SCUPrioQueue* prioQueue) {
+ScuError scu_prio_queue_trim_excess(ScuPrioQueue* prioQueue) {
     SCU_ASSERT(prioQueue != nullptr);
     if (prioQueue->capacity > prioQueue->count) {
         if (prioQueue->count == 0) {
@@ -360,17 +360,17 @@ SCUError scu_prio_queue_trim_excess(SCUPrioQueue* prioQueue) {
     return SCU_ERROR_NONE;
 }
 
-SCUPrioQueueIter scu_prio_queue_iter(const SCUPrioQueue* prioQueue) {
+ScuPrioQueueIter scu_prio_queue_iter(const ScuPrioQueue* prioQueue) {
     SCU_ASSERT(prioQueue != nullptr);
-    return (SCUPrioQueueIter) {
-        .prioQueue = SCU_CONST_CAST(SCUPrioQueue*, prioQueue),
+    return (ScuPrioQueueIter) {
+        .prioQueue = SCU_CONST_CAST(ScuPrioQueue*, prioQueue),
         .index = -1
     };
 }
 
-bool scu_prio_queue_iter_move_next(SCUPrioQueueIter* iter) {
+bool scu_prio_queue_iter_move_next(ScuPrioQueueIter* iter) {
     SCU_ASSERT(iter != nullptr);
-    SCUPrioQueue* prioQueue = iter->prioQueue;
+    ScuPrioQueue* prioQueue = iter->prioQueue;
     isize index = iter->index;
     SCU_ASSERT(prioQueue != nullptr);
     SCU_ASSERT((index >= -1) && (index < prioQueue->count));
@@ -381,26 +381,26 @@ bool scu_prio_queue_iter_move_next(SCUPrioQueueIter* iter) {
     return false;
 }
 
-SCUPrioQueueEntry scu_prio_queue_iter_current(const SCUPrioQueueIter* iter) {
+ScuPrioQueueEntry scu_prio_queue_iter_current(const ScuPrioQueueIter* iter) {
     SCU_ASSERT(iter != nullptr);
-    SCUPrioQueue* prioQueue = iter->prioQueue;
+    ScuPrioQueue* prioQueue = iter->prioQueue;
     isize index = iter->index;
     SCU_ASSERT(prioQueue != nullptr);
     SCU_ASSERT((index >= 0) && (index < prioQueue->count));
-    return (SCUPrioQueueEntry) {
+    return (ScuPrioQueueEntry) {
         .elem = scu_node_elem(prioQueue, index),
         .prio = scu_node_prio(prioQueue, index)
     };
 }
 
-void scu_prio_queue_iter_reset(SCUPrioQueueIter* iter) {
+void scu_prio_queue_iter_reset(ScuPrioQueueIter* iter) {
     SCU_ASSERT(iter != nullptr);
     SCU_ASSERT(iter->prioQueue != nullptr);
     SCU_ASSERT((iter->index >= -1) && (iter->index < iter->prioQueue->count));
     iter->index = -1;
 }
 
-void scu_prio_queue_free(SCUPrioQueue* prioQueue) {
+void scu_prio_queue_free(ScuPrioQueue* prioQueue) {
     if (prioQueue != nullptr) {
         scu_free(prioQueue->nodes);
         prioQueue->nodes = nullptr;

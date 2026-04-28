@@ -6,10 +6,10 @@
 #include "scu/types.h"
 
 /** @brief Represents a file stream used to input and output data. */
-typedef struct SCUFile SCUFile;
+typedef struct ScuFile ScuFile;
 
 /** @brief Represents an origin for seeking within a file stream. */
-typedef enum SCUSeekOrigin {
+typedef enum ScuSeekOrigin {
 
     /** @brief Indicates to seek from the beginning of the file stream. */
     SCU_SEEK_ORIGIN_SET,
@@ -22,7 +22,7 @@ typedef enum SCUSeekOrigin {
     /** @brief Indicates to seek from the end of the file stream. */
     SCU_SEEK_ORIGIN_END
 
-} SCUSeekOrigin;
+} ScuSeekOrigin;
 
 /**
  * @brief Returns a pointer to a file stream associated with the standard input
@@ -36,10 +36,10 @@ typedef enum SCUSeekOrigin {
  *
  * @return A pointer to a file stream associated with the standard input stream.
  */
-SCUFile* scu_stdin();
+ScuFile* scu_stdin();
 
 /**
- * @brief Expands to an expression of type `SCUFile*` that is associated with
+ * @brief Expands to an expression of type `ScuFile*` that is associated with
  * the standard input stream.
  *
  * @warning The file stream must not be modified or passed to `scu_fclose()`.
@@ -59,10 +59,10 @@ SCUFile* scu_stdin();
  * @return A pointer to a file stream associated with the standard output
  * stream.
  */
-SCUFile* scu_stdout();
+ScuFile* scu_stdout();
 
 /**
- * @brief Expands to an expression of type `SCUFile*` that is associated with
+ * @brief Expands to an expression of type `ScuFile*` that is associated with
  * the standard output stream.
  *
  * @warning The file stream must not be modified or passed to `scu_fclose()`.
@@ -81,10 +81,10 @@ SCUFile* scu_stdout();
  *
  * @return A pointer to a file stream associated with the standard error stream.
  */
-SCUFile* scu_stderr();
+ScuFile* scu_stderr();
 
 /**
- * @brief Expands to an expression of type `SCUFile*` that is associated with
+ * @brief Expands to an expression of type `ScuFile*` that is associated with
  * the standard error stream.
  *
  * @warning The file stream must not be modified or passed to `scu_fclose()`.
@@ -141,8 +141,8 @@ SCUFile* scu_stderr();
  * `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_fopen(
-    SCUFile* restrict* restrict file,
+ScuError scu_fopen(
+    ScuFile* restrict* restrict file,
     const char* restrict name,
     const char* restrict mode
 );
@@ -165,7 +165,7 @@ SCUError scu_fopen(
  * opening the temporary file, `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory
  * condition occurred, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_fopentmp(SCUFile** file);
+ScuError scu_fopentmp(ScuFile** file);
 
 /**
  * @brief Reopens a file stream with a specified name and mode.
@@ -207,7 +207,7 @@ SCUError scu_fopentmp(SCUFile** file);
  * Additionally, it is implementation-defined which mode changes are allowed
  * when `name` is `nullptr`.
  *
- * This function does not allocate a new `SCUFile` object, but modifies the
+ * This function does not allocate a new `ScuFile` object, but modifies the
  * specified file stream in-place.
  *
  * @warning If the operation succeeds, and `file` is not one of the standard
@@ -226,8 +226,8 @@ SCUError scu_fopentmp(SCUFile** file);
  * @return `SCU_ERROR_OPENING_FILE` if the file stream could not be reopened, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_freopen(
-    SCUFile* restrict file,
+ScuError scu_freopen(
+    ScuFile* restrict file,
     const char* restrict name,
     const char* restrict mode
 );
@@ -242,7 +242,7 @@ SCUError scu_freopen(
  * @return `SCU_ERROR_CLOSING_FILE` if the file stream could not be closed, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_fclose(SCUFile* file);
+ScuError scu_fclose(ScuFile* file);
 
 /**
  * @brief Writes any buffered data to the underlying file associated with a
@@ -256,7 +256,7 @@ SCUError scu_fclose(SCUFile* file);
  * @return `SCU_ERROR_FLUSHING_FILE` if the file stream could not be flushed, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_fflush(SCUFile* file);
+ScuError scu_fflush(ScuFile* file);
 
 /**
  * @brief Removes a file with a specified name.
@@ -268,7 +268,7 @@ SCUError scu_fflush(SCUFile* file);
  * @return `SCU_ERROR_REMOVING_FILE` if an error occurred while removing the
  * file, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_fremove(const char* name);
+ScuError scu_fremove(const char* name);
 
 /**
  * @brief Renames a file.
@@ -281,7 +281,7 @@ SCUError scu_fremove(const char* name);
  * @return `SCU_ERROR_RENAMING_FILE` if an error occurred while renaming the
  * file, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_frename(const char* oldName, const char* newName);
+ScuError scu_frename(const char* oldName, const char* newName);
 
 /**
  * @brief Reads `count` objects of size `size` from a specified file stream into
@@ -305,11 +305,11 @@ SCUError scu_frename(const char* oldName, const char* newName);
  * end-of-file condition is reached or an error occurs while reading from the
  * specified file stream.
  */
-SCUisize scu_fread(
-    SCUFile* restrict file,
+Scuisize scu_fread(
+    ScuFile* restrict file,
     void* restrict buffer,
-    SCUisize count,
-    SCUisize size
+    Scuisize count,
+    Scuisize size
 );
 
 /**
@@ -336,7 +336,7 @@ SCUisize scu_fread(
  * end-of-file condition is reached or an error occurs while reading from the
  * standard input stream.
  */
-SCUisize scu_read(void* buffer, SCUisize count, SCUisize size);
+Scuisize scu_read(void* buffer, Scuisize count, Scuisize size);
 
 /**
  * @brief Writes `count` objects of size `size` from a buffer to a specified
@@ -358,11 +358,11 @@ SCUisize scu_read(void* buffer, SCUisize count, SCUisize size);
  * @return The number of objects written, which may be less than `count` if an
  * error occurs while writing to the specified file stream.
  */
-SCUisize scu_fwrite(
-    SCUFile* restrict file,
+Scuisize scu_fwrite(
+    ScuFile* restrict file,
     const void* restrict buffer,
-    SCUisize count,
-    SCUisize size
+    Scuisize count,
+    Scuisize size
 );
 
 /**
@@ -387,7 +387,7 @@ SCUisize scu_fwrite(
  * @return The number of objects written, which may be less than `count` if an
  * error occurs while writing to the standard output stream.
  */
-SCUisize scu_write(const void* buffer, SCUisize count, SCUisize size);
+Scuisize scu_write(const void* buffer, Scuisize count, Scuisize size);
 
 /**
  * @brief Reads a single byte from a specified file stream.
@@ -399,7 +399,7 @@ SCUisize scu_write(const void* buffer, SCUisize count, SCUisize size);
  * before a byte is read, `SCU_ERROR_READING_FILE` if an error occurred while
  * reading from the specified file stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_freadc(SCUFile* restrict file, char* restrict c);
+ScuError scu_freadc(ScuFile* restrict file, char* restrict c);
 
 /**
  * @brief Reads a single byte from the standard input stream.
@@ -412,7 +412,7 @@ SCUError scu_freadc(SCUFile* restrict file, char* restrict c);
  * before a byte is read, `SCU_ERROR_READING_FILE` if an error occurred while
  * reading from the standard input stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_readc(char* c);
+ScuError scu_readc(char* c);
 
 /**
  * @brief Writes a single byte to a specified file stream.
@@ -422,7 +422,7 @@ SCUError scu_readc(char* c);
  * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
  * specified file stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_fwritec(SCUFile* file, char c);
+ScuError scu_fwritec(ScuFile* file, char c);
 
 /**
  * @brief Writes a single byte to the standard output stream.
@@ -434,7 +434,7 @@ SCUError scu_fwritec(SCUFile* file, char c);
  * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
  * standard output stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_writec(char c);
+ScuError scu_writec(char c);
 
 /**
  * @brief Pushes a single byte back into a specified file stream, such that
@@ -464,7 +464,7 @@ SCUError scu_writec(char c);
  * @return `SCU_ERROR_WRITING_FILE` if the byte could not be pushed back, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_funreadc(SCUFile* file, char c);
+ScuError scu_funreadc(ScuFile* file, char c);
 
 /**
  * @brief Reads a byte string from a specified file stream.
@@ -488,10 +488,10 @@ SCUError scu_funreadc(SCUFile* file, char c);
  * before any bytes are read, `SCU_ERROR_READING_FILE` if an error occurred
  * while reading from the specified file stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_freads(
-    SCUFile* restrict file,
+ScuError scu_freads(
+    ScuFile* restrict file,
     char* restrict buffer,
-    SCUisize size
+    Scuisize size
 );
 
 /**
@@ -518,7 +518,7 @@ SCUError scu_freads(
  * before any bytes are read, `SCU_ERROR_READING_FILE` if an error occurred
  * while reading from the standard input stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_reads(char* buffer, SCUisize size);
+ScuError scu_reads(char* buffer, Scuisize size);
 
 /**
  * @brief Writes a byte string to a specified file stream.
@@ -531,7 +531,7 @@ SCUError scu_reads(char* buffer, SCUisize size);
  * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
  * specified file stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_fwrites(SCUFile* restrict file, const char* restrict buffer);
+ScuError scu_fwrites(ScuFile* restrict file, const char* restrict buffer);
 
 /**
  * @brief Writes a byte string to the standard output stream.
@@ -546,7 +546,7 @@ SCUError scu_fwrites(SCUFile* restrict file, const char* restrict buffer);
  * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
  * standard output stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_writes(const char* buffer);
+ScuError scu_writes(const char* buffer);
 
 /**
  * @brief Reads a single line from a specified file stream.
@@ -580,10 +580,10 @@ SCUError scu_writes(const char* buffer);
  * bytes are read, `SCU_ERROR_READING_FILE` if an error occurred while reading
  * from the specified file stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_freadln(
-    SCUFile* restrict file,
+ScuError scu_freadln(
+    ScuFile* restrict file,
     char* restrict* restrict buffer,
-    SCUisize* restrict size
+    Scuisize* restrict size
 );
 
 /**
@@ -620,7 +620,7 @@ SCUError scu_freadln(
  * bytes are read, `SCU_ERROR_READING_FILE` if an error occurred while reading
  * from the standard input stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_readln(char* restrict* restrict buffer, SCUisize* restrict size);
+ScuError scu_readln(char* restrict* restrict buffer, Scuisize* restrict size);
 
 /**
  * @brief Writes a byte string followed by a newline to a specified file stream.
@@ -634,7 +634,7 @@ SCUError scu_readln(char* restrict* restrict buffer, SCUisize* restrict size);
  * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
  * specified file stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_fwriteln(SCUFile* restrict file, const char* restrict buffer);
+ScuError scu_fwriteln(ScuFile* restrict file, const char* restrict buffer);
 
 /**
  * @brief Writes a byte string followed by a newline to the standard output
@@ -651,7 +651,7 @@ SCUError scu_fwriteln(SCUFile* restrict file, const char* restrict buffer);
  * @return `SCU_ERROR_WRITING_FILE` if an error occurred while writing to the
  * standard output stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_writeln(const char* buffer);
+ScuError scu_writeln(const char* buffer);
 
 /**
  * @brief Reads all remaining bytes from a specified file stream into a
@@ -685,10 +685,10 @@ SCUError scu_writeln(const char* buffer);
  * bytes are read, `SCU_ERROR_READING_FILE` if an error occurred while reading
  * from the specified file stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_freadall(
-    SCUFile* restrict file,
+ScuError scu_freadall(
+    ScuFile* restrict file,
     char* restrict* restrict buffer,
-    SCUisize* restrict size
+    Scuisize* restrict size
 );
 
 /**
@@ -725,7 +725,7 @@ SCUError scu_freadall(
  * bytes are read, `SCU_ERROR_READING_FILE` if an error occurred while reading
  * from the standard input stream, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_readall(char* restrict* restrict buffer, SCUisize* restrict size);
+ScuError scu_readall(char* restrict* restrict buffer, Scuisize* restrict size);
 
 /**
  * @brief Reads formatted input from a specified file stream.
@@ -747,8 +747,8 @@ SCUError scu_readall(char* restrict* restrict buffer, SCUisize* restrict size);
  * while reading from the specified file stream. If an error occurs before any
  * argument is read, `-1` is returned.
  */
-SCUisize scu_vfscanf(
-    SCUFile* restrict file,
+Scuisize scu_vfscanf(
+    ScuFile* restrict file,
     const char* restrict format,
     va_list args
 );
@@ -770,7 +770,7 @@ SCUisize scu_vfscanf(
  * while reading from the specified file stream. If an error occurs before any
  * argument is read, `-1` is returned.
  */
-SCUisize scu_fscanf(SCUFile* restrict file, const char* restrict format, ...);
+Scuisize scu_fscanf(ScuFile* restrict file, const char* restrict format, ...);
 
 /**
  * @brief Reads formatted input from the standard input stream.
@@ -794,7 +794,7 @@ SCUisize scu_fscanf(SCUFile* restrict file, const char* restrict format, ...);
  * while reading from the standard input stream. If an error occurs before any
  * argument is read, `-1` is returned.
  */
-SCUisize scu_vscanf(const char* restrict format, va_list args);
+Scuisize scu_vscanf(const char* restrict format, va_list args);
 
 /**
  * @brief Reads formatted input from the standard input stream.
@@ -815,7 +815,7 @@ SCUisize scu_vscanf(const char* restrict format, va_list args);
  * while reading from the standard input stream. If an error occurs before any
  * argument is read, `-1` is returned.
  */
-SCUisize scu_scanf(const char* restrict format, ...);
+Scuisize scu_scanf(const char* restrict format, ...);
 
 /**
  * @brief Reads formatted input from a byte string.
@@ -836,7 +836,7 @@ SCUisize scu_scanf(const char* restrict format, ...);
  * expected arguments if the end of the byte string is reached or an error
  * occurs. If an error occurs before any argument is read, `-1` is returned.
  */
-SCUisize scu_vsscanf(
+Scuisize scu_vsscanf(
     const char* restrict buffer,
     const char* restrict format,
     va_list args
@@ -858,7 +858,7 @@ SCUisize scu_vsscanf(
  * expected arguments if the end of the byte string is reached or an error
  * occurs. If an error occurs before any argument is read, `-1` is returned.
  */
-SCUisize scu_sscanf(
+Scuisize scu_sscanf(
     const char* restrict buffer,
     const char* restrict format,
     ...
@@ -882,8 +882,8 @@ SCUisize scu_sscanf(
  * @return The number of bytes written to the specified file stream, or `-1` on
  * failure.
  */
-SCUisize scu_vfprintf(
-    SCUFile* restrict file,
+Scuisize scu_vfprintf(
+    ScuFile* restrict file,
     const char* restrict format,
     va_list args
 );
@@ -903,7 +903,7 @@ SCUisize scu_vfprintf(
  * @return The number of bytes written to the specified file stream, or `-1` on
  * failure.
  */
-SCUisize scu_fprintf(SCUFile* restrict file, const char* restrict format, ...);
+Scuisize scu_fprintf(ScuFile* restrict file, const char* restrict format, ...);
 
 /**
  * @brief Writes formatted output to the standard output stream.
@@ -925,7 +925,7 @@ SCUisize scu_fprintf(SCUFile* restrict file, const char* restrict format, ...);
  * @return The number of bytes written to the standard output stream, or `-1` on
  * failure.
  */
-SCUisize scu_vprintf(const char* restrict format, va_list args);
+Scuisize scu_vprintf(const char* restrict format, va_list args);
 
 /**
  * @brief Writes formatted output to the standard output stream.
@@ -944,7 +944,7 @@ SCUisize scu_vprintf(const char* restrict format, va_list args);
  * @return The number of bytes written to the standard output stream, or `-1` on
  * failure.
  */
-SCUisize scu_printf(const char* restrict format, ...);
+Scuisize scu_printf(const char* restrict format, ...);
 
 /**
  * @brief Writes formatted output to a buffer.
@@ -977,9 +977,9 @@ SCUisize scu_printf(const char* restrict format, ...);
  * sufficiently large. If an error occurs while writing to the buffer, `-1` is
  * returned.
  */
-SCUisize scu_vsnprintf(
+Scuisize scu_vsnprintf(
     char* restrict buffer,
-    SCUisize size,
+    Scuisize size,
     const char* restrict format,
     va_list args
 );
@@ -1012,9 +1012,9 @@ SCUisize scu_vsnprintf(
  * sufficiently large. If an error occurs while writing to the buffer, `-1` is
  * returned.
  */
-SCUisize scu_snprintf(
+Scuisize scu_snprintf(
     char* restrict buffer,
-    SCUisize size,
+    Scuisize size,
     const char* restrict format,
     ...
 );
@@ -1054,9 +1054,9 @@ SCUisize scu_snprintf(
  * `SCU_ERROR_WRITING_BUFFER` if an error occurred while writing to the buffer,
  * or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_vrsnprintf(
+ScuError scu_vrsnprintf(
     char* restrict* restrict buffer,
-    SCUisize* restrict size,
+    Scuisize* restrict size,
     const char* restrict format,
     va_list args
 );
@@ -1093,9 +1093,9 @@ SCUError scu_vrsnprintf(
  * `SCU_ERROR_WRITING_BUFFER` if an error occurred while writing to the buffer,
  * or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_rsnprintf(
+ScuError scu_rsnprintf(
     char* restrict* restrict buffer,
-    SCUisize* restrict size,
+    Scuisize* restrict size,
     const char* restrict format,
     ...
 );
@@ -1136,9 +1136,9 @@ SCUError scu_rsnprintf(
  * `SCU_ERROR_WRITING_BUFFER` if an error occurred while appending to the
  * buffer, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_vrasnprintf(
+ScuError scu_vrasnprintf(
     char* restrict* restrict buffer,
-    SCUisize* restrict size,
+    Scuisize* restrict size,
     const char* restrict format,
     va_list args
 );
@@ -1176,9 +1176,9 @@ SCUError scu_vrasnprintf(
  * `SCU_ERROR_WRITING_BUFFER` if an error occurred while appending to the
  * buffer, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_rasnprintf(
+ScuError scu_rasnprintf(
     char* restrict* restrict buffer,
-    SCUisize* restrict size,
+    Scuisize* restrict size,
     const char* restrict format,
     ...
 );
@@ -1194,7 +1194,7 @@ SCUError scu_rasnprintf(
  * @return The file position indicator of the specified file stream, or `-1` on
  * failure.
  */
-SCUisize scu_ftell(SCUFile* file);
+Scuisize scu_ftell(ScuFile* file);
 
 /**
  * @brief Sets the file position indicator of a specified file stream.
@@ -1222,7 +1222,7 @@ SCUisize scu_ftell(SCUFile* file);
  * @return `SCU_ERROR_SEEKING_FILE` if an error occurred while setting the file
  * position indicator, or `SCU_ERROR_NONE` on success.
  */
-SCUError scu_fseek(SCUFile* file, SCUSeekOrigin seekOrigin, SCUisize offset);
+ScuError scu_fseek(ScuFile* file, ScuSeekOrigin seekOrigin, Scuisize offset);
 
 /**
  * @brief Sets the file position indicator of a specified file stream to the
@@ -1237,7 +1237,7 @@ SCUError scu_fseek(SCUFile* file, SCUSeekOrigin seekOrigin, SCUisize offset);
  *
  * @param[in, out] file The file stream to modify.
  */
-void scu_frewind(SCUFile* file);
+void scu_frewind(ScuFile* file);
 
 /**
  * @brief Clears the end-of-file and error indicators of a specified file
@@ -1245,7 +1245,7 @@ void scu_frewind(SCUFile* file);
  *
  * @param[in, out] file The file stream to modify.
  */
-void scu_fclear(SCUFile* file);
+void scu_fclear(ScuFile* file);
 
 /**
  * @brief Determines if the end of a specified file stream has been reached.
@@ -1259,7 +1259,7 @@ void scu_fclear(SCUFile* file);
  * @return `true` if the end of the specified file stream has been reached,
  * otherwise `false`.
  */
-bool scu_feof(SCUFile* file);
+bool scu_feof(ScuFile* file);
 
 /**
  * @brief Determines if an error has occurred on a specified file stream.
@@ -1268,6 +1268,6 @@ bool scu_feof(SCUFile* file);
  * @return `true` if an error has occurred on the specified file stream,
  * otherwise `false`.
  */
-bool scu_ferror(SCUFile* file);
+bool scu_ferror(ScuFile* file);
 
 #endif

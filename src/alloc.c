@@ -15,10 +15,10 @@
  * allocator even if a different global allocator is later set using
  * `scu_set_global_allocator()`.
  */
-typedef struct SCUAllocHeader {
+typedef struct ScuAllocHeader {
 
     /** @brief The original allocator the block of memory was allocated with. */
-    const SCUAllocator* allocator;
+    const ScuAllocator* allocator;
 
     /**
      * @brief The actual data (i.e., the block of memory returned to the user).
@@ -29,7 +29,7 @@ typedef struct SCUAllocHeader {
      */
     alignas(max_align_t) byte data[];
 
-} SCUAllocHeader;
+} ScuAllocHeader;
 
 /**
  * @brief Allocates an uninitialized block of memory of at least `size`
@@ -95,7 +95,7 @@ static void scu_default_free([[maybe_unused]] void* context, void* block) {
 }
 
 /** @brief The default allocator relying on the C standard library. */
-static const SCUAllocator SCU_DEFAULT_ALLOCATOR = {
+static const ScuAllocator SCU_DEFAULT_ALLOCATOR = {
     .malloc = scu_default_malloc,
     .calloc = scu_default_calloc,
     .realloc = scu_default_realloc,
@@ -103,13 +103,13 @@ static const SCUAllocator SCU_DEFAULT_ALLOCATOR = {
 };
 
 /** @brief The global allocator (initially set to the default one). */
-static const SCUAllocator* _Atomic scuGlobalAllocator = &SCU_DEFAULT_ALLOCATOR;
+static const ScuAllocator* _Atomic scuGlobalAllocator = &SCU_DEFAULT_ALLOCATOR;
 
-const SCUAllocator* scu_get_global_allocator() {
+const ScuAllocator* scu_get_global_allocator() {
     return atomic_load_explicit(&scuGlobalAllocator, memory_order_acquire);
 }
 
-void scu_set_global_allocator(const SCUAllocator* allocator) {
+void scu_set_global_allocator(const ScuAllocator* allocator) {
     atomic_store_explicit(
         &scuGlobalAllocator,
         (allocator != nullptr) ? allocator : &SCU_DEFAULT_ALLOCATOR,
@@ -120,10 +120,10 @@ void scu_set_global_allocator(const SCUAllocator* allocator) {
 [[nodiscard]]
 void* scu_malloc(isize size) {
     SCU_ASSERT(size >= 0);
-    const SCUAllocator* allocator = scu_get_global_allocator();
-    SCUAllocHeader* header = allocator->malloc(
+    const ScuAllocator* allocator = scu_get_global_allocator();
+    ScuAllocHeader* header = allocator->malloc(
         allocator->context,
-        SCU_SIZEOF(SCUAllocHeader) + size
+        SCU_SIZEOF(ScuAllocHeader) + size
     );
     if (header == nullptr) {
         return nullptr;
@@ -136,11 +136,11 @@ void* scu_malloc(isize size) {
 void* scu_calloc(isize count, isize size) {
     SCU_ASSERT(count >= 0);
     SCU_ASSERT(size >= 0);
-    const SCUAllocator* allocator = scu_get_global_allocator();
-    SCUAllocHeader* header = allocator->calloc(
+    const ScuAllocator* allocator = scu_get_global_allocator();
+    ScuAllocHeader* header = allocator->calloc(
         allocator->context,
         1,
-        SCU_SIZEOF(SCUAllocHeader) + (count * size)
+        SCU_SIZEOF(ScuAllocHeader) + (count * size)
     );
     if (header == nullptr) {
         return nullptr;
@@ -155,9 +155,9 @@ void* scu_calloc(isize count, isize size) {
  * @param[in] data A pointer to the actual data.
  * @return A pointer to the header of the block of memory.
  */
-static inline SCUAllocHeader* scu_data_to_header(void* data) {
+static inline ScuAllocHeader* scu_data_to_header(void* data) {
     SCU_ASSERT(data != nullptr);
-    return (SCUAllocHeader*) ((byte*) data - SCU_SIZEOF(SCUAllocHeader));
+    return (ScuAllocHeader*) ((byte*) data - SCU_SIZEOF(ScuAllocHeader));
 }
 
 [[nodiscard]]
@@ -166,20 +166,20 @@ void* scu_realloc(void* block, isize newSize) {
     if (block == nullptr) {
         return scu_malloc(newSize);
     }
-    SCUAllocHeader* oldHeader = scu_data_to_header(block);
-    const SCUAllocator* allocator = oldHeader->allocator;
-    SCUAllocHeader* newHeader = allocator->realloc(
+    ScuAllocHeader* oldHeader = scu_data_to_header(block);
+    const ScuAllocator* allocator = oldHeader->allocator;
+    ScuAllocHeader* newHeader = allocator->realloc(
         allocator->context,
         oldHeader,
-        SCU_SIZEOF(SCUAllocHeader) + newSize
+        SCU_SIZEOF(ScuAllocHeader) + newSize
     );
     return (newHeader == nullptr) ? nullptr : newHeader->data;
 }
 
 void scu_free(void* block) {
     if (block != nullptr) {
-        SCUAllocHeader* header = scu_data_to_header(block);
-        const SCUAllocator* allocator = header->allocator;
+        ScuAllocHeader* header = scu_data_to_header(block);
+        const ScuAllocator* allocator = header->allocator;
         allocator->free(allocator->context, header);
     }
 }

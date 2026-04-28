@@ -6,7 +6,7 @@
 #include "scu/types.h"
 
 /** @brief Represents a last-in-first-out (LIFO) collection of elements. */
-typedef struct SCUStack SCUStack;
+typedef struct ScuStack ScuStack;
 
 /**
  * @brief Represents an iterator for a stack.
@@ -15,15 +15,15 @@ typedef struct SCUStack SCUStack;
  * detail and should not be relied upon. Most importantly, the behavior is
  * undefined if its fields are accessed directly.
  */
-typedef struct SCUStackIter {
+typedef struct ScuStackIter {
 
     /** @brief The stack being iterated over. */
-    SCUStack* stack;
+    ScuStack* stack;
 
     /** @brief The current index within the stack. */
-    SCUisize index;
+    Scuisize index;
 
-} SCUStackIter;
+} ScuStackIter;
 
 /**
  * @brief Allocates and initializes a new stack with a specified element size
@@ -38,7 +38,7 @@ typedef struct SCUStackIter {
  * @return A pointer to the new stack, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUStack* scu_stack_new(SCUisize elemSize);
+ScuStack* scu_stack_new(Scuisize elemSize);
 
 /**
  * @brief Allocates and initializes a new stack with a specified element size
@@ -54,7 +54,7 @@ SCUStack* scu_stack_new(SCUisize elemSize);
  * @return A pointer to the new stack, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUStack* scu_stack_new_with_capacity(SCUisize elemSize, SCUisize capacity);
+ScuStack* scu_stack_new_with_capacity(Scuisize elemSize, Scuisize capacity);
 
 /**
  * @brief Creates a shallow copy of a specified stack.
@@ -68,7 +68,7 @@ SCUStack* scu_stack_new_with_capacity(SCUisize elemSize, SCUisize capacity);
  * @return A pointer to the cloned stack, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUStack* scu_stack_clone(const SCUStack* stack);
+ScuStack* scu_stack_clone(const ScuStack* stack);
 
 /**
  * @brief Returns the capacity of a specified stack, i.e., the maximum number of
@@ -81,7 +81,7 @@ SCUStack* scu_stack_clone(const SCUStack* stack);
  * @param[in] stack The stack to examine.
  * @return The capacity of the specified stack.
  */
-SCUisize scu_stack_capacity(const SCUStack* stack);
+Scuisize scu_stack_capacity(const ScuStack* stack);
 
 /**
  * @brief Returns the number of elements in a specified stack.
@@ -89,7 +89,7 @@ SCUisize scu_stack_capacity(const SCUStack* stack);
  * @param[in] stack The stack to examine.
  * @return The number of elements in the specified stack.
  */
-SCUisize scu_stack_count(const SCUStack* stack);
+Scuisize scu_stack_count(const ScuStack* stack);
 
 /**
  * @brief Ensures that a specified stack has at least a specified capacity.
@@ -101,7 +101,7 @@ SCUisize scu_stack_count(const SCUStack* stack);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_stack_ensure_capacity(SCUStack* stack, SCUisize capacity);
+ScuError scu_stack_ensure_capacity(ScuStack* stack, Scuisize capacity);
 
 /**
  * @brief Pushes a new element onto the top of a specified stack.
@@ -113,7 +113,7 @@ SCUError scu_stack_ensure_capacity(SCUStack* stack, SCUisize capacity);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_stack_push(SCUStack* restrict stack, const void* restrict elem);
+ScuError scu_stack_push(ScuStack* restrict stack, const void* restrict elem);
 
 /**
  * @brief Removes the top element from a specified stack.
@@ -123,7 +123,7 @@ SCUError scu_stack_push(SCUStack* restrict stack, const void* restrict elem);
  * @param[in, out] stack The stack to remove the top element from.
  * @param[out]     elem  The removed top element.
  */
-void scu_stack_pop(SCUStack* restrict stack, void* restrict elem);
+void scu_stack_pop(ScuStack* restrict stack, void* restrict elem);
 
 /**
  * @brief Tries to remove the top element from a specified stack.
@@ -134,7 +134,7 @@ void scu_stack_pop(SCUStack* restrict stack, void* restrict elem);
  * @return `true` if the top element was successfully removed, otherwise
  * `false`.
  */
-bool scu_stack_try_pop(SCUStack* restrict stack, void* restrict elem);
+bool scu_stack_try_pop(ScuStack* restrict stack, void* restrict elem);
 
 /**
  * @brief Retrieves the top element of a specified stack without removing it.
@@ -147,7 +147,7 @@ bool scu_stack_try_pop(SCUStack* restrict stack, void* restrict elem);
  * @param[in]  stack The stack to examine.
  * @param[out] elem  A pointer to the top element of the stack.
  */
-void scu_stack_peek_impl(const SCUStack* restrict stack, void** restrict elem);
+void scu_stack_peek_impl(const ScuStack* restrict stack, void** restrict elem);
 
 /**
  * @brief Retrieves the top element of a specified stack without removing it.
@@ -173,7 +173,7 @@ void scu_stack_peek_impl(const SCUStack* restrict stack, void** restrict elem);
  * `false`.
  */
 bool scu_stack_try_peek_impl(
-    const SCUStack* restrict stack,
+    const ScuStack* restrict stack,
     void** restrict elem
 );
 
@@ -203,7 +203,7 @@ bool scu_stack_try_peek_impl(
  *
  * @param[in, out] stack The stack to clear.
  */
-void scu_stack_clear(SCUStack* stack);
+void scu_stack_clear(ScuStack* stack);
 
 /**
  * @brief Trims the excess capacity of a specified stack to match its current
@@ -215,7 +215,7 @@ void scu_stack_clear(SCUStack* stack);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_stack_trim_excess(SCUStack* stack);
+ScuError scu_stack_trim_excess(ScuStack* stack);
 
 /**
  * @brief Returns an iterator for a specified stack.
@@ -236,7 +236,7 @@ SCUError scu_stack_trim_excess(SCUStack* stack);
  * @param[in] stack The stack to iterate over.
  * @return An iterator for the specified stack.
  */
-SCUStackIter scu_stack_iter(const SCUStack* stack);
+ScuStackIter scu_stack_iter(const ScuStack* stack);
 
 /**
  * @brief Advances a specified stack iterator to the next element.
@@ -245,7 +245,7 @@ SCUStackIter scu_stack_iter(const SCUStack* stack);
  * @return `true` if the iterator was successfully advanced to the next element,
  * otherwise `false` (i.e., the stack does not contain any more elements).
  */
-bool scu_stack_iter_move_next(SCUStackIter* iter);
+bool scu_stack_iter_move_next(ScuStackIter* iter);
 
 /**
  * @brief Returns the current element of a specified stack iterator.
@@ -253,7 +253,7 @@ bool scu_stack_iter_move_next(SCUStackIter* iter);
  * @param[in] iter The iterator to examine.
  * @return A pointer to the current element.
  */
-void* scu_stack_iter_current(const SCUStackIter* iter);
+void* scu_stack_iter_current(const ScuStackIter* iter);
 
 /**
  * @brief Resets a specified stack iterator to its initial position.
@@ -265,7 +265,7 @@ void* scu_stack_iter_current(const SCUStackIter* iter);
  *
  * @param[in, out] iter The iterator to reset.
  */
-void scu_stack_iter_reset(SCUStackIter* iter);
+void scu_stack_iter_reset(ScuStackIter* iter);
 
 /**
  * @brief Deallocates a specified stack.
@@ -281,7 +281,7 @@ void scu_stack_iter_reset(SCUStackIter* iter);
  *
  * @param[in, out] stack The stack to deallocate.
  */
-void scu_stack_free(SCUStack* stack);
+void scu_stack_free(ScuStack* stack);
 
 /**
  * @brief Iterates over each element in a specified stack.
@@ -294,7 +294,7 @@ void scu_stack_free(SCUStack* stack);
  *
  * ```c
  * // T is the type of the elements stored in the stack.
- * SCUStack* stack = scu_stack_new(SCU_SIZEOF(T));
+ * ScuStack* stack = scu_stack_new(SCU_SIZEOF(T));
  * ...
  * T* elem;
  * SCU_STACK_FOREACH(elem, stack) {
@@ -313,7 +313,7 @@ void scu_stack_free(SCUStack* stack);
  */
 #define SCU_STACK_FOREACH(elem, stack)                                       \
     for (                                                                    \
-        SCUStackIter SCU_XCONCAT(it, __LINE__) = scu_stack_iter(stack);      \
+        ScuStackIter SCU_XCONCAT(it, __LINE__) = scu_stack_iter(stack);      \
         scu_stack_iter_move_next(&SCU_XCONCAT(it, __LINE__))                 \
             && (                                                             \
                 (elem) = scu_stack_iter_current(&SCU_XCONCAT(it, __LINE__)), \

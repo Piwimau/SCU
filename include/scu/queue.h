@@ -6,7 +6,7 @@
 #include "scu/types.h"
 
 /** @brief Represents a first-in-first-out (FIFO) collection of elements. */
-typedef struct SCUQueue SCUQueue;
+typedef struct ScuQueue ScuQueue;
 
 /**
  * @brief Represents an iterator for a queue.
@@ -15,15 +15,15 @@ typedef struct SCUQueue SCUQueue;
  * detail and should not be relied upon. Most importantly, the behavior is
  * undefined if its fields are accessed directly.
  */
-typedef struct SCUQueueIter {
+typedef struct ScuQueueIter {
 
     /** @brief The queue being iterated over. */
-    SCUQueue* queue;
+    ScuQueue* queue;
 
     /** @brief The current index within the queue. */
-    SCUisize index;
+    Scuisize index;
 
-} SCUQueueIter;
+} ScuQueueIter;
 
 /**
  * @brief Allocates and initializes a new queue with a specified element size
@@ -38,7 +38,7 @@ typedef struct SCUQueueIter {
  * @return A pointer to the new queue, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUQueue* scu_queue_new(SCUisize elemSize);
+ScuQueue* scu_queue_new(Scuisize elemSize);
 
 /**
  * @brief Allocates and initializes a new queue with a specified element size
@@ -54,7 +54,7 @@ SCUQueue* scu_queue_new(SCUisize elemSize);
  * @return A pointer to the new queue, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUQueue* scu_queue_new_with_capacity(SCUisize elemSize, SCUisize capacity);
+ScuQueue* scu_queue_new_with_capacity(Scuisize elemSize, Scuisize capacity);
 
 /**
  * @brief Creates a shallow copy of a specified queue.
@@ -68,7 +68,7 @@ SCUQueue* scu_queue_new_with_capacity(SCUisize elemSize, SCUisize capacity);
  * @return A pointer to the cloned queue, or `nullptr` on failure.
  */
 [[nodiscard]]
-SCUQueue* scu_queue_clone(const SCUQueue* queue);
+ScuQueue* scu_queue_clone(const ScuQueue* queue);
 
 /**
  * @brief Returns the capacity of a specified queue, i.e., the maximum number of
@@ -81,7 +81,7 @@ SCUQueue* scu_queue_clone(const SCUQueue* queue);
  * @param[in] queue The queue to examine.
  * @return The capacity of the specified queue.
  */
-SCUisize scu_queue_capacity(const SCUQueue* queue);
+Scuisize scu_queue_capacity(const ScuQueue* queue);
 
 /**
  * @brief Returns the number of elements stored in a specified queue.
@@ -89,7 +89,7 @@ SCUisize scu_queue_capacity(const SCUQueue* queue);
  * @param[in] queue The queue to examine.
  * @return The number of elements stored in the specified queue.
  */
-SCUisize scu_queue_count(const SCUQueue* queue);
+Scuisize scu_queue_count(const ScuQueue* queue);
 
 /**
  * @brief Ensures that a specified queue has at least a specified capacity.
@@ -101,7 +101,7 @@ SCUisize scu_queue_count(const SCUQueue* queue);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_queue_ensure_capacity(SCUQueue* queue, SCUisize capacity);
+ScuError scu_queue_ensure_capacity(ScuQueue* queue, Scuisize capacity);
 
 /**
  * @brief Enqueues a new element into a specified queue.
@@ -113,7 +113,7 @@ SCUError scu_queue_ensure_capacity(SCUQueue* queue, SCUisize capacity);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_queue_enqueue(SCUQueue* restrict queue, const void* restrict elem);
+ScuError scu_queue_enqueue(ScuQueue* restrict queue, const void* restrict elem);
 
 /**
  * @brief Dequeues the element at the front of a specified queue.
@@ -124,7 +124,7 @@ SCUError scu_queue_enqueue(SCUQueue* restrict queue, const void* restrict elem);
  * @param[in, out] queue The queue to dequeue the element from.
  * @param[out]     elem  The dequeued element.
  */
-void scu_queue_dequeue(SCUQueue* restrict queue, void* restrict elem);
+void scu_queue_dequeue(ScuQueue* restrict queue, void* restrict elem);
 
 /**
  * @brief Tries to dequeue the element at the front of a specified queue.
@@ -133,7 +133,7 @@ void scu_queue_dequeue(SCUQueue* restrict queue, void* restrict elem);
  * @param[out]     elem  The dequeued element on success, otherwise unchanged.
  * @return `true` if an element was successfully dequeued, otherwise `false`.
  */
-bool scu_queue_try_dequeue(SCUQueue* restrict queue, void* restrict elem);
+bool scu_queue_try_dequeue(ScuQueue* restrict queue, void* restrict elem);
 
 /**
  * @brief Returns the element at the front of a specified queue without removing
@@ -148,7 +148,7 @@ bool scu_queue_try_dequeue(SCUQueue* restrict queue, void* restrict elem);
  * @param[in]  queue The queue to examine.
  * @param[out] elem  A pointer to the element at the front of the queue.
  */
-void scu_queue_peek_impl(const SCUQueue* restrict queue, void** restrict elem);
+void scu_queue_peek_impl(const ScuQueue* restrict queue, void** restrict elem);
 
 /**
  * @brief Returns the element at the front of a specified queue without removing
@@ -175,7 +175,7 @@ void scu_queue_peek_impl(const SCUQueue* restrict queue, void** restrict elem);
  * @return `true` if an element was successfully retrieved, otherwise `false`.
  */
 bool scu_queue_try_peek_impl(
-    const SCUQueue* restrict queue,
+    const ScuQueue* restrict queue,
     void** restrict elem
 );
 
@@ -204,7 +204,7 @@ bool scu_queue_try_peek_impl(
  *
  * @param[in, out] queue The queue to clear.
  */
-void scu_queue_clear(SCUQueue* queue);
+void scu_queue_clear(ScuQueue* queue);
 
 /**
  * @brief Trims the excess capacity of a specified queue to match its current
@@ -216,7 +216,7 @@ void scu_queue_clear(SCUQueue* queue);
  * @return `SCU_ERROR_OUT_OF_MEMORY` if an out-of-memory condition occurred, or
  * `SCU_ERROR_NONE` on success.
  */
-SCUError scu_queue_trim_excess(SCUQueue* queue);
+ScuError scu_queue_trim_excess(ScuQueue* queue);
 
 /**
  * @brief Returns an iterator for a specified queue.
@@ -235,7 +235,7 @@ SCUError scu_queue_trim_excess(SCUQueue* queue);
  * @param[in] queue The queue to iterate over.
  * @return An iterator for the specified queue.
  */
-SCUQueueIter scu_queue_iter(const SCUQueue* queue);
+ScuQueueIter scu_queue_iter(const ScuQueue* queue);
 
 /**
  * @brief Advances a specified queue iterator to the next element.
@@ -244,7 +244,7 @@ SCUQueueIter scu_queue_iter(const SCUQueue* queue);
  * @return `true` if the iterator was successfully advanced to the next element,
  * otherwise `false` (i.e., the queue does not contain any more elements).
  */
-bool scu_queue_iter_move_next(SCUQueueIter* iter);
+bool scu_queue_iter_move_next(ScuQueueIter* iter);
 
 /**
  * @brief Returns the current element of a specified queue iterator.
@@ -252,7 +252,7 @@ bool scu_queue_iter_move_next(SCUQueueIter* iter);
  * @param[in] iter The iterator to examine.
  * @return The current element of the iterator.
  */
-void* scu_queue_iter_current(const SCUQueueIter* iter);
+void* scu_queue_iter_current(const ScuQueueIter* iter);
 
 /**
  * @brief Resets a specified queue iterator to its initial position.
@@ -264,7 +264,7 @@ void* scu_queue_iter_current(const SCUQueueIter* iter);
  *
  * @param[in, out] iter The iterator to reset.
  */
-void scu_queue_iter_reset(SCUQueueIter* iter);
+void scu_queue_iter_reset(ScuQueueIter* iter);
 
 /**
  * @brief Deallocates a specified queue.
@@ -280,7 +280,7 @@ void scu_queue_iter_reset(SCUQueueIter* iter);
  *
  * @param[in] queue The queue to deallocate.
  */
-void scu_queue_free(SCUQueue* queue);
+void scu_queue_free(ScuQueue* queue);
 
 /**
  * @brief Iterates over each element in a specified queue.
@@ -293,7 +293,7 @@ void scu_queue_free(SCUQueue* queue);
  *
  * ```c
  * // T is the type of the elements stored in the queue.
- * SCUQueue* queue = scu_queue_new(sizeof(T));
+ * ScuQueue* queue = scu_queue_new(sizeof(T));
  * ...
  * T* elem;
  * SCU_QUEUE_FOREACH(elem, queue) {
@@ -315,7 +315,7 @@ void scu_queue_free(SCUQueue* queue);
  */
 #define SCU_QUEUE_FOREACH(elem, queue)                                       \
     for (                                                                    \
-        SCUQueueIter SCU_XCONCAT(it, __LINE__) = scu_queue_iter(queue);      \
+        ScuQueueIter SCU_XCONCAT(it, __LINE__) = scu_queue_iter(queue);      \
         scu_queue_iter_move_next(&SCU_XCONCAT(it, __LINE__))                 \
             && (                                                             \
                 (elem) = scu_queue_iter_current(&SCU_XCONCAT(it, __LINE__)), \
